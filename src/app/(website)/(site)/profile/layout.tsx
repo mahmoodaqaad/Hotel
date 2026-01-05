@@ -1,57 +1,28 @@
+"use client"
 
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "@/app/globals.css"
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css"
-import Header from "@/components/WebSite/header/Header";
+import React from "react";
 import SideBar from "@/components/WebSite/profile/SideBar/SideBar";
-const geistSans = Geist({
-    variable: "--font-geist-sans",
-    subsets: ["latin"],
-});
 
-const geistMono = Geist_Mono({
-    variable: "--font-geist-mono",
-    subsets: ["latin"],
-});
-
-export const metadata: Metadata = {
-    title: "Hotel Book",
-    description: "Hotel Book website for booking hotel",
-};
-
-export default function RootLayout({
+export default function ProfileLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en">
-
-            <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-                <ToastContainer theme="colored" />
-                <Header />
-                <div className="">
-
-                    <div className="flex gap-2 dark:bg-gray-700 dark:text-white">
-                        <div className="hidden md:block">
-
-                            <SideBar />
-                        </div>
-
-                        <div className="flex-1 p-3   vh-site">
-                            {children}
-                        </div>
-
-                    </div>
-                    <div className="block md:hidden">
-
+        <main className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-[120px] pb-24 md:pb-0">
+            <div className="container mx-auto px-4 md:px-6">
+                <div className="flex flex-col md:flex-row gap-8">
+                    {/* Sidebar container */}
+                    <div className="w-full md:w-72 shrink-0">
                         <SideBar />
                     </div>
-                </div>
 
-            </body>
-        </html>
+                    {/* Main content area */}
+                    <div className="flex-1 bg-white dark:bg-slate-900/50 rounded-[2.5rem] p-6 md:p-10 shadow-2xl shadow-slate-200/50 dark:shadow-none ring-1 ring-slate-100 dark:ring-white/5 min-h-[600px]">
+                        {children}
+                    </div>
+                </div>
+            </div>
+        </main>
     );
 }

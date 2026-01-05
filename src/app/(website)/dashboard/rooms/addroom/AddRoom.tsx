@@ -1,12 +1,15 @@
 "use client"
+
 import { LoadingPage } from '@/app/loading'
 import { User } from '@prisma/client'
 import axios from 'axios'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
-import { LuImagePlus } from 'react-icons/lu'
+import { HiPlus, HiX, HiUpload, HiCurrencyDollar, HiIdentification, HiDocumentText } from 'react-icons/hi'
 import { toast } from 'react-toastify'
+import { motion, AnimatePresence } from 'framer-motion'
+import { DOMAIN } from '@/utils/consant'
 
 const AddRoom = ({ user }: { user: User }) => {
     const [name, setName] = useState("")
@@ -16,169 +19,177 @@ const AddRoom = ({ user }: { user: User }) => {
     const [loading, setLoading] = useState(false)
     const router = useRouter()
 
-
-
-    const AddRoomHanlde = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
 
+        if (user.role !== "Admin" && user.role !== "SuperAdmin") {
+            return toast.error("Unauthorized: Access denied")
+        }
+
+        if (!name || !price || !discrption || images.length === 0) {
+            return toast.error("Please fill all fields and upload at least one image")
+        }
+
         try {
+            setLoading(true)
+            const uploadPromises = images.map(async (image) => {
+                const formData = new FormData()
+                formData.append("file", image)
+                formData.append("upload_preset", "HotelWithNext")
+                formData.append("cloud_name", "ddoj9gsda")
+                const res = await axios.post(`https://api.cloudinary.com/v1_1/ddoj9gsda/image/upload`, formData);
+                return res.data.secure_url;
+            })
 
-            if (user.role === "Admin" || user.role === "SuperAdmin") {
+            const imageUrls = await Promise.all(uploadPromises)
+            await axios.post(`${DOMAIN}/api/rooms`, { name, price: Number(price), discrption, imageUrls })
 
-                if (!name) return toast.error("Name is required");
-                if (!price) return toast.error("price is required");
-                if (!discrption) return toast.error("discrption is required");
-                if (images.length === 0) return toast.error("images is required");
-
-                setLoading(true)
-                // const imagesUrls=await up 
-                const uplpadProductImgs = []
-                const uploadPromises = images.map(async (image) => {
-                    const formData = new FormData()
-
-                    formData.append("file", image)
-                    formData.append("upload_preset", "HotelWithNext")
-                    formData.append("cloud_name", "ddoj9gsda")
-                    const res = await axios.post(`https://api.cloudinary.com/v1_1/ddoj9gsda/image/upload`, formData);
-
-                    return res.data.secure_url;
-                })
-                const urls = await Promise.all(uploadPromises)
-
-                uplpadProductImgs.push(...urls)
-                await axios.post("http://localhost:3000/api/rooms", { name, price, discrption, imageUrls: uplpadProductImgs })
-                router.push("/dashboard/rooms?pageNumber=1")
-                router.refresh()
+            toast.success("Room added successfully!")
+            router.push("/dashboard/rooms?pageNumber=1")
+            router.refresh()
+        } catch (error) {
+            console.error(error)
+            if (axios.isAxiosError(error)) {
+                toast.error(error.response?.data?.message || "Failed to add room")
+            } else {
+                toast.error("An unexpected error occurred")
             }
-            else {
-                toast.error("Not allowed ,forbeddien")
-            }
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } catch (e: any) {
-
-            console.log(e);
-
-            return toast.error(e.response.data.message)
-
         } finally {
             setLoading(false)
         }
-
     }
 
-
+    const removeImage = (index: number) => {
+        setImages(prev => prev.filter((_, i) => i !== index))
+    }
 
     return (
-        <>
+        <div className="max-w-4xl mx-auto">
             {loading && <LoadingPage />}
 
-            <form onSubmit={AddRoomHanlde} className='mt-3 border-t border-gray-300 text-center'>
-                <div className='mt-6'>
-                    <input type="text"
-                        name='name'
-                        placeholder='Name... '
-                        className='px-2 py-3 w-full border-0 outline-0 dark:bg-gray-800'
-                        value={name}
-                        onChange={e => setName(e.target.value)}
-                    />
-                </div>
-                <div className='mt-7'>
-                    <input type="text"
-                        name='discrption'
-                        placeholder='Discrption... '
-                        className='px-2 py-3 w-full border-0 outline-0 dark:bg-gray-800'
-                        value={discrption}
-                        onChange={e => setDiscrption(e.target.value)}
-                    />
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="premium-card p-8 md:p-12"
+            >
+                <div className="mb-10 text-center">
+                    <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">Add New Room</h2>
+                    <p className="text-slate-500 dark:text-slate-400 mt-2 font-medium">Create a new luxury experience for your guests</p>
                 </div>
 
-
-                <div className='mt-7'>
-
-                    <input
-                        type="number"
-                        placeholder='Price... '
-                        className='px-2 py-3 w-full border-0 outline-0 dark:bg-gray-800'
-                        value={price}
-                        onChange={e => setPrice(e.target.value)}
-                    />
-                </div>
-
-
-                <div className='mt-7'>
-                    <label htmlFor="images"
-                        className='flex justify-center items-center p-4 border-2 border-gray-500 cursor-pointer'
-
-                    >
-                        <LuImagePlus className='text-3xl' />
-                    </label>
-                    <input
-                        id='images'
-                        hidden
-                        type="file"
-                        multiple
-                        onChange={e =>
-                            setImages(prev => [...prev, ...Array.from(e.target.files || [])])
-
-                        } />
-                </div>
-                <button type="submit" className='bg-teal-400 hover:bg-teal-600 transition-colors duration-150 px-6 py-2 rounded-md  text-2xl text-white mt-10 '>Add</button>
-            </form>
-
-            <div className='flex gap-3 mt-6 flex-col items-center'>
-
-                {
-
-                    images && images.map((img, i) => {
-
-                        function deleteImg(img: File) {
-
-                            const newImg = images.filter(item => item !== img)
-                            setImages(newImg)
-
-                        }
-
-                        return (
-                            <div
-                                key={i}
-                                className='border-2 flex justify-between items-center py-2 px-2 border-gray-700 w-full dark:border-gray-400'
-                            >
-                                <div>
-
-                                    <Image
-                                        height={120}
-                                        width={120}
-                                        src={URL.createObjectURL(img)} alt='' />
-
-                                    <p className='mt-2 text-blue-600 text-center'>
-                                        {
-                                            Number(img.size / 1024) > 1000 ?
-                                                (img.size / 1024 / 1024).toFixed(1) + "MB"
-                                                :
-                                                (img.size / 1024).toFixed(1) + "KB"
-
-
-                                        }
-                                    </p>
-
-                                </div>
-
-                                <div>
-                                    <button
-                                        onClick={() => deleteImg(img)}
-                                        className='bg-red-500 uppercase px-3 py-2 rounded-md text-white transition-all hover:bg-red-800  '
-                                    >
-                                        Delete
-                                    </button>
-                                </div>
+                <form onSubmit={handleSubmit} className="space-y-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div className="space-y-6">
+                            {/* Room Name */}
+                            <div className="space-y-2">
+                                <label className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 flex items-center gap-2">
+                                    <HiIdentification className="text-blue-500" /> Room Name
+                                </label>
+                                <input
+                                    type="text"
+                                    placeholder="e.g. Royal Presidential Suite"
+                                    className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl py-4 px-6 text-slate-900 dark:text-white font-bold outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                                    value={name}
+                                    onChange={e => setName(e.target.value)}
+                                />
                             </div>
-                        )
-                    }
-                    )
-                }
-            </div>
-        </>
 
+                            {/* Price */}
+                            <div className="space-y-2">
+                                <label className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 flex items-center gap-2">
+                                    <HiCurrencyDollar className="text-blue-500" /> Price per Night
+                                </label>
+                                <input
+                                    type="number"
+                                    placeholder="0.00"
+                                    className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl py-4 px-6 text-slate-900 dark:text-white font-bold outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                                    value={price}
+                                    onChange={e => setPrice(e.target.value)}
+                                />
+                            </div>
+                        </div>
+
+                        {/* Description */}
+                        <div className="space-y-2">
+                            <label className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 flex items-center gap-2">
+                                <HiDocumentText className="text-blue-500" /> Room Description
+                            </label>
+                            <textarea
+                                placeholder="Describe the room's unique features, view, and amenities..."
+                                className="w-full h-full min-h-[160px] bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl py-4 px-6 text-slate-900 dark:text-white font-bold outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all resize-none placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                                value={discrption}
+                                onChange={e => setDiscrption(e.target.value)}
+                            />
+                        </div>
+                    </div>
+
+                    {/* Image Upload */}
+                    <div className="space-y-4">
+                        <label className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 flex items-center gap-2">
+                            <HiUpload className="text-blue-500" /> Room Gallery
+                        </label>
+
+                        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                            <AnimatePresence mode="popLayout">
+                                {images.map((img, i) => (
+                                    <motion.div
+                                        key={i}
+                                        initial={{ opacity: 0, scale: 0.8 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        exit={{ opacity: 0, scale: 0.8 }}
+                                        className="group relative aspect-square rounded-2xl overflow-hidden shadow-lg border-2 border-slate-200 dark:border-white/10"
+                                    >
+                                        <Image
+                                            layout="fill"
+                                            objectFit="cover"
+                                            src={URL.createObjectURL(img)}
+                                            alt={`Preview ${i}`}
+                                        />
+                                        <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                            <button
+                                                type="button"
+                                                onClick={() => removeImage(i)}
+                                                className="w-10 h-10 bg-red-500 text-white rounded-full flex items-center justify-center hover:scale-110 active:scale-95 transition-transform"
+                                            >
+                                                <HiX size={20} />
+                                            </button>
+                                        </div>
+                                        <div className="absolute bottom-1 right-1 px-1.5 py-0.5 bg-white/90 dark:bg-slate-900/90 rounded-lg text-[8px] font-black uppercase tracking-tighter">
+                                            {(img.size / 1024 / 1024).toFixed(1)} MB
+                                        </div>
+                                    </motion.div>
+                                ))}
+
+                                <motion.label
+                                    className="aspect-square flex flex-col items-center justify-center gap-2 border-2 border-dashed border-slate-200 dark:border-white/10 rounded-2xl cursor-pointer hover:border-blue-500/50 hover:bg-blue-50/50 dark:hover:bg-blue-500/5 transition-all text-slate-400 hover:text-blue-500"
+                                >
+                                    <HiPlus size={32} />
+                                    <span className="text-[10px] font-black uppercase tracking-widest">Add Photo</span>
+                                    <input
+                                        type="file"
+                                        hidden
+                                        multiple
+                                        accept="image/*"
+                                        onChange={e => setImages(prev => [...prev, ...Array.from(e.target.files || [])])}
+                                    />
+                                </motion.label>
+                            </AnimatePresence>
+                        </div>
+                    </div>
+
+                    <div className="pt-8 border-t border-slate-100 dark:border-white/5 flex justify-end">
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="group relative px-10 py-4 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-400 text-white font-black uppercase tracking-[0.2em] rounded-2xl shadow-xl shadow-blue-500/30 transition-all active:scale-95 disabled:active:scale-100 flex items-center gap-3"
+                        >
+                            <span>Add Room</span>
+                            <HiPlus size={20} className="group-hover:rotate-90 transition-transform duration-300" />
+                        </button>
+                    </div>
+                </form>
+            </motion.div>
+        </div>
     )
 }
 

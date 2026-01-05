@@ -1,37 +1,30 @@
 import NavBarDashboard from "@/components/Dashboard/NavBarDashboard/NavBarDashboard";
 import SideBar from "@/components/Dashboard/SideBar/SideBar";
-import DashboardContext from "@/Context/DashboardContext";
-import { IsSuperAdminOrAdminOrManagerPage } from "@/utils/CheckRole";
+import DashboardContextProvider from "@/Context/DashboardContext";
+import { IsSuperAdminOrAdminOrManagerPage } from "@/utils/roles";
 import { varfiyTokenForPage } from "@/utils/verfiyToken";
 import { User } from "@prisma/client";
 import { redirect } from "next/navigation";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css"
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
     const user = await varfiyTokenForPage() as User
     if (!user) redirect("/login")
     if (!IsSuperAdminOrAdminOrManagerPage(user.role)) redirect("/403")
+
     return (
-        <html lang="en" >
+        <DashboardContextProvider>
+            <div className="flex min-h-screen bg-slate-50 dark:bg-slate-950">
+                <SideBar user={user} />
 
-            <body className="dark:bg-gray-950">
-                <ToastContainer theme="colored" />
-
-                <DashboardContext>
-                    <div className="flex gap-2 ">
-                        <SideBar user={user} />
-                        <div className="overflow-auto relative transition-all flex-1   bg-white dark:bg-slate-800 dark:text-white">
-
-                            <NavBarDashboard />
-                            <div className="p-3">
-
-                                {children}
-                            </div>
+                <div className="flex-1 flex flex-col min-w-0 transition-all duration-300">
+                    <NavBarDashboard />
+                    <main className="flex-1 p-4 md:p-8 lg:p-10 overflow-x-hidden">
+                        <div className="mx-auto max-w-[1600px]">
+                            {children}
                         </div>
-                    </div>
-                </DashboardContext>
-            </body>
-        </html>
+                    </main>
+                </div>
+            </div>
+        </DashboardContextProvider>
     );
 }

@@ -2,28 +2,92 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --primary: #1e293b;
+  --primary-foreground: #f8fafc;
+  --secondary: #3b82f6;
+  --secondary-foreground: #ffffff;
+  --accent: #f59e0b;
+  --background: #ffffff;
+  --foreground: #0f172a;
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+  --border: #e2e8f0;
+  --input: #e2e8f0;
+  --ring: #3b82f6;
+  --radius: 0.75rem;
+}
+
+.dark {
+  --primary: #f8fafc;
+  --primary-foreground: #0f172a;
+  --secondary: #60a5fa;
+  --secondary-foreground: #ffffff;
+  --accent: #fbbf24;
+  --background: #0f172a;
+  --foreground: #f8fafc;
+  --card: #1e293b;
+  --card-foreground: #f8fafc;
+  --border: #334155;
+  --input: #334155;
+  --ring: #60a5fa;
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    border-color: var(--border);
+  }
+}
 
 .vh-100 {
-
-    min-height: 100vh;
+  min-height: 100vh;
 }
 
 .vh-dash {
-    min-height: calc(100vh - 113px);
-
-}
-
-@media (width<768px) {
-
-    .muins-trnsalte {
-        transform: translateX(-160%);
-        -webkit-transform: translateX(-160%);
-        -moz-transform: translateX(-160%);
-        -ms-transform: translateX(-160%);
-        -o-transform: translateX(-160%);
-    }
+  min-height: calc(100vh - 113px);
 }
 
 .vh-site {
-    min-height: calc(100vh - 104px);
+  min-height: calc(100vh - 104px);
+}
+
+@media (width < 768px) {
+  .muins-trnsalte {
+    transform: translateX(-160%);
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 dark:bg-gray-700 rounded-full hover:bg-gray-400 dark:hover:bg-gray-600 transition-colors;
+}
+
+/* Modern Transitions */
+.transition-standard {
+  @apply transition-all duration-300 ease-in-out;
+}
+
+/* Glassmorphism */
+.glass {
+  @apply bg-white/70 dark:bg-slate-900/70 backdrop-blur-md border border-white/20 dark:border-slate-800/20 shadow-xl;
+}
+
+/* Card Styling */
+.premium-card {
+  @apply bg-card text-card-foreground rounded-[var(--radius)] shadow-sm hover:shadow-md transition-all duration-300;
+  border: 1px solid var(--border);
 }

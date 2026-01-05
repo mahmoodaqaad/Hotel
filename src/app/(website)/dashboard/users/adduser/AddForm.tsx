@@ -1,93 +1,142 @@
 "use client"
+
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import { toast } from 'react-toastify'
+import { motion } from 'framer-motion'
+import { HiUser, HiMail, HiShieldCheck, HiLockClosed, HiUserAdd } from 'react-icons/hi'
+import { LoadingPage } from '@/app/loading'
+import { DOMAIN } from '@/utils/consant'
 
 const AddForm = () => {
     const [name, setName] = useState("")
     const [email, setEmail] = useState("")
     const [role, setRole] = useState("")
     const [password, setPassword] = useState("")
+    const [loading, setLoading] = useState(false)
     const router = useRouter()
 
-    const AddUser = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
 
-        try {
-
-
-            if (!name) return toast.error("Name is required");
-            if (!email) return toast.error("Email is required");
-            if (!role) return toast.error("role is required");
-            if (!password) return toast.error("password is required");
-
-            await axios.post("http://localhost:3000/api/users", { name, email, password, role })
-            router.push("/dashboard/users?pageNumber=1")
-            router.refresh()
-            toast.success("added")
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } catch (e: any) {
-
-            console.log(e);
-
-            return toast.error(e.response.data.message)
-
+        if (!name || !email || !role || !password) {
+            return toast.error("Please fill in all fields")
         }
 
+        try {
+            setLoading(true)
+            await axios.post(`${DOMAIN}/api/users`, { name, email, password, role })
+
+            toast.success("User account created successfully")
+            router.push("/dashboard/users?pageNumber=1")
+            router.refresh()
+        } catch (error) {
+            console.error(error)
+            if (axios.isAxiosError(error)) {
+                toast.error(error.response?.data?.message || "Failed to add user")
+            } else {
+                toast.error("An unexpected error occurred")
+            }
+        } finally {
+            setLoading(false)
+        }
     }
+
     return (
-        <form onSubmit={AddUser} className='mt-3 border-t border-gray-300 text-center'>
-            <div className='mt-6'>
+        <div className="max-w-2xl mx-auto">
+            {loading && <LoadingPage />}
 
-                <input
-                    type="text"
-                    name='name'
-                    placeholder='Name... '
-                    className='px-2 py-3 w-full border-0 outline-0 dark:bg-gray-800'
-                    value={name}
-                    onChange={e => setName(e.target.value)}
-                />
-            </div>
-            <div className='mt-7'>
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="premium-card p-8 md:p-12"
+            >
+                <div className="mb-10 text-center">
+                    <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">Create User Account</h2>
+                    <p className="text-slate-500 dark:text-slate-400 mt-2 font-medium">Add a new member to your management team</p>
+                </div>
 
-                <input
-                    type="email"
-                    name='email'
-                    placeholder='Email... '
-                    className='px-2 py-3 w-full border-0 outline-0 dark:bg-gray-800'
-                    value={email}
-                    onChange={e => setEmail(e.target.value)}
-                />
-            </div>
+                <form onSubmit={handleSubmit} className="space-y-6">
+                    {/* Full Name */}
+                    <div className="space-y-2">
+                        <label className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 flex items-center gap-2">
+                            <HiUser className="text-blue-500" /> Full Name
+                        </label>
+                        <input
+                            type="text"
+                            placeholder="e.g. John Doe"
+                            className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl py-4 px-6 text-slate-900 dark:text-white font-bold outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                            value={name}
+                            onChange={e => setName(e.target.value)}
+                        />
+                    </div>
 
-            <div className='mt-7'>
+                    {/* Email Address */}
+                    <div className="space-y-2">
+                        <label className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 flex items-center gap-2">
+                            <HiMail className="text-blue-500" /> Email Address
+                        </label>
+                        <input
+                            type="email"
+                            placeholder="john@example.com"
+                            className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl py-4 px-6 text-slate-900 dark:text-white font-bold outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                            value={email}
+                            onChange={e => setEmail(e.target.value)}
+                        />
+                    </div>
 
-                <select
-                    className='px-2 py-3 w-full border-0 outline-0 dark:bg-gray-800'
-                    value={role}
-                    onChange={e => setRole(e.target.value)} >
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Role Selection */}
+                        <div className="space-y-2">
+                            <label className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 flex items-center gap-2">
+                                <HiShieldCheck className="text-blue-500" /> Account Role
+                            </label>
+                            <div className="relative group">
+                                <select
+                                    className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl py-4 px-6 text-slate-900 dark:text-white font-bold outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all appearance-none cursor-pointer"
+                                    value={role}
+                                    onChange={e => setRole(e.target.value)}
+                                >
+                                    <option value="" disabled className="dark:bg-slate-900">Select Role</option>
+                                    <option value="SuperAdmin" className="dark:bg-slate-900">SuperAdmin</option>
+                                    <option value="Admin" className="dark:bg-slate-900">Admin</option>
+                                    <option value="Manager" className="dark:bg-slate-900">Manager</option>
+                                    <option value="User" className="dark:bg-slate-900">User</option>
+                                </select>
+                                <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-slate-400">
+                                    <HiUserAdd size={20} />
+                                </div>
+                            </div>
+                        </div>
 
-                    <option value="" disabled>Role</option>
-                    <option value="SuperAdmin">SuperAdmin</option>
-                    <option value="Admin">Admin</option>
-                    <option value="Manager">Manager</option>
-                    <option value="User">User</option>
+                        {/* Password */}
+                        <div className="space-y-2">
+                            <label className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 flex items-center gap-2">
+                                <HiLockClosed className="text-blue-500" /> Password
+                            </label>
+                            <input
+                                type="password"
+                                placeholder="••••••••"
+                                className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl py-4 px-6 text-slate-900 dark:text-white font-bold outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                                value={password}
+                                onChange={e => setPassword(e.target.value)}
+                            />
+                        </div>
+                    </div>
 
-                </select>
-            </div>
-            <div className='mt-7'>
-
-                <input
-                    type="Password"
-                    name='password'
-                    placeholder='Password... '
-                    className='px-2 py-3 w-full border-0 outline-0 dark:bg-gray-800'
-                    value={password}
-                    onChange={e => setPassword(e.target.value)} />
-            </div>
-            <button type="submit" className='bg-teal-400 hover:bg-teal-600 transition-colors duration-150 px-6 py-2 rounded-md  text-2xl text-white mt-10 '>Add</button>
-        </form>
+                    <div className="pt-8 flex justify-center">
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="w-full py-4 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-400 text-white font-black uppercase tracking-[0.2em] rounded-2xl shadow-xl shadow-blue-500/30 transition-all active:scale-95 disabled:active:scale-100 flex items-center justify-center gap-3"
+                        >
+                            <span>Initialize Account</span>
+                        </button>
+                    </div>
+                </form>
+            </motion.div>
+        </div>
     )
 }
 

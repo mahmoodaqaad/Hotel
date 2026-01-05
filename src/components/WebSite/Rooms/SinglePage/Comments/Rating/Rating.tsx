@@ -1,102 +1,89 @@
 "use client"
 
-import Loading from '@/app/loading'
-import { ModeContext } from '@/Context/ModeContext'
 import { DOMAIN } from '@/utils/consant'
 import { Room, User } from '@prisma/client'
 import axios from 'axios'
-import { redirect, useRouter } from 'next/navigation'
-import React, { useContext, useState } from 'react'
-import { FaRegStar, FaStar } from 'react-icons/fa'
+import { useRouter } from 'next/navigation'
+import React, { useState } from 'react'
+import { HiStar } from 'react-icons/hi'
 import { toast } from 'react-toastify'
 import Swal from 'sweetalert2'
+import { motion } from 'framer-motion'
 
 const Rating = ({ room, user }: { room: Room, user: User }) => {
-
-    const [rating, setRating] = useState(0); // حالة لتخزين التقييم
-    const [hover, setHover] = useState<number | null>(null);
+    const [rating, setRating] = useState(0)
+    const [hover, setHover] = useState<number | null>(null)
     const [loading, setLoading] = useState(false)
     const router = useRouter()
-    const context = useContext(ModeContext)
-    if (!context) throw new Error("error in rating context")
-    const { isDarkmode } = context
-    const handleRating = async () => {
 
+    const handleRating = async () => {
+        if (rating === 0) return toast.error("Please select a rating")
+        if (!user) return toast.error("Please login to rate")
 
         try {
-            if (!user) {
-                toast.error("you are not log in")
-                // router.replace("/login")
-            }
-            else {
+            setLoading(true)
+            await axios.post(`${DOMAIN}/api/Rating`, { roomId: room.id, userId: user.id, rating })
 
-                if (!user) {
-                    toast.error("You Are Not log in ,must be log in")
-                    redirect("/login")
+            Swal.fire({
+                title: "Rating Received!",
+                text: "Thank you for your valuable feedback.",
+                icon: "success",
+                confirmButtonColor: "#3b82f6",
+                customClass: {
+                    popup: 'rounded-[1.5rem] dark:bg-slate-900 dark:text-white',
+                    title: 'font-bold tracking-tight'
                 }
-                setLoading(true)
-                await axios.post(`${DOMAIN}/api/Rating`, { roomId: room.id, userId: user.id, rating })
-                router.refresh()
-                Swal.fire({
-                    title: "Thank You For Rating!",
-                    icon: "success",
-                    background: !isDarkmode ? "#444" : "#fff",
-                    color: isDarkmode ? "#333" : "#fff",
-                });
-            }
-        } catch (error) {
-            console.log(error);
-
-        }
-        finally {
+            })
+            router.refresh()
+        } catch (error: any) {
+            console.error(error)
+            toast.error(error.response?.data?.message || "Failed to submit rating")
+        } finally {
             setLoading(false)
         }
     }
 
     return (
-        <>
-            {loading && <Loading />}
-            <div className='p-2 mb-5 flex gap-5'>
-
-                <div className='flex gap-3 items-center flex-1'>
-                    {
-                        [1, 2, 3, 4, 5].map((star, index) => (
-
-                            <div key={index} className='cursor-pointer text-3xl '
-                                onClick={() => setRating(star)}
-                                onMouseEnter={() => setHover(star)}
-                                onMouseLeave={() => setHover(null)}
-                            >
-
-
-                                {star ?
-                                    <FaStar style={{
-                                        color: (hover || rating) >= star ? '#FFD700' : '#ccc', // اللون الأصفر عند التحديد
-                                        transition: 'color 0.2s ease-in-out',
-                                    }}
-
-                                        key={index} />
-                                    :
-                                    <FaRegStar style={{
-                                        color: (hover || rating) >= star ? '#FFD700' : '#ccc', // اللون الأصفر عند التحديد
-                                        transition: 'color 0.2s ease-in-out',
-                                    }}
-                                        key={index} />
-                                }
-
-                            </div>
-
-                        ))
-                    }
-                </div>
-                <div>
-                    <button
-                        onClick={handleRating}
-                        className='bg-teal-400 px-5 py-2 text-2xl text-white'>Sent</button>
-                </div>
-
+        <div className="flex flex-col sm:flex-row items-center gap-8 bg-white dark:bg-slate-800/40 p-6 rounded-3xl ring-1 ring-slate-100 dark:ring-white/5 shadow-sm">
+            <div className="flex items-center gap-2">
+                {[1, 2, 3, 4, 5].map((star) => (
+                    <motion.button
+                        key={star}
+                        whileHover={{ scale: 1.2, rotate: 5 }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => setRating(star)}
+                        onMouseEnter={() => setHover(star)}
+                        onMouseLeave={() => setHover(null)}
+                        className="p-1 focus:outline-none transition-colors"
+                    >
+                        <HiStar
+                            size={40}
+                            className={`${(hover || rating) >= star
+                                    ? "text-yellow-400 fill-current"
+                                    : "text-slate-200 dark:text-slate-700"
+                                } transition-colors drop-shadow-sm`}
+                        />
+                    </motion.button>
+                ))}
             </div>
-        </>
+
+            <div className="flex-1 w-full sm:w-auto">
+                <p className="hidden sm:block text-slate-500 dark:text-slate-400 text-sm font-bold mb-4">
+                    {rating > 0 ? `You selected ${rating} stars` : "Select a star to rate"}
+                </p>
+                <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={handleRating}
+                    disabled={loading || rating === 0}
+                    className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-slate-200 dark:disabled:bg-slate-800 disabled:text-slate-400 text-white font-bold py-3.5 px-8 rounded-2xl transition-all shadow-lg shadow-blue-500/20 flex items-center justify-center gap-2 h-[52px]"
+                >
+                    {loading ? (
+                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    ) : "Submit Rating"}
+                </motion.button>
+            </div>
+        </div>
     )
 }
 

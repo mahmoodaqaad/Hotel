@@ -3,79 +3,59 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import React from 'react'
-import { BiComment, BiEdit, BiHome, BiLock, BiSolidBookmark } from 'react-icons/bi'
-import { FaBed, FaClipboardList } from 'react-icons/fa'
-const profileLinks = [
-  {
-    label: "Home",
-    Icon: BiHome, // بدون أقواس
-    href: "/profile//"
-  },
-  {
-    label: "My Booking",
-    Icon: FaBed,
-    href: "/profile/booking"
-  },
-  {
-    label: "My Booking Request",
-    Icon: FaClipboardList,
-    href: "/profile/requests"
-  },
+import { motion } from 'framer-motion'
+import { HiHome, HiBookOpen, HiClipboardList, HiBookmark, HiChatAlt2, HiUserCircle, HiLockClosed } from 'react-icons/hi'
 
-  {
-    label: "Saved",
-    Icon: BiSolidBookmark,
-    href: "/profile/saved"
-  },
-  {
-    label: "My Comment",
-    Icon: BiComment,
-    href: "/profile/comments"
-  },
-  {
-    label: "Edit My info",
-    Icon: BiEdit,
-    href: "/profile/edit"
-  },
-  {
-    label: "Change Password",
-    Icon: BiLock,
-    href: "/profile/changePassword"
-  }
+const profileLinks = [
+  { label: "Overview", icon: HiHome, href: "/profile" },
+  { label: "My Bookings", icon: HiBookOpen, href: "/profile/booking" },
+  { label: "Booking Requests", icon: HiClipboardList, href: "/profile/requests" },
+  { label: "Saved Rooms", icon: HiBookmark, href: "/profile/saved" },
+  { label: "My Comments", icon: HiChatAlt2, href: "/profile/comments" },
+  { label: "Edit Profile", icon: HiUserCircle, href: "/profile/edit" },
+  { label: "Security", icon: HiLockClosed, href: "/profile/changePassword" }
 ];
+
 const SideBar = () => {
-  const path = usePathname()
+  const pathname = usePathname()
 
   return (
-    <div className="fixed w-full bottom-0 z-2 md:sticky md:pt-[86px] lg:pt-[104px] md:h-screen transition-all  md:top-0 md:left-0 bg-gray-100 shadow-lg overflow-x-auto md:overflow-y-auto dark:bg-slate-800 dark:text-white ">
-      <div className=''>
-        <h1 className='text-3xl mb-2 p-2 mt-2 hidden md:block '>Profile</h1>
-        <div className='border-t-2'>
-          <div className='flex  md:gap-0 md:flex-col justify-between md:justify-normal'>
+    <aside className="fixed bottom-0 left-0 w-full z-40 md:sticky md:top-[120px] md:w-full md:h-auto bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl md:bg-transparent md:dark:bg-transparent md:backdrop-blur-none border-t border-slate-200 dark:border-white/10 md:border-none">
+      <div className="md:bg-white dark:md:bg-slate-900/50 md:shadow-2xl md:shadow-slate-200/50 dark:md:shadow-none md:rounded-[2.5rem] md:p-6 md:ring-1 md:ring-slate-100 dark:md:ring-white/5 overflow-hidden">
+        <h2 className="hidden md:block text-2xl font-bold text-slate-900 dark:text-white mb-8 px-4 tracking-tight">Account</h2>
 
-            {
-              profileLinks.map(({ href, Icon, label }, i) => (
-                <Link
+        <nav className="flex md:flex-col justify-around md:justify-start">
+          {profileLinks.map((link) => {
+            const isActive = pathname === link.href
+            return (
+              <Link key={link.href} href={link.href} className="group w-full">
+                <div className={`relative flex flex-col md:flex-row items-center gap-1 md:gap-4 py-4 md:py-3.5 px-4 md:px-6 transition-all duration-300 ${isActive
+                    ? 'text-blue-600 dark:text-blue-400'
+                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                  }`}>
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeTab"
+                      className="absolute inset-0 bg-blue-50 dark:bg-blue-500/10 md:rounded-2xl z-0"
+                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                    />
+                  )}
 
-                  href={href} key={i} className={`w-full justify-center md:justify-normal border-b-2 py-4 px-2 flex items-center gap-2 text-xl   
-                hover:bg-gray-200 dark:hover:bg-gray-500 transition-all
-                ${href === path && "bg-gray-200 dark:bg-gray-500"
-                    }
-                `}>
-                  <div className='scale-110 text-2xl px-1 md:px-0 '>
+                  <link.icon className={`relative z-10 text-xl md:text-2xl transition-transform group-hover:scale-110 ${isActive ? 'scale-110' : ''}`} />
+                  <span className={`relative z-10 text-[10px] md:text-sm font-bold tracking-tight md:tracking-normal ${isActive ? 'opacity-100' : 'opacity-80'}`}>
+                    {link.label}
+                  </span>
 
-                    <Icon />
-                  </div>
-                  <p className='hidden md:block'>{label}</p>
-                </Link>
-              ))
-            }
-
-          </div>
-        </div>
-
+                  {isActive && (
+                    <div className="hidden md:block absolute right-4 w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
+                  )}
+                </div>
+              </Link>
+            )
+          })}
+        </nav>
       </div>
-    </div >
+    </aside>
   )
 }
 

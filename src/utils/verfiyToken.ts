@@ -1,30 +1,49 @@
 import jwt from 'jsonwebtoken';
 import { JWTPaylod } from "./Types";
 import { NextRequest } from 'next/server';
-import { cookies } from 'next/headers';
 import { getFetchById } from './FetchData';
-import { redirect } from 'next/navigation';
-export function varfiyToken(req: NextRequest): JWTPaylod | null {
+
+// Types for router compatibility
+interface NextApiRequestLike {
+    cookies: Partial<{ [key: string]: string }>;
+}
+
+export function varfiyToken(req: NextRequest | NextApiRequestLike): JWTPaylod | null {
     try {
-        const jwtToken = req.cookies.get("jwt")?.value as string
+        let jwtToken: string | undefined;
 
-        const privateKey = process.env.JWT_SECRET_KEY as string
+        if ('cookies' in req) {
+            if (typeof req.cookies.get === 'function') {
+                // NextRequest (App Router)
+                jwtToken = (req as NextRequest).cookies.get("jwt")?.value;
+            } else {
+                // NextApiRequest (Pages Router) or Express
+                jwtToken = (req as NextApiRequestLike).cookies['jwt'];
+            }
+        }
 
-        return jwt.verify(jwtToken, privateKey) as JWTPaylod
+        if (!jwtToken) return null;
 
-
+        const privateKey = process.env.JWT_SECRET_KEY as string;
+        return jwt.verify(jwtToken, privateKey) as JWTPaylod;
 
     } catch (error) {
         console.log(error);
-        return null
-
+        return null;
     }
-
 }
 
-export async function varfiyTokenForPage(){
+export async function varfiyTokenForPage() {
     try {
-        const token = (await cookies()).get("jwt")?.value || ""
+        let token = "";
+        try {
+            const { cookies } = await import("next/headers");
+            const cookieStore = await cookies();
+            token = cookieStore.get("jwt")?.value || "";
+        } catch (e) {
+            console.warn("varfiyTokenForPage called outside App Router context");
+            return null;
+        }
 
         if (!token) return null;
         const privtKey = process.env.JWT_SECRET_KEY as string;
@@ -38,15 +57,33 @@ export async function varfiyTokenForPage(){
 
 export async function varfiyMyAccount() {
     try {
-        const token = (await cookies()).get("jwt")?.value || ""
+        let token = "";
+        try {
+            const { cookies } = await import("next/headers");
+            const cookieStore = await cookies();
+            token = cookieStore.get("jwt")?.value || "";
+        } catch (e) {
+            console.warn("varfiyMyAccount called outside App Router context");
+            return null;
+        }
 
         if (!token) return null;
         const privtKey = process.env.JWT_SECRET_KEY as string;
         const userPayload = jwt.verify(token, privtKey) as JWTPaylod;
+
+        // This implicitly uses token in FetchData via dynamic import too
         const response = await getFetchById("users/myAccount", userPayload.id)
 
+        if (response.status === 403) {
+            try {
+                const { redirect } = await import("next/navigation");
+                redirect("/dashboard/403");
+            } catch (e) {
+                // Handle redirect manually or return generic error if in Pages/API
+                return { error: 'Forbidden' };
+            }
+        }
 
-        if (response.status === 403) redirect("/dashboard/403")
         if (!response.ok) throw new Error("Error IN Your account")
 
         return response.json()
@@ -56,4 +93,3 @@ export async function varfiyMyAccount() {
         return null;
     }
 }
-

@@ -1,165 +1,220 @@
 "use client"
 
-import { ModeContext } from '@/Context/ModeContext'
 import { DOMAIN } from '@/utils/consant'
 import { BookingRequest, Room } from '@prisma/client'
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
-import React, { useContext, useState } from 'react'
-import { CgClose } from 'react-icons/cg'
-import { FaLongArrowAltRight } from 'react-icons/fa'
+import React, { useState } from 'react'
+import { HiX, HiCalendar, HiCheckCircle, HiChevronRight } from 'react-icons/hi'
 import { toast } from 'react-toastify'
 import Swal from 'sweetalert2'
+import { motion, AnimatePresence } from 'framer-motion'
 
 const Booking_list = ({ room, userId }: { room: Room & { bookingRequests: BookingRequest[] }, userId: number }) => {
-
-  const BookRequst = room.bookingRequests.find(item => item.roomId == room.id && item.userId === userId)
-  const [IsBookIt, setIsBookIt] = useState(room.bookingRequests.some(item => item.roomId == room.id && item.userId === userId))
-  const [ShowMenu, setShowMenu] = useState(false)
+  const router = useRouter()
+  const [showModal, setShowModal] = useState(false)
   const [checkIn, setCheckIn] = useState("")
   const [checkOut, setCheckOut] = useState("")
-  const context = useContext(ModeContext)
+  const [loading, setLoading] = useState(false)
 
-  const router = useRouter()
-  if (!context) {
-    throw new Error("Error in mode context")
-  }
-  const { isDarkmode } = context
+  const BookRequest = room.bookingRequests.find(item => item.roomId === room.id && item.userId === userId)
+  const [isBooked, setIsBooked] = useState(!!BookRequest)
+
   const handleBook = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (loading) return
+
+    if (!userId) {
+      toast.error("Please login to book a room")
+      return router.push("/login")
+    }
+
+    if (!checkIn || !checkOut) {
+      return toast.error("Please select both check-in and check-out dates")
+    }
+
+    if (new Date(checkOut).getTime() <= new Date(checkIn).getTime()) {
+      return toast.error("Check-out date must be after check-in date")
+    }
 
     try {
+      setLoading(true)
+      setIsBooked(true)
+      setShowModal(false)
 
-      if (!userId) {
-        toast.error("You Are not Login")
-        router.replace("/login")
-      }
-      else {
+      await axios.post(`${DOMAIN}/api/booking-requests`, {
+        userId,
+        roomId: room.id,
+        checkIn,
+        checkOut
+      })
 
-        if (IsBookIt) return toast.error("you can not sent many request ")
-        if (!checkIn || !checkOut) toast.error("All Fileds Are Reqiured")
-        if (new Date(checkOut).getTime() - new Date(checkIn).getTime() <= 0) return toast.error("check in is after check out")
-
-        await axios.post(`${DOMAIN}/api/booking-requests`, {
-          userId,
-          roomId: room.id,
-          checkIn,
-          checkOut
-        })
-        setIsBookIt(true)
-        setShowMenu(false)
-        Swal.fire({
-          title: "Request Book Success",
-          icon: "success",
-
-        })
-        toast.success("add request successfully")
-      }
+      Swal.fire({
+        title: "Booking Request Sent!",
+        text: "We have received your request and will get back to you soon.",
+        icon: "success",
+        confirmButtonColor: "#3b82f6",
+        customClass: {
+          popup: 'rounded-[1.5rem] dark:bg-slate-900 dark:text-white',
+          title: 'font-bold tracking-tight text-2xl',
+          confirmButton: 'rounded-xl font-bold py-3 px-8'
+        }
+      })
     } catch (error) {
-      console.log(error);
-
+      setIsBooked(false)
+      console.error(error)
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data?.message || "Something went wrong")
+      } else {
+        toast.error("An unexpected error occurred")
+      }
+    } finally {
+      setLoading(false)
     }
   }
 
   const handleCancelBook = async () => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
+    const result = await Swal.fire({
+      title: "Cancel Booking Request?",
+      text: "Are you sure you want to cancel your request for this room?",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes!",
-      background: !isDarkmode ? "#444" : "#fff",
-      color: isDarkmode ? "#333" : "#fff",
-
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          await axios.patch(`${DOMAIN}/api/booking-requests/status/${BookRequst?.id}`)
-          setIsBookIt(false)
-          Swal.fire({
-            title: "Cancled!",
-            text: "Your Request is cancled.",
-            icon: "success"
-          });
-
-        } catch (error) {
-          console.log(error);
-
-        }
+      confirmButtonColor: "#ef4444",
+      cancelButtonColor: "#64748b",
+      confirmButtonText: "Yes, cancel it",
+      customClass: {
+        popup: 'rounded-[1.5rem] dark:bg-slate-900 dark:text-white',
+        title: 'font-bold tracking-tight',
+        confirmButton: 'rounded-xl font-bold py-3 px-6',
+        cancelButton: 'rounded-xl font-bold py-3 px-6'
       }
     })
+
+    if (result.isConfirmed) {
+      try {
+        await axios.patch(`${DOMAIN}/api/booking-requests/status/${BookRequest?.id}`)
+        setIsBooked(false)
+        toast.success("Booking request cancelled")
+      } catch (error) {
+        console.error(error)
+        toast.error("Failed to cancel request")
+      }
+    }
   }
+
   return (
-    <div>
+    <>
+      <AnimatePresence>
+        {showModal && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowModal(false)}
+              className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm"
+            />
 
-      {
-        ShowMenu &&
-        <div className='fixed top-0 z-50 left-0 w-full h-screen bg-gray-900 bg-opacity-60 flex justify-center items-center'>
-
-          <div className='relative px-10 py-9 max-w-[90%] bg-gray-400 dark:bg-gray-700 bg-opacity-95 rounded-lg '>
-            <div className='text-red-600 text-3xl absolute top-2 right-2 cursor-pointer hover:scale-110 transition-all ' onClick={() => setShowMenu(false)}>
-              <CgClose />
-            </div>
-
-            <div>
-              <h1 className='font-semibold text-4xl text-white mt-5 font-mono text-center'>Request Menu</h1>
-              <div className='mt-3 text-center'>
-                <form action="">
-
-                  <div className='flex items-center justify-between flex-wrap md:flex-nowrap text-white text-2xl'>
-                    <label htmlFor="in" className='pr-4 flex items-center gap-1'>
-                      <FaLongArrowAltRight />
-                      In
-                    </label>
-                    <input
-                      value={checkIn}
-                      onChange={e => setCheckIn(e.target.value)}
-                      type="date" id='in' className=' bg-transparent px-3 text-3xl py-1 outline-none border-2 mb-5 rounded-lg' />
-                  </div>
-
-                  <div className='flex items-center justify-between flex-wrap md:flex-nowrap text-white text-2xl'>
-                    <label htmlFor="out" className='pr-4 flex items-center gap-1'>
-                      <FaLongArrowAltRight />
-                      Out
-                    </label>
-                    <input
-                      value={checkOut}
-                      onChange={e => setCheckOut(e.target.value)}
-                      type="date" id='out' className=' bg-transparent px-3 text-3xl py-1 outline-none border-2 mb-2 rounded-lg' />
-                  </div>
-
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative w-full max-w-lg bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-2xl overflow-hidden ring-1 ring-black/5 dark:ring-white/10"
+            >
+              <div className="p-8 md:p-10">
+                <div className="flex items-center justify-between mb-8">
+                  <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Reserve Room</h2>
                   <button
-
-
-                    onClick={handleBook}
-                    className='bg-white dark:bg-gray-900 dark:text-white dark:hover:bg-gray-600 mt-4 py-3 px-5 rounded tracking-widest text-2xl cursor-pointer hover:bg-teal-200 transition-all'>
-                    Book Now
-
+                    onClick={() => setShowModal(false)}
+                    className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-white/5 transition-colors text-slate-400"
+                  >
+                    <HiX size={24} />
                   </button>
+                </div>
+
+                <form onSubmit={handleBook} className="space-y-6">
+                  <div className="space-y-4">
+                    <div className="relative group">
+                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-blue-500 transition-colors">
+                        <HiCalendar size={20} />
+                      </div>
+                      <div className="absolute top-1/2 -translate-y-1/2 right-12 text-[10px] font-bold text-slate-400 uppercase tracking-widest pointer-events-none">Check-In</div>
+                      <input
+                        type="date"
+                        required
+                        className="w-full bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 rounded-2xl py-4 pl-12 pr-4 text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium"
+                        value={checkIn}
+                        onChange={e => setCheckIn(e.target.value)}
+                      />
+                    </div>
+
+                    <div className="relative group">
+                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-blue-500 transition-colors">
+                        <HiCalendar size={20} />
+                      </div>
+                      <div className="absolute top-1/2 -translate-y-1/2 right-12 text-[10px] font-bold text-slate-400 uppercase tracking-widest pointer-events-none">Check-Out</div>
+                      <input
+                        type="date"
+                        required
+                        className="w-full bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5 rounded-2xl py-4 pl-12 pr-4 text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium"
+                        value={checkOut}
+                        onChange={e => setCheckOut(e.target.value)}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="bg-blue-50 dark:bg-blue-500/10 p-4 rounded-2xl border border-blue-100 dark:border-blue-500/20">
+                    <div className="flex items-center gap-3 text-blue-600 dark:text-blue-400 text-sm font-medium">
+                      <HiCheckCircle size={20} className="shrink-0" />
+                      <span>Request will be sent to our management for immediate review.</span>
+                    </div>
+                  </div>
+
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    disabled={loading}
+                    type="submit"
+                    className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-600/50 text-white font-bold py-5 rounded-2xl shadow-xl shadow-blue-500/25 transition-all flex items-center justify-center gap-2 group"
+                  >
+                    {loading ? (
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    ) : (
+                      <>
+                        Reserve Now
+                        <HiChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                      </>
+                    )}
+                  </motion.button>
                 </form>
               </div>
-            </div>
+            </motion.div>
           </div>
-        </div>
-      }
-      {
-        IsBookIt ?
-          <div
-            onClick={handleCancelBook}
-            className='bg-red-700 text-white p-3 rounded-lg text-3xl cursor-pointer hover:bg-red-200 transition-all'>
-            Cancle Book
-          </div>
-          : <div
-            onClick={() => setShowMenu(true)}
-            className='bg-teal-700 text-white p-3 rounded-lg text-3xl cursor-pointer hover:bg-teal-200 transition-all'>
-            Book Now
+        )}
+      </AnimatePresence>
 
-          </div>
-      }
-
-    </div>
+      {isBooked ? (
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={handleCancelBook}
+          className="bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 font-bold py-4 px-8 rounded-2xl border border-red-200 dark:border-red-500/20 hover:bg-red-100 dark:hover:bg-red-500/20 transition-all flex items-center gap-2"
+        >
+          <HiX size={20} />
+          Cancel Reservation
+        </motion.button>
+      ) : (
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => setShowModal(true)}
+          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-10 rounded-2xl shadow-xl shadow-blue-500/25 transition-all flex items-center gap-2 group"
+        >
+          Book This Room
+          <HiChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
+        </motion.button>
+      )}
+    </>
   )
 }
 
