@@ -1,8 +1,8 @@
-import SearchRoom from '@/components/WebSite/Rooms/SearchRoom/SearchRoom'
+import { getFilteredRooms } from '@/services/rooms'
 import SingleRoom from '@/components/WebSite/Rooms/SingleRoom/SingleRoom'
-import { DOMAIN } from '@/utils/consant'
-import { RoomWithReltionAll } from '@/utils/Types'
+import SearchRoom from '@/components/WebSite/Rooms/SearchRoom/SearchRoom'
 import React from 'react'
+
 interface FilterProps {
     searchParams: {
         guest: string
@@ -12,17 +12,13 @@ interface FilterProps {
     }
 
 }
-const RoomsFilter = async ({ searchParams: { guest, checkIn, checkOut, type } }: FilterProps) => {
+const RoomsFilter = async ({ searchParams }: FilterProps) => {
+    // Await searchParams as per Next.js recent versions best practices (though params is the prop here)
+    const { guest, checkIn, checkOut, type } = await searchParams;
 
-    const response = await fetch(`${DOMAIN}/api/rooms/filter`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ guest, checkIn, checkOut, type })
-    })
+    const data = await getFilteredRooms({ guest, checkIn, checkOut, type });
 
-    if (response.status === 404) return (
+    if (!data || data.length === 0) return (
         <main className='min-h-screen bg-slate-50 dark:bg-slate-950 pt-[120px] pb-24'>
             <div className='container mx-auto px-6 text-center'>
                 <div className="text-8xl mb-8">🏨</div>
@@ -39,8 +35,9 @@ const RoomsFilter = async ({ searchParams: { guest, checkIn, checkOut, type } }:
         </main>
     )
 
-    if (!response.ok) throw new Error("Error in fetch data filter")
-    const data: RoomWithReltionAll[] = await response.json()
+    // Ensure data matches what SingleRoom expects. 
+    // getFilteredRooms returns Room & { images: RoomImage[] }. 
+    // SingleRoom usually expects this. casting if necessary or letting TS infer.
 
     return (
         <main className='min-h-screen bg-slate-50 dark:bg-slate-950 pt-[120px] pb-24'>

@@ -38,7 +38,9 @@ const TableRow = memo(({
     isMy,
     showEditAndDelete,
     action,
-    onlineUser,
+    onlineUser, // Expecting Set<string> now, or convert in component if Set serialization is issue. 
+    // Wait, onlineUser passed from TableShow is array. Let's accept array but optimize locally or in parent.
+    // Better: Helper function or parent conversion. Let's keep it simple for now but use sizes.
     one,
     tow,
     three,
@@ -50,15 +52,19 @@ const TableRow = memo(({
     const showImages = (images: any[]) => {
         return images.map((img: any) => (
             <div className='relative w-10 h-10 rounded-lg overflow-hidden border border-border shadow-sm group' key={img.id}>
-                <Image
-                    src={img?.imageUrl}
+                <Image src={img?.imageUrl || '/placeholder.jpg'}
                     fill
+                    sizes="40px"
                     className="object-cover transition-transform group-hover:scale-110"
                     alt=''
+                    loading="lazy"
                 />
             </div>
         ))
     }
+
+    // Optimize online check if array is large? For < 50 users it's negligible.
+    // Focus on Image optimization.
 
     return (
         <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors border-b border-border last:border-0 group">
@@ -72,18 +78,18 @@ const TableRow = memo(({
                     <td key={i} className='p-4 text-sm text-slate-700 dark:text-slate-300'>
                         {head.key === "images" ? (
                             <div className='flex -space-x-2 overflow-hidden truncate'>
-                                {showImages(data[head.key])}
+                                {Array.isArray(data[head.key]) && showImages(data[head.key])}
                             </div>
                         ) : head.key === "price" || head.key === "totalAmount" || head.key === "paidAmount" || head.key === "remainingAmount" ? (
                             <span className="font-semibold text-slate-900 dark:text-white">${data[head.key]}</span>
                         ) : head.key === "user" ? (
-                            <span className="font-medium">{data[head.key].name}</span>
+                            <span className="font-medium">{data[head.key]?.name || 'N/A'}</span>
                         ) : head.key === "room" ? (
-                            <span className="font-medium">{data[head.key].name}</span>
+                            <span className="font-medium">{data[head.key]?.name || 'N/A'}</span>
                         ) : head.key === "email" ? (
                             <div className='flex items-center gap-2'>
                                 <span className="truncate max-w-[150px]">{data[head.key]}</span>
-                                {onlineUser.some(u => u.id === data.id) && (
+                                {Array.isArray(onlineUser) && onlineUser.some(u => u.id === data.id) && (
                                     <span className="relative flex h-2 w-2">
                                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                                         <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
@@ -91,9 +97,9 @@ const TableRow = memo(({
                                 )}
                             </div>
                         ) : (head.value === "Total booked" && head.key === "booking") ? (
-                            data[head.key].totalAmount
+                            data[head.key]?.totalAmount || 0
                         ) : head.key === "booking" ? (
-                            data[head.key].room.name
+                            data[head.key]?.room?.name || 'N/A'
                         ) : head.key === "Update Status" ? (
                             UpdateStatus(data)
                         ) : head.key === "status" ? (

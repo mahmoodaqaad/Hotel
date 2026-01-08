@@ -24,6 +24,11 @@ const AddForm = () => {
             return toast.error("Please fill in all fields")
         }
 
+        if (name.length < 2) return toast.error("Name must be at least 2 characters");
+        if (password.length < 6) return toast.error("Password must be at least 6 characters");
+        // Simple email regex or just rely on Input type="email" basic check + backend
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return toast.error("Please enter a valid email address");
+
         try {
             setLoading(true)
             await axios.post(`${DOMAIN}/api/users`, { name, email, password, role })
@@ -50,45 +55,48 @@ const AddForm = () => {
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="premium-card p-8 md:p-12"
+                className="premium-card p-6 md:p-12"
             >
                 <div className="mb-10 text-center">
                     <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">Create User Account</h2>
                     <p className="text-slate-500 dark:text-slate-400 mt-2 font-medium">Add a new member to your management team</p>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
-                    {/* Full Name */}
-                    <div className="space-y-2">
-                        <label className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 flex items-center gap-2">
-                            <HiUser className="text-blue-500" /> Full Name
-                        </label>
-                        <input
-                            type="text"
-                            placeholder="e.g. John Doe"
-                            className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl py-4 px-6 text-slate-900 dark:text-white font-bold outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
-                            value={name}
-                            onChange={e => setName(e.target.value)}
-                        />
+                <form onSubmit={handleSubmit} className="space-y-6 md:space-y-8">
+                    {/* Main Info Section */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                        {/* Full Name */}
+                        <div className="space-y-3">
+                            <label className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 flex items-center gap-2">
+                                <HiUser className="text-blue-500" /> Full Name
+                            </label>
+                            <input
+                                type="text"
+                                placeholder="e.g. John Doe"
+                                className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl py-4 px-6 text-slate-900 dark:text-white font-bold outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                                value={name}
+                                onChange={e => setName(e.target.value)}
+                            />
+                        </div>
+
+                        {/* Email Address */}
+                        <div className="space-y-3">
+                            <label className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 flex items-center gap-2">
+                                <HiMail className="text-blue-500" /> Email Address
+                            </label>
+                            <input
+                                type="email"
+                                placeholder="john@example.com"
+                                className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl py-4 px-6 text-slate-900 dark:text-white font-bold outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                                value={email}
+                                onChange={e => setEmail(e.target.value)}
+                            />
+                        </div>
                     </div>
 
-                    {/* Email Address */}
-                    <div className="space-y-2">
-                        <label className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 flex items-center gap-2">
-                            <HiMail className="text-blue-500" /> Email Address
-                        </label>
-                        <input
-                            type="email"
-                            placeholder="john@example.com"
-                            className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl py-4 px-6 text-slate-900 dark:text-white font-bold outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
-                            value={email}
-                            onChange={e => setEmail(e.target.value)}
-                        />
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
                         {/* Role Selection */}
-                        <div className="space-y-2">
+                        <div className="space-y-3">
                             <label className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 flex items-center gap-2">
                                 <HiShieldCheck className="text-blue-500" /> Account Role
                             </label>
@@ -104,14 +112,14 @@ const AddForm = () => {
                                     <option value="Manager" className="dark:bg-slate-900">Manager</option>
                                     <option value="User" className="dark:bg-slate-900">User</option>
                                 </select>
-                                <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-slate-400">
+                                <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-slate-400 group-hover:text-blue-500 transition-colors">
                                     <HiUserAdd size={20} />
                                 </div>
                             </div>
                         </div>
 
                         {/* Password */}
-                        <div className="space-y-2">
+                        <div className="space-y-3">
                             <label className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 flex items-center gap-2">
                                 <HiLockClosed className="text-blue-500" /> Password
                             </label>
@@ -125,13 +133,14 @@ const AddForm = () => {
                         </div>
                     </div>
 
-                    <div className="pt-8 flex justify-center">
+                    <div className="pt-8 border-t border-slate-100 dark:border-white/5 flex justify-end">
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full py-4 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-400 text-white font-black uppercase tracking-[0.2em] rounded-2xl shadow-xl shadow-blue-500/30 transition-all active:scale-95 disabled:active:scale-100 flex items-center justify-center gap-3"
+                            className="group relative px-10 py-4 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-400 text-white font-black uppercase tracking-[0.2em] rounded-2xl shadow-xl shadow-blue-500/30 transition-all active:scale-95 disabled:active:scale-100 flex items-center gap-3"
                         >
-                            <span>Initialize Account</span>
+                            <span>Create Account</span>
+                            <HiUserAdd size={20} className="group-hover:translate-x-1 transition-transform" />
                         </button>
                     </div>
                 </form>

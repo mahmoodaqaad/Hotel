@@ -1,3 +1,4 @@
+import { getSingleRoom } from "@/services/rooms";
 import { IsSuperAdminOrAdmin } from "@/utils/CheckRole";
 import prisma from "@/utils/db";
 import { UpdateRoomDto } from "@/utils/Dtos";
@@ -8,43 +9,15 @@ interface props {
 
 export const GET = async (req: NextRequest, { params: { id } }: props) => {
     try {
-
-        const room = await prisma.room.findUnique({
-            where: { id: Number(id) }, include: {
-                images: true,
-                Rating: true,
-                bookingRequests: {
-                    select: {
-                        userId: true,
-                        roomId: true,
-                        id: true
-                    }
-
-                },
-                comments: {
-                    include: { user: true }
-                }
-            }
-        })
+        const room = await getSingleRoom(id);
 
         if (!room) return NextResponse.json({ message: "room Not found" }, { status: 404 });
-        const ratings = room.Rating;
-        const totalRatings = ratings.length;
 
-        // حساب مجموع النجوم
-        const totalStars = ratings.reduce((sum, rating) => sum + rating.ratingValue, 0);
-
-        // حساب المعدل
-        const averageRating = totalRatings > 0 ? totalStars / totalRatings : 0;
-        return NextResponse.json({ ...room, averageRating: averageRating.toFixed(1), totalRatings, }, { status: 200 });
-
+        return NextResponse.json(room, { status: 200 });
 
     } catch (error) {
         return NextResponse.json({ message: "internal server error", error }, { status: 500 })
-
     }
-
-
 }
 
 export const PUT = async (req: NextRequest, context: { params: { id: string } }) => {

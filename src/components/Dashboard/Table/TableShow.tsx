@@ -5,7 +5,7 @@ import React, { useContext, useEffect, useState, useTransition, useCallback } fr
 import UnData from '../../../utils/Tools/UnData'
 import PaginationPage from '../../../utils/pagination/Pagination'
 import { DOMAIN } from '@/utils/consant'
-import Swal from 'sweetalert2'
+// Removed static import
 import { ModeContext } from '@/Context/ModeContext'
 import axios from 'axios'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -60,6 +60,7 @@ const TableShow = (props: Props) => {
     }, [])
 
     const handleUpdateStatus = useCallback(async (id: number, comf: boolean) => {
+        const Swal = (await import('sweetalert2')).default
         try {
             if (comf) {
                 Swal.fire({
@@ -128,6 +129,7 @@ const TableShow = (props: Props) => {
     }, [isDarkmode, path, router])
 
     const handleDelete = useCallback(async (id: number) => {
+        const Swal = (await import('sweetalert2')).default
         const result = await Swal.fire({
             title: "Are you sure?",
             text: "You won't be able to revert this!",

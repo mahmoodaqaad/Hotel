@@ -1,4 +1,5 @@
-import prisma from "@/utils/db";
+import { searchRooms } from "@/services/rooms";
+import prisma from "@/utils/db"; // Keep prisma for POST logic if distinct
 import { NextRequest, NextResponse } from "next/server";
 
 export const POST = async (req: NextRequest) => {
@@ -67,43 +68,7 @@ export const POST = async (req: NextRequest) => {
 export const GET = async (req: NextRequest) => {
     try {
         const search = req.nextUrl.searchParams.get("search") || ""
-
-
-        // لو المستخدم كتب رقم -> بحث بعدد الأشخاص
-        const rooms = await prisma.room.findMany({
-            include: {
-                images: true
-            },
-            where: {
-                OR: [
-                    {
-                        name: {
-                            contains: search,
-                            mode: "insensitive"
-                        }
-                    },
-                    {
-                        guest: {
-                            contains: search,
-                            mode: "insensitive"
-                        },
-
-                    },
-                    {
-                        view: {
-                            contains: search,
-                            mode: "insensitive"
-                        }
-                    },
-                    {
-
-                    }
-
-                ]
-            }
-        });
-
-
+        const rooms = await searchRooms(search);
         return NextResponse.json(rooms);
 
     } catch (error) {

@@ -1,3 +1,4 @@
+import { getAllRooms } from "@/services/rooms";
 import { IsSuperAdminOrAdmin } from "@/utils/CheckRole";
 import { ARTICLE_PER_PAGE } from "@/utils/consant";
 import prisma from "@/utils/db";
@@ -7,61 +8,26 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async (req: NextRequest) => {
     try {
-
-
-
-
         const pageNumber = req.nextUrl.searchParams.get("pageNumber") || 1
-
         const limit = Number(req.nextUrl.searchParams.get("limit")) || ARTICLE_PER_PAGE
         const search = req.nextUrl.searchParams.get("search") || ""
         const sort = req.nextUrl.searchParams.get("sort") || "createdAt"
         const order = req.nextUrl.searchParams.get("order") === "asc" ? "asc" : "desc"
         const filter = req.nextUrl.searchParams.get("filter") || ""
 
-        const whereClause: any = {
-            name: {
-                contains: search,
-                mode: "insensitive"
-            }
-        }
-        if (filter) {
-            whereClause.status = filter
-        }
-
-
-        if (search != "") {
-            const room = await prisma.room.findMany({
-                where: whereClause,
-                orderBy: {
-                    [sort]: order
-                },
-                include: {
-                    images: true
-                }
-
-            })
-            return NextResponse.json(room, { status: 200 })
-
-        }
-        const rooms = await prisma.room.findMany({
-            where: filter ? { status: filter as any } : {},
-            orderBy: {
-                [sort]: order
-            },
-            skip: limit * (Number(pageNumber) - 1),
-            take: limit,
-            include: {
-                images: true
-            }
-
-
-        });
+        // Use strict type assertion for order as "asc" | "desc"
+        const rooms = await getAllRooms({
+            pageNumber,
+            search,
+            sort,
+            order: order as "asc" | "desc",
+            filter,
+            limit
+        })
 
         return NextResponse.json(rooms, { status: 200 })
     } catch (error) {
         return NextResponse.json({ message: "internal server error", error }, { status: 500 })
-
     }
 }
 export const POST = async (req: NextRequest) => {

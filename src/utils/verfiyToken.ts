@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { JWTPaylod } from "./Types";
 import { NextRequest } from 'next/server';
-import { getFetchById } from './FetchData';
+import prisma from "@/utils/db";
 
 // Types for router compatibility
 interface NextApiRequestLike {
@@ -40,53 +40,93 @@ export async function varfiyTokenForPage() {
             const { cookies } = await import("next/headers");
             const cookieStore = await cookies();
             token = cookieStore.get("jwt")?.value || "";
-        } catch (e) {
+        } catch (_) {
             console.warn("varfiyTokenForPage called outside App Router context");
             return null;
         }
 
         if (!token) return null;
         const privtKey = process.env.JWT_SECRET_KEY as string;
-        const userPayload = jwt.verify(token, privtKey) as JWTPaylod;
-        return userPayload || null;
+
+        // Prevent jwt.verify from throwing if token is invalid format or empty
+        try {
+            const userPayload = jwt.verify(token, privtKey) as JWTPaylod;
+            return userPayload || null;
+        } catch (_) {
+            return null;
+        }
     } catch (error) {
         console.log(error);
         return null;
     }
 }
 
-export async function varfiyMyAccount() {
+export async function varfiyMyAccount(includeRelations: boolean = false) {
     try {
         let token = "";
         try {
             const { cookies } = await import("next/headers");
             const cookieStore = await cookies();
             token = cookieStore.get("jwt")?.value || "";
-        } catch (e) {
+        } catch (_) {
             console.warn("varfiyMyAccount called outside App Router context");
             return null;
         }
 
         if (!token) return null;
         const privtKey = process.env.JWT_SECRET_KEY as string;
-        const userPayload = jwt.verify(token, privtKey) as JWTPaylod;
-
-        // This implicitly uses token in FetchData via dynamic import too
-        const response = await getFetchById("users/myAccount", userPayload.id)
-
-        if (response.status === 403) {
-            try {
-                const { redirect } = await import("next/navigation");
-                redirect("/dashboard/403");
-            } catch (e) {
-                // Handle redirect manually or return generic error if in Pages/API
-                return { error: 'Forbidden' };
-            }
+        let userPayload: JWTPaylod;
+        try {
+            userPayload = jwt.verify(token, privtKey) as JWTPaylod;
+        } catch (_) {
+            return null;
         }
 
-        if (!response.ok) throw new Error("Error IN Your account")
+        // Direct DB access instead of fetch to avoid network loop errors
+        let user;
+        if (includeRelations) {
+            user = await prisma.user.findUnique({
+                where: { id: userPayload?.id },
+                include: {
+                    bookings: {
+                        include: {
+                            room: {
+                                include: {
+                                    images: true
+                                }
+                            }
+                        }
+                    },
+                    bookingRequests: {
+                        include: {
+                            room: true
+                        }
+                    },
+                    comments: {
+                        include: {
+                            room: true
+                        }
+                    },
+                    Saved: {
+                        include: {
+                            room: {
+                                include: {
+                                    images: true
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        } else {
+            user = await prisma.user.findUnique({
+                where: { id: userPayload.id },
+                select: { id: true, name: true, email: true, role: true, createdAt: true },
+            });
+        }
 
-        return response.json()
+        if (!user) return null;
+        return user;
 
     } catch (error) {
         console.log(error);

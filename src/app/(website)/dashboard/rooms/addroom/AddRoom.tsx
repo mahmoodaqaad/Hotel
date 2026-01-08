@@ -70,57 +70,56 @@ const AddRoom = ({ user }: { user: User }) => {
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="premium-card p-8 md:p-12"
+                className="premium-card p-5 md:p-10 lg:p-12"
             >
-                <div className="mb-10 text-center">
-                    <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">Add New Room</h2>
-                    <p className="text-slate-500 dark:text-slate-400 mt-2 font-medium">Create a new luxury experience for your guests</p>
+                <div className="mb-8 md:mb-10 text-center">
+                    <h2 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white tracking-tight">Add New Room</h2>
+                    <p className="text-sm md:text-base text-slate-500 dark:text-slate-400 mt-2 font-medium">Create a new luxury experience for your guests</p>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-8">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div className="space-y-6">
-                            {/* Room Name */}
-                            <div className="space-y-2">
-                                <label className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 flex items-center gap-2">
-                                    <HiIdentification className="text-blue-500" /> Room Name
-                                </label>
-                                <input
-                                    type="text"
-                                    placeholder="e.g. Royal Presidential Suite"
-                                    className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl py-4 px-6 text-slate-900 dark:text-white font-bold outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
-                                    value={name}
-                                    onChange={e => setName(e.target.value)}
-                                />
-                            </div>
-
-                            {/* Price */}
-                            <div className="space-y-2">
-                                <label className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 flex items-center gap-2">
-                                    <HiCurrencyDollar className="text-blue-500" /> Price per Night
-                                </label>
-                                <input
-                                    type="number"
-                                    placeholder="0.00"
-                                    className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl py-4 px-6 text-slate-900 dark:text-white font-bold outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
-                                    value={price}
-                                    onChange={e => setPrice(e.target.value)}
-                                />
-                            </div>
-                        </div>
-
-                        {/* Description */}
-                        <div className="space-y-2">
+                <form onSubmit={handleSubmit} className="space-y-6 md:space-y-8">
+                    {/* Main Info Section */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                        {/* Room Name */}
+                        <div className="space-y-3">
                             <label className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 flex items-center gap-2">
-                                <HiDocumentText className="text-blue-500" /> Room Description
+                                <HiIdentification className="text-blue-500" /> Room Name
                             </label>
-                            <textarea
-                                placeholder="Describe the room's unique features, view, and amenities..."
-                                className="w-full h-full min-h-[160px] bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl py-4 px-6 text-slate-900 dark:text-white font-bold outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all resize-none placeholder:text-slate-400 dark:placeholder:text-slate-600"
-                                value={discrption}
-                                onChange={e => setDiscrption(e.target.value)}
+                            <input
+                                type="text"
+                                placeholder="e.g. Royal Presidential Suite"
+                                className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl py-4 px-6 text-slate-900 dark:text-white font-bold outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                                value={name}
+                                onChange={e => setName(e.target.value)}
                             />
                         </div>
+
+                        {/* Price */}
+                        <div className="space-y-3">
+                            <label className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 flex items-center gap-2">
+                                <HiCurrencyDollar className="text-blue-500" /> Price per Night
+                            </label>
+                            <input
+                                type="number"
+                                placeholder="0.00"
+                                className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl py-4 px-6 text-slate-900 dark:text-white font-bold outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                                value={price}
+                                onChange={e => setPrice(e.target.value)}
+                            />
+                        </div>
+                    </div>
+
+                    {/* Description - Full Width */}
+                    <div className="space-y-3">
+                        <label className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 flex items-center gap-2">
+                            <HiDocumentText className="text-blue-500" /> Room Description
+                        </label>
+                        <textarea
+                            placeholder="Describe the room's unique features, view, and amenities..."
+                            className="w-full min-h-[120px] bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl py-4 px-6 text-slate-900 dark:text-white font-bold outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all resize-y placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                            value={discrption}
+                            onChange={e => setDiscrption(e.target.value)}
+                        />
                     </div>
 
                     {/* Image Upload */}
@@ -129,7 +128,7 @@ const AddRoom = ({ user }: { user: User }) => {
                             <HiUpload className="text-blue-500" /> Room Gallery
                         </label>
 
-                        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-4">
                             <AnimatePresence mode="popLayout">
                                 {images.map((img, i) => (
                                     <motion.div

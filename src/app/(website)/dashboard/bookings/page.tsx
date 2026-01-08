@@ -1,14 +1,14 @@
 import Link from 'next/link'
 import React from 'react'
 import Table from './Table'
-import { GetBooking, getBookingCount } from '@/apiCall/Booking'
-import { BookingWithRelations, SearchProps } from '@/utils/Types'
+import { getAllBookings, getBookingsCount } from '@/services/bookings'
+import { SearchProps } from '@/utils/Types'
 
 
 const BookingPage = async ({ searchParams }: SearchProps) => {
   const { pageNumber, search = "", sort = "", order = "", filter = "" } = await searchParams
-  const Booking: BookingWithRelations[] = await GetBooking(pageNumber, search, sort, order, filter)
-  const count: number = await getBookingCount()
+  const Booking = await getAllBookings({ pageNumber, search })
+  const count = await getBookingsCount()
 
   return (
     <section >

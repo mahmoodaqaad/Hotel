@@ -12,6 +12,8 @@ import { User, Notification } from '@prisma/client'
 import { socket } from '@/lib/socketClints'
 import { IsSuperAdminOrAdminOrManagerPage } from '@/utils/roles'
 
+import { usePathname } from 'next/navigation'
+
 interface HeaderClientProps {
     user: (User & { Notification: Notification[] }) | null
 }
@@ -19,6 +21,15 @@ interface HeaderClientProps {
 const HeaderClient = ({ user }: HeaderClientProps) => {
     const [isScrolled, setIsScrolled] = useState(false)
     const [isMenuOpen, setIsMenuOpen] = useState(false)
+    const pathname = usePathname()
+
+    console.log("user => ",user)
+    // Only "Home" page has a transparent hero section
+    const isHomePage = pathname === '/'
+
+    // Determine active state: Scrolled OR Not on Home Page
+    // If we are NOT on home page, we always want the "scrolled" (solid) style
+    const isSolid = isScrolled || !isHomePage
 
     useEffect(() => {
         const handleScroll = () => {
@@ -43,7 +54,7 @@ const HeaderClient = ({ user }: HeaderClientProps) => {
 
     return (
         <header
-            className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${isScrolled
+            className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${isSolid
                 ? 'bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg py-3 shadow-lg'
                 : 'bg-transparent py-6'
                 }`}
@@ -51,7 +62,7 @@ const HeaderClient = ({ user }: HeaderClientProps) => {
             <div className="container mx-auto px-6 flex items-center justify-between">
                 {/* Logo */}
                 <Link href="/" className="relative z-50 group">
-                    <h1 className={`text-2xl font-bold tracking-tighter transition-colors duration-300 ${isScrolled ? 'text-slate-900 dark:text-white' : 'text-white'
+                    <h1 className={`text-2xl font-bold tracking-tighter transition-colors duration-300 ${isSolid ? 'text-slate-900 dark:text-white' : 'text-white'
                         }`}>
                         Harbor<span className="text-blue-500">Lights</span>
                     </h1>
@@ -63,7 +74,7 @@ const HeaderClient = ({ user }: HeaderClientProps) => {
                         <Link
                             key={link.name}
                             href={link.href}
-                            className={`text-sm font-medium transition-all hover:text-blue-500 ${isScrolled
+                            className={`text-sm font-medium transition-all hover:text-blue-500 ${isSolid
                                 ? 'text-slate-600 dark:text-slate-300'
                                 : 'text-white/80 hover:text-white'
                                 }`}
@@ -75,7 +86,7 @@ const HeaderClient = ({ user }: HeaderClientProps) => {
 
                 {/* Actions */}
                 <div className="flex items-center space-x-3 lg:space-x-5">
-                    <div className={isScrolled ? 'text-slate-700 dark:text-slate-300' : 'text-white'}>
+                    <div className={isSolid ? 'text-slate-700 dark:text-slate-300' : 'text-white'}>
                         <ThemeMode />
                     </div>
 
@@ -88,7 +99,7 @@ const HeaderClient = ({ user }: HeaderClientProps) => {
                                 href={user.role === "User" ? "/profile" : "/dashboard/profile"}
                                 className="group relative"
                             >
-                                <FaUserCircle className={`text-3xl transition-all group-hover:scale-110 ${isScrolled ? 'text-slate-700 dark:text-slate-300' : 'text-white'
+                                <FaUserCircle className={`text-3xl transition-all group-hover:scale-110 ${isSolid ? 'text-slate-700 dark:text-slate-300' : 'text-white'
                                     }`} />
                             </Link>
 
@@ -109,7 +120,7 @@ const HeaderClient = ({ user }: HeaderClientProps) => {
                         <div className="hidden md:flex items-center space-x-4">
                             <Link
                                 href="/login"
-                                className={`text-sm font-medium ${isScrolled ? 'text-slate-600 dark:text-slate-300' : 'text-white/80'
+                                className={`text-sm font-medium ${isSolid ? 'text-slate-600 dark:text-slate-300' : 'text-white/80'
                                     }`}
                             >
                                 Sign In
@@ -125,7 +136,7 @@ const HeaderClient = ({ user }: HeaderClientProps) => {
 
                     {/* Mobile Menu Toggle */}
                     <button
-                        className={`lg:hidden text-2xl z-50 ${isScrolled ? 'text-slate-900 dark:text-white' : 'text-white'
+                        className={`lg:hidden text-2xl z-50 ${isSolid ? 'text-slate-900 dark:text-white' : 'text-white'
                             }`}
                         onClick={() => setIsMenuOpen(!isMenuOpen)}
                     >

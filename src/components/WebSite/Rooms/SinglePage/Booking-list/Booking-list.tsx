@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 import { HiX, HiCalendar, HiCheckCircle, HiChevronRight } from 'react-icons/hi'
 import { toast } from 'react-toastify'
-import Swal from 'sweetalert2'
+// dynamic import
 import { motion, AnimatePresence } from 'framer-motion'
 
 const Booking_list = ({ room, userId }: { room: Room & { bookingRequests: BookingRequest[] }, userId: number }) => {
@@ -49,6 +49,7 @@ const Booking_list = ({ room, userId }: { room: Room & { bookingRequests: Bookin
         checkOut
       })
 
+      const Swal = (await import('sweetalert2')).default
       Swal.fire({
         title: "Booking Request Sent!",
         text: "We have received your request and will get back to you soon.",
@@ -74,6 +75,7 @@ const Booking_list = ({ room, userId }: { room: Room & { bookingRequests: Bookin
   }
 
   const handleCancelBook = async () => {
+    const Swal = (await import('sweetalert2')).default
     const result = await Swal.fire({
       title: "Cancel Booking Request?",
       text: "Are you sure you want to cancel your request for this room?",

@@ -2,19 +2,13 @@ import { Booking, Payment, User } from '@prisma/client'
 // import Link from 'next/link'
 import React from 'react'
 import Table from './Table'
-import { GetPaymentCount, GetPayments } from '@/apiCall/Payment'
+import { getAllPayments, getPaymentsCount } from '@/services/payments'
 import { SearchProps } from '@/utils/Types'
-type PaymentProps = Payment & {
-  user: User
-  booking: Booking & {
-    room: {
-      name: string
-    }
-  }
-}
-const BookingRequestPage = async ({ searchParams: { pageNumber ,search=""} }: SearchProps) => {
-  const payments: PaymentProps[] = await GetPayments(pageNumber, search)
-  const count: number = await GetPaymentCount()
+
+const PaymentsPage = async ({ searchParams }: SearchProps) => {
+  const { pageNumber, search = "" } = await searchParams
+  const payments = await getAllPayments({ pageNumber, search })
+  const count = await getPaymentsCount()
 
   return (
     <section >
@@ -28,4 +22,4 @@ const BookingRequestPage = async ({ searchParams: { pageNumber ,search=""} }: Se
   )
 }
 
-export default BookingRequestPage
+export default PaymentsPage

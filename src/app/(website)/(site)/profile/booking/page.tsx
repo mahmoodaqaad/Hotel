@@ -1,11 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import SingleRoom from '@/components/WebSite/Rooms/SingleRoom/SingleRoom'
-import { RoomWithReltionAll } from '@/utils/Types'
 import { varfiyMyAccount } from '@/utils/verfiyToken'
-import { Booking, User } from '@prisma/client'
 import React from 'react'
 
 const page = async () => {
-    const user: User & { bookings: (Booking & { room: RoomWithReltionAll })[] } = await varfiyMyAccount()
+    const user = await varfiyMyAccount(true) as any
 
     return (
         <div className='pt-[86px] lg:pt-[104px] '>
@@ -16,7 +15,7 @@ const page = async () => {
 
             <div className='flex flex-wrap '>
                 {
-                    user.bookings.map((item, i) => (
+                    user?.bookings?.map((item: any, i: number) => (
                         <div key={i} className='w-full sm:w-1/2 xl:w-1/3 p-2 sm:p-4'>
                             <div className='bg-gray-200 dark:bg-gray-800 shadow-xl   rounded-lg '>
 

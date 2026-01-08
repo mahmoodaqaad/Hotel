@@ -8,10 +8,11 @@ export const LoginSchema = z.object({
 })
 
 export const RegisterSchema = z.object({
-    name: z.string().min(2),
-    email: z.string().min(2).email(),
-    password: z.string().min(6),
-
+    name: z.string().min(2, { message: "Name must be at least 2 characters" }),
+    email: z.string().min(2).email({ message: "Invalid email address" }),
+    password: z.string().min(6, { message: "Password must be at least 6 characters" }),
+    role: z.enum(["SuperAdmin", "Admin", "Manager", "User"]).optional(), // Optional for registration, mandatory for AddUser? 
+    // Actually, checking AddUser logic, role is sent. Registration might default to User.
 })
 export const CreateRoomSchema = z.object({
     name: z.string().min(2),

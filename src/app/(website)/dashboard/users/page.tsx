@@ -1,4 +1,4 @@
-import { getUser, getUserCount } from '@/apiCall/users'
+import { getAllUsers, getUsersCount } from '@/services/users'
 import { User } from '@prisma/client'
 import Link from 'next/link'
 import React from 'react'
@@ -8,8 +8,8 @@ import { SearchProps } from '@/utils/Types'
 
 const UserPage = async ({ searchParams }: SearchProps) => {
   const { pageNumber, search = "", sort = "", order = "", filter = "" } = await searchParams
-  const users: User[] = await getUser(pageNumber, search, sort, order, filter)
-  const count: number = await getUserCount()
+  const users = await getAllUsers({ pageNumber, search, sort, order, filter })
+  const count = await getUsersCount()
   const SignUser = await varfiyTokenForPage() as User
 
   return (

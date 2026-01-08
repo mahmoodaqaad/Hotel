@@ -1,20 +1,26 @@
-import { getSingleRoom } from '@/apiCall/Rooms'
-import { RoomWithReltionAll } from '@/utils/Types'
+import { getSingleRoom } from '@/services/rooms'
 import React from 'react'
 import ShowDetalits from './ShowDetalits'
 import CommentAndReting from './CommentAndReting'
 import { varfiyMyAccount } from '@/utils/verfiyToken'
-import { BookingRequest, User } from '@prisma/client'
+import { User } from '@prisma/client'
+import { notFound } from 'next/navigation'
+import { RoomWithReltionAll } from '@/utils/Types'
 
 interface SingleArticlesPageProps {
     params: { id: string }
 }
 
 const RoomPage = async ({ params }: SingleArticlesPageProps) => {
-    const room: RoomWithReltionAll & {
-        bookingRequests: BookingRequest[]
-    } = await getSingleRoom(params.id)
-    const user = await varfiyMyAccount() as User;
+    const [roomData, user] = await Promise.all([
+        getSingleRoom(params.id),
+        varfiyMyAccount() as Promise<User>
+    ])
+
+    if (!roomData) return notFound();
+
+    // Cast to expected type as service returns inferred type compatible with structure
+    const room = roomData as unknown as RoomWithReltionAll;
 
     return (
         <main className="min-h-screen bg-white dark:bg-slate-950 pt-[120px]">

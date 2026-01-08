@@ -10,6 +10,7 @@ import ThemeMode from './ThemeMode'
 import { User, Notification } from '@prisma/client'
 import { socket } from '@/lib/socketClints'
 import Notifiction from '@/components/Notifiction/Notifiction'
+import SearchInput from './SearchInput'
 
 const NavBarDashboard = () => {
     const [user, setUser] = useState<(User & { Notification: Notification[] }) | null>(null)
@@ -36,16 +37,12 @@ const NavBarDashboard = () => {
                     </div>
                 </div>
 
-                <div className="flex-1 max-w-xl hidden md:block">
+                <div className="flex-1 max-w-xl hidden md:block z-50">
                     <div className="relative group">
                         <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-blue-500 transition-colors">
                             <HiSearch size={20} />
                         </div>
-                        <input
-                            type="text"
-                            placeholder="Search everything..."
-                            className="w-full bg-slate-100/50 dark:bg-white/5 border border-transparent rounded-2xl py-2.5 pl-12 pr-4 text-sm font-medium outline-none focus:bg-white dark:focus:bg-slate-800 focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/10 transition-all"
-                        />
+                        <SearchInput />
                     </div>
                 </div>
 

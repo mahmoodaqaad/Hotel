@@ -9,7 +9,7 @@ import React from 'react'
 import { HiChatAlt2, HiStar, HiLockClosed } from 'react-icons/hi'
 
 const CommentAndReting = ({ room, user }: { room: RoomWithReltionAll, user: User }) => {
-    const userHasRated = room.Rating.some(item => item.userId === user?.id)
+    const userHasRated = room?.Rating.some(item => item.userId === user?.id)
 
     return (
         <section className="max-w-4xl mx-auto space-y-16">
@@ -27,7 +27,7 @@ const CommentAndReting = ({ room, user }: { room: RoomWithReltionAll, user: User
                         <HiStar size={24} />
                     </div>
                     <div className="text-2xl font-black text-blue-600 dark:text-blue-400">
-                        {room.averageRating.toFixed(1)} / 5
+                        {room?.averageRating?.toFixed(1)} / 5
                     </div>
                     <div className="text-slate-400 dark:text-slate-500 font-bold text-sm uppercase tracking-widest">
                         Average
@@ -65,7 +65,7 @@ const CommentAndReting = ({ room, user }: { room: RoomWithReltionAll, user: User
                                     <HiChatAlt2 className="text-blue-500" />
                                     Share Your Thoughts
                                 </h3>
-                                <CreateComment roomId={room.id} userId={Number(user?.id)} />
+                                <CreateComment roomId={room?.id} userId={Number(user?.id)} />
                             </div>
                         </div>
                     )}
@@ -76,10 +76,10 @@ const CommentAndReting = ({ room, user }: { room: RoomWithReltionAll, user: User
                     <div className="flex items-center justify-between mb-8">
                         <h3 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Recent Comments</h3>
                         <span className="bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-slate-400 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest">
-                            {room.comments?.length || 0} Entries
+                            {room?.comments?.length || 0} Entries
                         </span>
                     </div>
-                    <ShowAllcomment comments={room.comments as CommentWithUser[]} user={user} />
+                    <ShowAllcomment comments={room?.comments as CommentWithUser[]} user={user} />
                 </div>
             </div>
         </section>

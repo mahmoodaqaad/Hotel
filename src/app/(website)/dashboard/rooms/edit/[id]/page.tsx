@@ -1,22 +1,24 @@
 import React from 'react'
 import { Room } from '@prisma/client'
-import { getSingleRoom } from '@/apiCall/Rooms'
+import { getSingleRoom } from '@/services/rooms'
 import EditForm from './EditForm'
 import AuthGuardPage from '@/components/Auth/AuthGuard/AuthGuard'
 interface EditFormProps {
     params: { id: string }
 }
-const EditRoom = async ({ params: { id } }: EditFormProps) => {
-    const Room: Room = await getSingleRoom(id)
+const EditRoom = async ({ params }: EditFormProps) => {
+    // Await params if needed in improved next.js versions, but currently props.
+    // However, getSingleRoom expects id.
+    const { id } = await params;
+    // Prisma returns Room with images.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const Room = await getSingleRoom(id) as any
 
     return (
         <AuthGuardPage allowedRole={["SuperAdmin", "Admin"]}>
 
             <section className='vh-dash flex justify-center items-center'  >
-                <div className='p-4 shadow-md bg-gray-200 dark:bg-gray-700  rounded-md w-full sm:w-10/12 md:w-7/12 lg:w-5/12'>
-                    <h2 className='text-4xl text-center font-semibold'>Edit Room</h2>
-                    <EditForm room={Room} />
-                </div>
+                <EditForm room={Room} />
             </section>
         </AuthGuardPage>
 

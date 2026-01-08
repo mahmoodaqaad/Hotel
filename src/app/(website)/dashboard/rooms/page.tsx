@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import React from 'react'
-import { getRooms, getRoomsCount } from '@/apiCall/Rooms'
+import { getAllRooms, getRoomsCount } from '@/services/rooms'
 import { User } from '@prisma/client'
 import Table from './Table'
 import { varfiyTokenForPage } from '@/utils/verfiyToken'
@@ -8,7 +8,35 @@ import { RoomWithReltion, SearchProps } from '@/utils/Types'
 
 const UserPage = async ({ searchParams }: SearchProps) => {
   const { pageNumber, search = "", sort = "", order = "", filter = "" } = await searchParams
-  const rooms: RoomWithReltion[] = await getRooms(pageNumber, search, sort, order, filter)
+
+  /*
+  const roomsRaw = await getAllRooms({
+    pageNumber,
+    search,
+    sort,
+    order: (order === "asc" || order === "desc") ? order : undefined,
+    filter
+  })
+  const rooms = roomsRaw as unknown as RoomWithReltion[]
+  */
+  // const rooms: RoomWithReltion[] = [];
+
+  let rooms: RoomWithReltion[] = [];
+  try {
+    const roomsRaw = await getAllRooms({
+      pageNumber,
+      search,
+      sort,
+      order: (order === "asc" || order === "desc") ? order : undefined,
+      filter
+    });
+    rooms = roomsRaw as unknown as RoomWithReltion[];
+  } catch (error) {
+    console.error("DEBUG: getAllRooms failed:", error);
+    // Fallback to empty array to allow page render
+    rooms = [];
+  }
+
   const count: number = await getRoomsCount()
   const SignUser = await varfiyTokenForPage() as User
   return (

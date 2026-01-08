@@ -1,4 +1,4 @@
-import { getBookingRequestCount, GetRoomsRequest } from '@/apiCall/BookingRequest'
+import { getAllBookingRequests, getBookingRequestsCount } from '@/services/bookingRequests'
 import { BookingRequest } from '@prisma/client'
 import Link from 'next/link'
 import React from 'react'
@@ -17,9 +17,9 @@ const BookingRequestPage = async ({ searchParams }: SearchProps) => {
     const order = params?.order || "";
     const filter = params?.filter || "";
 
-    const BookingRequest: BookingRequestWithRelations[] = await GetRoomsRequest(pageNumber, search, sort, order, filter)
+    const BookingRequest = await getAllBookingRequests({ pageNumber })
 
-    const count: number = await getBookingRequestCount()
+    const count = await getBookingRequestsCount()
 
 
     return (

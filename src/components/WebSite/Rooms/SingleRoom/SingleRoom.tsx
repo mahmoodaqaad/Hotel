@@ -1,3 +1,4 @@
+"use client"
 import Image from 'next/image'
 import React from 'react'
 import { motion } from 'framer-motion'
@@ -16,7 +17,7 @@ const SingleRoom = ({ room, booking = true }: { room: RoomWithReltionAll, bookin
             <Link href={`/rooms/${room.id}`} className='relative block h-[240px] overflow-hidden'>
                 <Image
                     fill
-                    src={room.images[0]?.imageUrl}
+                    src={room?.images[0]?.imageUrl}
                     alt={room.name}
                     className='object-cover transition-transform duration-700 group-hover:scale-110'
                 />

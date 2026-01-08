@@ -41,28 +41,35 @@ export const PUT = async (req: NextRequest, { params }: { params: { id: string }
         const book = await prisma.booking.findUnique({ where: { id: Number(payment.bookingId) } })
         const body = await req.json()
 
-        const oldAmount = Number(book?.paidAmount)
+        const currentPaymentAmount = Number(payment.amount)
+        const currentBookingPaid = Number(book?.paidAmount)
+        const totalBookingAmount = Number(book?.totalAmount)
+        const newPaymentAmount = Number(body.amount)
 
-        if (Number(body.amount) + Number(payment.amount) > Number(book?.totalAmount)) return NextResponse.json({ message: "The amount paid is greater than the requested amount." }, { status: 404 })
+        const newBookingPaid = currentBookingPaid - currentPaymentAmount + newPaymentAmount
 
+        if (newBookingPaid > totalBookingAmount) {
+            return NextResponse.json({ message: "The amount paid is greater than the total booking amount." }, { status: 400 })
+        }
+
+        const isPaid = newBookingPaid >= totalBookingAmount
 
         await prisma.payment.update({
             where: { id: Number(params.id) },
             data: {
                 method: body.method,
-                amount: oldAmount + Number(body.amount),
-                status: oldAmount + Number(body.amount) === Number(book?.totalAmount) ? "paid" : "pending"
+                amount: newPaymentAmount,
+                status: isPaid ? "paid" : "pending"
             }
         })
 
         await prisma.booking.update({
             where: { id: Number(payment.bookingId) },
             data: {
-                paidAmount: oldAmount + Number(body.amount),
-                remainingAmount: Number(book?.totalAmount) - (oldAmount + Number(body.amount)),
-                paymentStatus: oldAmount + Number(body.amount) === Number(book?.totalAmount) ? "paid" : "pending"
+                paidAmount: newBookingPaid,
+                remainingAmount: totalBookingAmount - newBookingPaid,
+                paymentStatus: isPaid ? "paid" : "pending"
             }
-
         })
         return NextResponse.json({ message: "updated" }, { status: 200 })
 
