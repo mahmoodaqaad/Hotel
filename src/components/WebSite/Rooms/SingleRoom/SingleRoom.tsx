@@ -14,11 +14,11 @@ const SingleRoom = ({ room, booking = true }: { room: RoomWithReltionAll, bookin
             className='group bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all'
         >
             {/* Image Section */}
-            <Link href={`/rooms/${room.id}`} className='relative block h-[240px] overflow-hidden'>
+            <Link href={`/rooms/${room?.id}`} className='relative block h-[240px] overflow-hidden'>
                 <Image
                     fill
-                    src={room?.images[0]?.imageUrl}
-                    alt={room.name}
+                    src={room?.images?.[0]?.imageUrl || "/img/room/1.jpg"} // Fallback image
+                    alt={room?.name || "Room Image"}
                     className='object-cover transition-transform duration-700 group-hover:scale-110'
                 />
 

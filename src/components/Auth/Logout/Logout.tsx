@@ -38,6 +38,7 @@ const Logout = () => {
 
                     setLoading(true)
                     await axios.post(`${DOMAIN}/api/users/logout`)
+                    
 
                     router.replace("/login");
                     router.refresh();

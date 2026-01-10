@@ -17,6 +17,8 @@ const LoginForm = () => {
     const [loading, setLoading] = useState(false)
     const router = useRouter()
 
+    // if (myUser !== null) redirect("/")
+
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault()
         if (loading) return
@@ -91,7 +93,7 @@ const LoginForm = () => {
 
             <div className="text-center pt-6">
                 <p className="text-slate-400 font-medium">
-                    Don't have an account? {' '}
+                    Don{"'"}t have an account? {' '}
                     <Link href="/register" className="text-blue-400 hover:text-blue-300 font-bold transition-colors">
                         Create one now
                     </Link>

@@ -59,6 +59,8 @@ const TableShow = (props: Props) => {
         }
     }, [])
 
+
+
     const handleUpdateStatus = useCallback(async (id: number, comf: boolean) => {
         const Swal = (await import('sweetalert2')).default
         try {
@@ -314,13 +316,17 @@ const TableShow = (props: Props) => {
                 </div>
             </div>
 
-            {(showOtherTable && page) && (
+            {(showOtherTable && !isNaN(page)) && (
                 <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     className='flex justify-center mt-8'
                 >
-                    <PaginationPage path={path} total={count} page={page} />
+                    {
+
+
+                        <PaginationPage path={path} total={count} page={page} />
+                    }
                 </motion.div>
             )}
         </div>

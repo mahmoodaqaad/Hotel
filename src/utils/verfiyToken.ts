@@ -99,12 +99,20 @@ export async function varfiyMyAccount(includeRelations: boolean = false) {
                     },
                     bookingRequests: {
                         include: {
-                            room: true
+                            room: {
+                                include: {
+                                    images: true
+                                }
+                            }
                         }
                     },
                     comments: {
                         include: {
-                            room: true
+                            room: {
+                                include: {
+                                    images: true
+                                }
+                            }
                         }
                     },
                     Saved: {

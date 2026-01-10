@@ -23,7 +23,6 @@ const HeaderClient = ({ user }: HeaderClientProps) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
     const pathname = usePathname()
 
-    console.log("user => ",user)
     // Only "Home" page has a transparent hero section
     const isHomePage = pathname === '/'
 

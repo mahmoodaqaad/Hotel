@@ -13,20 +13,18 @@ const page = async () => {
                 My Booking
             </div>
 
-            <div className='flex flex-wrap '>
+            <div className='grid grid-cols-1 md:grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6'>
                 {
                     user?.bookings?.map((item: any, i: number) => (
-                        <div key={i} className='w-full sm:w-1/2 xl:w-1/3 p-2 sm:p-4'>
-                            <div className='bg-gray-200 dark:bg-gray-800 shadow-xl   rounded-lg '>
-
-                                <h1 className=' p-2 flex gap-3 items-center'>
-                                    <p>Check Out :</p>
-                                    <p className='text-2xl font-semibold'>
-
-                                        {new Date(item.checkOut).toDateString()}
-                                    </p>
-                                </h1>
-                                <SingleRoom booking={false} room={item.room} />
+                        <div key={i} className='bg-gray-200 dark:bg-gray-800 shadow-xl rounded-2xl overflow-hidden'>
+                            <h1 className='p-4 flex gap-3 items-center border-b border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-900/50'>
+                                <p className='text-sm text-gray-500 uppercase font-bold tracking-wider'>Check Out:</p>
+                                <p className='text-lg font-bold text-blue-600 dark:text-blue-400'>
+                                    {new Date(item.checkOut).toLocaleDateString()}
+                                </p>
+                            </h1>
+                            <div className='p-2'>
+                                {item?.room && <SingleRoom booking={false} room={item.room} />}
                             </div>
                         </div>
                     ))

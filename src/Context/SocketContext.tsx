@@ -2,6 +2,7 @@
 
 import { socket } from "@/lib/socketClints";
 import { Notification, User } from "@prisma/client";
+import axios, { Axios } from "axios";
 import { createContext, useEffect, useState, ReactNode } from "react";
 
 interface SocketContextProviderType {
@@ -17,6 +18,9 @@ export const SocketContextProvider = ({ children }: { children: ReactNode }) => 
     const [notifications, setNotification] = useState<Notification[]>([])
     const [myUser, setMyUser] = useState<User | undefined>(undefined)
 
+
+    
+    
     useEffect(() => {
         if (!socket || !myUser) return
         socket.emit("addNewUser", myUser)

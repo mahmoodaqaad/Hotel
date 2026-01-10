@@ -13,11 +13,10 @@ const page = async () => {
                 Saved
             </div>
 
-            <div className='flex flex-wrap '>
+            <div className='grid grid-cols-1 md:grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6'>
                 {
                     user?.Saved?.map((item: any, i: number) => (
-                        <div key={i} className='w-full sm:w-1/2 xl:w-1/3 p-2 sm:p-4'>
-
+                        <div key={i} className='p-2'>
                             <SingleRoom booking={false} room={item.room} />
                         </div>
                     ))
