@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import Image from 'next/image'
+import Link from 'next/link'
 
 const Hero = () => {
     return (
@@ -41,12 +42,12 @@ const Hero = () => {
                         transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
                         className="flex flex-wrap gap-4"
                     >
-                        <button className="px-8 py-4 bg-blue-600 text-white rounded-full font-semibold hover:bg-blue-700 transition-all hover:scale-105 shadow-xl shadow-blue-500/20">
+                        <Link href={"/contact"} className="px-8 py-4 bg-blue-600 text-white rounded-full font-semibold hover:bg-blue-700 transition-all hover:scale-105 shadow-xl shadow-blue-500/20">
                             Book Your Stay
-                        </button>
-                        <button className="px-8 py-4 bg-white/10 text-white backdrop-blur-md border border-white/20 rounded-full font-semibold hover:bg-white/20 transition-all">
+                        </Link>
+                        <Link href={"/rooms"} className="px-8 py-4 bg-white/10 text-white backdrop-blur-md border border-white/20 rounded-full font-semibold hover:bg-white/20 transition-all">
                             Explore Rooms
-                        </button>
+                        </Link>
                     </motion.div>
                 </div>
             </div>
