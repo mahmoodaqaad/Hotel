@@ -40,7 +40,7 @@ const SearchRoom = () => {
 
     return (
         <div className='max-w-xl mx-auto mb-12 px-4'>
-            <div className='relative group z-50'>
+            <div className='relative group z-40'>
                 <div className='flex items-center bg-white dark:bg-slate-800/50 backdrop-blur-md rounded-2xl shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-200 dark:border-slate-700 p-2 focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-500 transition-all'>
                     <div className="flex-1 relative">
                         <input

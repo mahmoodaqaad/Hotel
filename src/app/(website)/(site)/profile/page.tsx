@@ -1,12 +1,14 @@
 import { varfiyMyAccount } from '@/utils/verfiyToken'
 import { User } from '@prisma/client'
+import { redirect } from 'next/navigation'
+import Link from 'next/link'
 import React from 'react'
-import { HiMail, HiCalendar, HiBadgeCheck, HiUserCircle } from 'react-icons/hi'
+import { HiMail, HiCalendar, HiBadgeCheck, HiUserCircle, HiChevronRight, HiLockClosed, HiCog } from 'react-icons/hi'
 
 const page = async () => {
 
-    const user = await varfiyMyAccount() as User
-
+    const user = await varfiyMyAccount() as unknown as User
+    if (!user) redirect("/login")
     return (
         <div className="space-y-8">
             {/* Header */}
@@ -72,6 +74,46 @@ const page = async () => {
                     <span className="text-sm font-bold text-slate-500 uppercase tracking-wide">Account Status</span>
                 </div>
                 {/*  We could add more stats here later if we fetch them */}
+            </div>
+
+            {/* Quick Actions - Especially for Mobile */}
+            <div className="space-y-4">
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2 px-2">
+                    <HiCog className="text-blue-500" />
+                    Quick Actions
+                </h3>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <Link href="/profile/edit" className="group p-5 premium-card hover:border-blue-500/50 transition-all duration-300">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-4">
+                                <div className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform">
+                                    <HiUserCircle size={28} />
+                                </div>
+                                <div>
+                                    <h4 className="font-bold text-slate-900 dark:text-white">Edit Profile</h4>
+                                    <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">Update your persona info</p>
+                                </div>
+                            </div>
+                            <HiChevronRight className="text-slate-400 group-hover:translate-x-1 transition-transform" size={20} />
+                        </div>
+                    </Link>
+
+                    <Link href="/profile/changePassword" className="group p-5 premium-card hover:border-orange-500/50 transition-all duration-300">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-4">
+                                <div className="w-12 h-12 rounded-2xl bg-orange-50 dark:bg-orange-500/10 flex items-center justify-center text-orange-600 dark:text-orange-400 group-hover:scale-110 transition-transform">
+                                    <HiLockClosed size={28} />
+                                </div>
+                                <div>
+                                    <h4 className="font-bold text-slate-900 dark:text-white">Security</h4>
+                                    <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">Password & Protection</p>
+                                </div>
+                            </div>
+                            <HiChevronRight className="text-slate-400 group-hover:translate-x-1 transition-transform" size={20} />
+                        </div>
+                    </Link>
+                </div>
             </div>
         </div>
     )

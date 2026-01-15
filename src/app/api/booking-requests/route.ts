@@ -4,9 +4,10 @@ import prisma from "@/utils/db";
 import { CreateBookingRequestDto } from "@/utils/Dtos";
 import { varfiyToken } from "@/utils/verfiyToken";
 import { NextRequest, NextResponse } from "next/server";
+import { supabase } from "@/utils/supabase";
 
 
- 
+
 export const GET = async (req: NextRequest) => {
     const isAllowd = IsSuperAdminOrAdminOrManager(req)
 
@@ -108,62 +109,143 @@ export const POST = async (req: NextRequest) => {
         if (!checkIn) return NextResponse.json({ message: "checkIn not Found" }, { status: 404 })
 
         if (!checkOut) return NextResponse.json({ message: "checkOut not Found" }, { status: 404 })
-        if (Number(new Date(checkOut).getTime()) - Number(Number(new Date(checkIn).getTime())) <= 0) return NextResponse.json({ message: "check in is after check out" }, { status: 404 })
 
         const checkInn = new Date(checkIn);
         const checkOutn = new Date(checkOut);
-        // return NextResponse.json({ userId, roomId, checkIn, checkOut }, { status: 500 })
+        const now = new Date();
+
+        // Validate dates
+        if (checkOutn.getTime() <= checkInn.getTime()) {
+            return NextResponse.json({ message: "Check-out must be after check-in" }, { status: 400 })
+        }
+
+        // Check if dates are in the past
+        if (checkInn < now) {
+            return NextResponse.json({ message: "Check-in date cannot be in the past" }, { status: 400 })
+        }
+
+        // Verify user exists
         const IdUser = await prisma.user.findUnique({ where: { id: Number(userId) } })
         if (!IdUser) return NextResponse.json({ message: "User not Found" }, { status: 404 })
 
-        const Room = await prisma.room.findUnique({ where: { id: Number(roomId) } })
-        // return NextResponse.json(Room, { status: 500 })
-        if (!Room) return NextResponse.json({ message: "Room not Found" }, { status: 404 })
-        const IsRoomVar = Room?.status === "booked"
-        // في السمتقبل شوف اذا محجوزة او لا او اذا التواريخ كويسة  
-        if (IsRoomVar) return NextResponse.json({ message: "this Room is booked" }, { status: 400 })
+        // Use transaction to prevent race conditions
+        const result = await prisma.$transaction(async (tx) => {
+            // Get room with lock (using findUnique inside transaction)
+            const Room = await tx.room.findUnique({ where: { id: Number(roomId) } })
 
-        const newRequst = await prisma.bookingRequest.create({
-            data: {
-                userId: Number(userId),
-                roomId: Number(roomId),
-                checkIn: checkInn,
-                checkOut: checkOutn
+            if (!Room) {
+                throw new Error("Room not Found")
             }
-        })
-        await prisma.room.update({
-            where: { id: Number(roomId) }
-            ,
-            data: {
 
-                status: "requested"
+            // Check if room is available
+            if (Room.status !== "available") {
+                throw new Error(`Room is ${Room.status}`)
             }
-        })
 
-        const writerComment = await prisma.user.findUnique({ where: { id: Number(userId) }, select: { name: true } })
-        const room = await prisma.room.findUnique({ where: { id: Number(roomId) }, select: { name: true } })
-        const users = await prisma.user.findMany({ where: { role: "SuperAdmin" }, select: { id: true } })
-        users.map(async (item) => {
-
-
-            await prisma.notification.create({
-                data: {
-                    message: `${writerComment?.name} request book for a room (${room?.name})`,
-                    userId: item.id,
-                    
-                    type: "booking-request"
+            // Check for date overlaps with active bookings
+            const overlappingBookings = await tx.booking.findFirst({
+                where: {
+                    roomId: Number(roomId),
+                    status: "active",
+                    AND: [
+                        { checkIn: { lte: checkOutn } },
+                        { checkOut: { gte: checkInn } }
+                    ]
                 }
             })
+
+            if (overlappingBookings) {
+                throw new Error("Room is already booked for these dates")
+            }
+
+            // Check for overlapping pending requests
+            const overlappingRequests = await tx.bookingRequest.findFirst({
+                where: {
+                    roomId: Number(roomId),
+                    status: "pending",
+                    AND: [
+                        { checkIn: { lte: checkOutn } },
+                        { checkOut: { gte: checkInn } }
+                    ]
+                }
+            })
+
+            if (overlappingRequests) {
+                throw new Error("There is already a pending request for these dates")
+            }
+
+            // Create booking request
+            const newRequst = await tx.bookingRequest.create({
+                data: {
+                    userId: Number(userId),
+                    roomId: Number(roomId),
+                    checkIn: checkInn,
+                    checkOut: checkOutn
+                }
+            })
+
+            // Update room status
+            await tx.room.update({
+                where: { id: Number(roomId) },
+                data: { status: "requested" }
+            })
+
+            return newRequst
         })
-        
-        return NextResponse.json({ message: "add requst", newRequst }, { status: 201 })
+
+        // Send notifications after successful transaction
+        const writerComment = await prisma.user.findUnique({ where: { id: Number(userId) }, select: { name: true } })
+        const room = await prisma.room.findUnique({ where: { id: Number(roomId) }, select: { name: true } })
+        const users = await prisma.user.findMany({
+            where: {
+                role: "SuperAdmin",
+                id: { not: Number(userId) }
+            },
+            select: { id: true }
+        })
+
+        // Create all notifications at once
+        const notifications = users.map(item => ({
+            message: `${writerComment?.name} request book for a room (${room?.name})`,
+            userId: item.id,
+            type: "booking-request",
+            link: `/dashboard/booking-requests`
+        }))
+
+        await prisma.notification.createMany({ data: notifications })
+
+        // Broadcast notifications
+        for (const item of users) {
+            const notification = await prisma.notification.findFirst({
+                where: { userId: item.id },
+                orderBy: { createdAt: 'desc' }
+            })
+
+            await supabase
+                .channel(`notifications-${item.id}`)
+                .send({
+                    type: 'broadcast',
+                    event: 'new-notification',
+                    payload: notification,
+                });
+        }
+
+        return NextResponse.json({ message: "add requst", newRequst: result }, { status: 201 })
 
     } catch (error) {
         console.log("****************");
-
         console.log(error);
 
-        return NextResponse.json({ message: "Error in inrenal Server", error }, { status: 500 })
+        if (error instanceof Error) {
+            if (error.message === "Room not Found") {
+                return NextResponse.json({ message: error.message }, { status: 404 })
+            }
+            if (error.message.includes("booked") || error.message.includes("requested") || error.message.includes("pending")) {
+                return NextResponse.json({ message: error.message }, { status: 400 })
+            }
+        }
+
+        return NextResponse.json({ message: "Error in internal Server", error }, { status: 500 })
     }
 
 }

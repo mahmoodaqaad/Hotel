@@ -2,6 +2,7 @@
 import prisma from "@/utils/db";
 import { ARTICLE_PER_PAGE } from "@/utils/consant";
 import { Prisma } from "@prisma/client";
+import { serializePrisma } from "@/utils/serialize";
 
 interface GetRequestsParams {
     pageNumber?: string | number;
@@ -25,7 +26,7 @@ export const getAllBookingRequests = async (params: GetRequestsParams = {}) => {
                 room: { select: { name: true, price: true } }
             }
         });
-        return requests;
+        return serializePrisma(requests);
     } catch (error) {
         console.error("Error fetching booking requests:", error);
         return [];

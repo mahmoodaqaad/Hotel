@@ -36,7 +36,7 @@ const ShowDetalits = ({ room, user }: Props) => {
 
             {/* Right Column: Room Info */}
             <div className="w-full lg:w-1/2 p-8 md:p-12 lg:p-16 flex flex-col">
-                <div className="flex items-start justify-between mb-8">
+                <div className="flex items-start justify-between flex-col md:flex-row mb-8">
                     <div className="flex-1">
                         <div className="flex items-center gap-4 mb-4">
                             <Rating ava={room.averageRating} />
@@ -78,7 +78,7 @@ const ShowDetalits = ({ room, user }: Props) => {
                         </div>
                     </div>
                     <div className="w-full md:w-auto">
-                        <Booking_list room={room} userId={user?.id} />
+                        <Booking_list room={room} user={user} />
                     </div>
                 </div>
             </div>

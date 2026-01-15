@@ -58,6 +58,8 @@ model User {
   role      Role     @default(User)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  lastSeen  DateTime @default(now())
+
 
   bookings        Booking[]
   bookingRequests BookingRequest[]

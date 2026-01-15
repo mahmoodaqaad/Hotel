@@ -17,7 +17,6 @@ interface prpops {
     }
 }
 const PaymentForm = ({ payment }: prpops) => {
-    console.log(payment);
 
     const router = useRouter();
 

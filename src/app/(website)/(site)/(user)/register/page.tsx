@@ -117,7 +117,7 @@ const RegisterForm = () => {
 
 const RegisterPage = () => {
   return (
-    <main className="relative min-h-screen flex items-center justify-center overflow-hidden bg-slate-900">
+    <main className="mt-9 relative min-h-screen flex items-center justify-center overflow-hidden bg-slate-900">
       {/* Background Image with Blur */}
       <div className="absolute inset-0 z-0">
         <Image

@@ -1,17 +1,16 @@
 "use client"
 
 import { User } from '@prisma/client'
-import React, { useContext, useEffect, useState, useTransition, useCallback } from 'react'
+import React, { useContext, useTransition, useCallback, useState, useEffect } from 'react'
 import UnData from '../../../utils/Tools/UnData'
 import PaginationPage from '../../../utils/pagination/Pagination'
 import { DOMAIN } from '@/utils/consant'
-// Removed static import
 import { ModeContext } from '@/Context/ModeContext'
 import axios from 'axios'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { toast } from 'react-toastify'
 import SearchTable from './SearchTable'
-import { socket } from '@/lib/socketClints'
+import { SocketContext } from '@/Context/SocketContext'
 import TableRow from './TableRow'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -40,26 +39,17 @@ const FilterConfig: Record<string, { key: string, options: string[] }> = {
 
 const TableShow = (props: Props) => {
     const { data, singleUser, action, header, one, tow, three = "", four = "", path, page, count, showOtherTable = false } = props
-    const [onlineUser, setOnlineUser] = useState<(User & { socketId: string })[]>([])
     const [isPending, startTransition] = useTransition()
 
-    const context = useContext(ModeContext)
-    if (!context) {
+    const contextSocket = useContext(SocketContext)
+    const onlineUser = contextSocket?.onlineUsers || []
+
+    const contextMode = useContext(ModeContext)
+    if (!contextMode) {
         throw new Error("Error in mode context")
     }
-    const { isDarkmode } = context
+    const { isDarkmode } = contextMode
     const router = useRouter()
-
-    useEffect(() => {
-        socket.on("getOnlineUser", (res: (User & { socketId: string })[]) => {
-            setOnlineUser(res)
-        })
-        return () => {
-            socket.off("getOnlineUser")
-        }
-    }, [])
-
-
 
     const handleUpdateStatus = useCallback(async (id: number, comf: boolean) => {
         const Swal = (await import('sweetalert2')).default
@@ -322,11 +312,7 @@ const TableShow = (props: Props) => {
                     animate={{ opacity: 1 }}
                     className='flex justify-center mt-8'
                 >
-                    {
-
-
-                        <PaginationPage path={path} total={count} page={page} />
-                    }
+                    <PaginationPage path={path} total={count} page={page} />
                 </motion.div>
             )}
         </div>

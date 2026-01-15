@@ -2,6 +2,7 @@
 import prisma from "@/utils/db";
 import { ARTICLE_PER_PAGE } from "@/utils/consant";
 import { Prisma } from "@prisma/client";
+import { serializePrisma } from "@/utils/serialize";
 
 interface GetPaymentsParams {
     pageNumber?: string | number;
@@ -46,7 +47,7 @@ export const getAllPayments = async (params: GetPaymentsParams = {}) => {
                 }
             }
         });
-        return payments;
+        return serializePrisma(payments);
     } catch (error) {
         console.error("Error fetching payments:", error);
         return [];
@@ -65,7 +66,7 @@ export const getSinglePayment = async (id: string | number) => {
                 booking: true
             }
         });
-        return payment;
+        return serializePrisma(payment);
     } catch (error) {
         console.error("Error fetching single payment:", error);
         return null;

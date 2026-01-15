@@ -1,15 +1,19 @@
-"use client"
 
 import React from "react";
 import SideBar from "@/components/WebSite/profile/SideBar/SideBar";
+import { varfiyMyAccount } from "@/utils/verfiyToken";
+import { redirect } from "next/navigation";
+import { User } from "@prisma/client";
 
-export default function ProfileLayout({
+export default async function ProfileLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
 }>) {
+    const user = await varfiyMyAccount() as unknown as User
+    if (!user) redirect("/login")
     return (
-        <main className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-[120px] pb-24 md:pb-0">
+        <main className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-[120px] pb-24 md:pb-0" >
             <div className="container sm:max-w-[1200px] lg:max-w-[1400px] mx-auto px-4 md:px-6">
                 <div className="flex flex-col md:flex-row gap-8">
                     {/* Sidebar container */}
@@ -23,6 +27,6 @@ export default function ProfileLayout({
                     </div>
                 </div>
             </div>
-        </main>
+        </main >
     );
 }

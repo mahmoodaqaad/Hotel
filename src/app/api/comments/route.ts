@@ -1,82 +1,72 @@
-import { socket } from "@/lib/socketClints";
 import prisma from "@/utils/db";
 import { NextRequest, NextResponse } from "next/server";
+import { supabase } from "@/utils/supabase";
 
 export const POST = async (req: NextRequest) => {
-
     try {
+        const body = await req.json();
+        const { text, userId, roomId } = body;
 
-        const { text, userId, roomId } = await req.json() as {
-            text: string,
-            userId: number,
-            roomId: number,
-
+        // Validate comment text
+        if (!text || typeof text !== 'string' || text.trim().length === 0) {
+            return NextResponse.json({ message: "Comment cannot be empty" }, { status: 400 })
         }
-        await prisma.comment.create({
+
+        if (text.trim().length > 1000) {
+            return NextResponse.json({ message: "Comment too long (max 1000 characters)" }, { status: 400 })
+        }
+
+        // Minimal creation
+        const comment = await prisma.comment.create({
             data: {
-                text,
-                userId,
-                roomId,
+                text: text.trim(),
+                userId: Number(userId),
+                roomId: Number(roomId),
             }
-        })
-        const writerComment = await prisma.user.findUnique({ where: { id: Number(userId) }, select: { name: true } })
-        const room = await prisma.room.findUnique({ where: { id: Number(roomId) }, select: { name: true, id: true } })
-        const users = await prisma.user.findMany({ where: { role: "SuperAdmin" }, select: { id: true } })
+        });
 
+        // Add Notification for Admins
+        const room = await prisma.room.findUnique({ where: { id: Number(roomId) }, select: { name: true } });
+        const user = await prisma.user.findUnique({ where: { id: Number(userId) }, select: { name: true } });
+        const admins = await prisma.user.findMany({
+            where: {
+                role: "SuperAdmin",
+                id: { not: Number(userId) }
+            },
+            select: { id: true }
+        });
 
-        const messageNotif = `${writerComment?.name} Comment for a room (${room?.name})`
+        // Create all notifications at once
+        const notifications = admins.map(admin => ({
+            message: `${user?.name} commented on room ${room?.name}`,
+            userId: admin.id,
+            type: "comment",
+            link: `/rooms/${roomId}`
+        }))
 
-        // const nofictionForDataBase = []
-        // users.map(async (item) => {
+        await prisma.notification.createMany({ data: notifications })
 
+        // Broadcast notifications
+        for (const admin of admins) {
+            const notification = await prisma.notification.findFirst({
+                where: { userId: admin.id },
+                orderBy: { createdAt: 'desc' }
+            })
 
-        //     const newd = await prisma.notification.create({
-        //         data: {
+            await supabase.channel(`notifications-${admin.id}`).send({
+                type: 'broadcast',
+                event: 'new-notification',
+                payload: notification,
+            });
+        }
 
-        //             message: messageNotif,
-        //             userId: item.id,
-        //             type: "booking-requesr",
-        //         }, select: {
-        //             id: true,
-        //             message: true,
-        //             isRead: true,
-        //             userId: true,
-        //             createdAt: true,
-        //             type: true,
-        //         }
-
-        //     })
-
-        //     await nofictionForDataBase.push(newd)
-
-        // })
-
-
-
-        const newNofticetion = await prisma.notification.create({
-            data: {
-
-                message: messageNotif,
-                userId: users[0]?.id,
-                type: "booking-requesr",
-            }, select: {
-                id: true,
-                message: true,
-                isRead: true,
-                userId: true,
-                createdAt: true,
-                type: true,
-            }
-
-        })
-        console.log("d========================>", newNofticetion);
-        return NextResponse.json({ message: "Comment Added", notf: { newNofticetion, roomId: room?.id } }, { status: 201 })
-
-
-    } catch (error) {
-        return NextResponse.json({ message: "500 intrenal error", error }, { status: 500 })
-
+        return NextResponse.json({ message: "Comment Added", comment }, { status: 201 });
+    } catch (error: any) {
+        console.error("FATAL ERROR:", error);
+        return NextResponse.json({
+            message: "Server Error",
+            error: error.message,
+            stack: error.stack
+        }, { status: 500 });
     }
-
-}
-
+};

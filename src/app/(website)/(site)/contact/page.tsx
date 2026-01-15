@@ -3,10 +3,9 @@ import React from 'react'
 
 const page = () => {
     return (
-        <div className=' mt-[40px]'>
+        <main className='min-h-screen pt-[80px] lg:pt-[100px] bg-slate-50 dark:bg-slate-950'>
             <ConectForm />
-
-        </div>
+        </main>
     )
 }
 

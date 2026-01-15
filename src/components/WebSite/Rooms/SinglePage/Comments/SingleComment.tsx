@@ -63,11 +63,11 @@ const SingleComment = ({ item, user }: { item: CommentWithUser, user: User }) =>
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-2">
                         <h4 className="text-lg font-bold text-slate-900 dark:text-white truncate pr-4">
-                            {item.user.name}
+                            {item?.user?.name}
                         </h4>
-                        <div className="flex items-center gap-2 text-slate-400 dark:text-slate-500 font-bold text-[10px] uppercase tracking-widest bg-slate-100 dark:bg-white/5 px-3 py-1 rounded-full">
+                        <div className="hidden md:none md:flex items-center gap-2 text-slate-400 dark:text-slate-500 font-bold text-[10px] uppercase tracking-widest bg-slate-100 dark:bg-white/5 px-3 py-1 rounded-full">
                             <HiClock size={12} />
-                            {new Date(item.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                            {new Date(item?.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                         </div>
                     </div>
 
@@ -93,6 +93,10 @@ const SingleComment = ({ item, user }: { item: CommentWithUser, user: User }) =>
                         </motion.button>
                     </div>
                 )}
+            </div>
+            <div className="md:hidden flex justify-end items-center gap-2 text-slate-400 dark:text-slate-500 font-bold text-[10px] uppercase tracking-widest  dark:bg-white/5 px-3 py-1 rounded-sm md:rounded-full">
+                <HiClock size={12} />
+                {new Date(item?.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
             </div>
         </motion.div>
     )

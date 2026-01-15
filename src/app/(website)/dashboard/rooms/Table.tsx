@@ -7,7 +7,6 @@ import { User } from '@prisma/client'
 const Table = ({ rooms, user, action = true, pageNumber = 1, count, showOtherTable }: { rooms: RoomWithReltion[], user: User, } & tableProps) => {
 
 
-    console.log(rooms);
 
     const head = [
         { key: "id", value: "ID" },

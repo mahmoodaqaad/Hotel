@@ -4,14 +4,14 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "dev:socket": "set NODE_OPTIONS=--loader ts-node/esm --trace-warnings && ts-node server.mts",
     "build": "next build",
-    "start": "node --loader ts-node/esm server.mts",
+    "start": "next start",
     "lint": "next lint",
     "postinstall": "prisma generate"
   },
   "dependencies": {
     "@prisma/client": "^6.4.1",
+    "@supabase/supabase-js": "^2.90.1",
     "axios": "^1.8.3",
     "bcryptjs": "^3.0.2",
     "cookie": "^1.0.2",
@@ -26,9 +26,8 @@
     "react-image-gallery": "^1.4.0",
     "react-paginate": "^8.3.0",
     "react-toastify": "^11.0.3",
-    "socket.io": "^4.8.1",
-    "socket.io-client": "^4.8.1",
     "sweetalert2": "^11.6.13",
+    "swr": "^2.3.8",
     "ts-node": "^10.9.2",
     "xlsx": "^0.18.5",
     "zod": "^3.24.2"
@@ -40,8 +39,6 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@types/socket.io": "^3.0.1",
-    "@types/socket.io-client": "^1.4.36",
     "eslint": "^9",
     "eslint-config-next": "15.1.7",
     "postcss": "^8",

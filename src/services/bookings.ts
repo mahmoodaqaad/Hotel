@@ -1,7 +1,7 @@
-
 import prisma from "@/utils/db";
 import { ARTICLE_PER_PAGE } from "@/utils/consant";
 import { Prisma } from "@prisma/client";
+import { serializePrisma } from "@/utils/serialize";
 
 // Types for params
 interface GetBookingsParams {
@@ -13,6 +13,7 @@ interface GetBookingsParams {
 export const getAllBookings = async (params: GetBookingsParams = {}) => {
     const {
         pageNumber = 1,
+        search = "",
     } = params;
 
     const take = ARTICLE_PER_PAGE;
@@ -21,8 +22,26 @@ export const getAllBookings = async (params: GetBookingsParams = {}) => {
     // Booking sort order defaulting to newest first
     const orderBy: Prisma.BookingOrderByWithRelationInput = { createdAt: 'desc' };
 
+    const where: Prisma.BookingWhereInput = {};
+
+    if (search) {
+        where.OR = [
+            {
+                room: {
+                    name: { contains: search, mode: 'insensitive' }
+                }
+            },
+            {
+                user: {
+                    name: { contains: search, mode: 'insensitive' }
+                }
+            }
+        ];
+    }
+
     try {
         const bookings = await prisma.booking.findMany({
+            where,
             skip,
             take,
             orderBy,
@@ -31,7 +50,7 @@ export const getAllBookings = async (params: GetBookingsParams = {}) => {
                 room: { select: { name: true, price: true } }
             }
         });
-        return bookings;
+        return serializePrisma(bookings);
     } catch (error) {
         console.error("Error fetching bookings:", error);
         return [];
@@ -52,7 +71,7 @@ export const getSingleBooking = async (id: string | number) => {
                 payment: true,
             }
         });
-        return booking;
+        return serializePrisma(booking);
     } catch (error) {
         console.error("Error fetching booking:", error);
         return null;

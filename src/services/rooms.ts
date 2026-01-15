@@ -1,6 +1,7 @@
 import prisma from "@/utils/db";
 import { ARTICLE_PER_PAGE } from "@/utils/consant";
-import { Prisma } from "@prisma/client";
+import { Prisma, RoomStatus } from "@prisma/client";
+import { serializePrisma } from "@/utils/serialize";
 
 // Types for params to avoid 'any'
 interface GetRoomsParams {
@@ -41,16 +42,7 @@ export const getAllRooms = async (params: GetRoomsParams = {}) => {
 
     // 2. Status Filter
     if (filter) {
-        // Explicit cast to match enum if needed, or string literal
-        where.status = filter as RoomType; // Actually status is RoomStatus, wait. Filter is usually status?
-        // Looking at page.tsx in RoomFilter, type is passed as type. 
-        // In this getAllRooms context, filter might be status? 
-        // In previous code `where.status = filter as any`.
-        // Let's assume filter param maps to status.
-        where.status = filter as any; // Reverting to any if I can't import Enum right now easily or just leave it.
-        // Actually, let's look at imports. 
-        // import { RoomType } from "@prisma/client"; is unused in rooms.ts? No it's implicitly used.
-        // Let's import RoomStatus.
+        where.status = filter as RoomStatus;
     }
 
     try {
@@ -65,7 +57,7 @@ export const getAllRooms = async (params: GetRoomsParams = {}) => {
                 images: true
             }
         });
-        return rooms;
+        return serializePrisma(rooms);
     } catch (error) {
         console.error("Error fetching rooms:", error);
         return [];
@@ -81,15 +73,36 @@ export const getSingleRoom = async (id: string | number) => {
         const room = await prisma.room.findUnique({
             where: { id: Number(id) },
             include: {
+
                 images: true,
                 Rating: true,
                 bookingRequests: {
+                    where: {
+                        status: "pending" // Only include active/pending booking requests
+                    },
                     select: {
                         userId: true,
                         roomId: true,
-                        id: true
+                        id: true,
+                        status: true
                     }
                 },
+                bookings: {
+                    where: {
+                        status: "active" // Only include active bookings
+                    },
+                    select: {
+                        userId: true,
+                        roomId: true,
+                        id: true,
+                        status: true,
+                        checkIn: true,
+                        checkOut: true
+                    }
+                },
+
+
+
                 comments: {
                     include: { user: true }
                 }
@@ -103,11 +116,11 @@ export const getSingleRoom = async (id: string | number) => {
         const totalStars = ratings.reduce((sum, rating) => sum + rating.ratingValue, 0);
         const averageRating = totalRatings > 0 ? totalStars / totalRatings : 0;
 
-        return {
+        return serializePrisma({
             ...room,
             averageRating: Number(averageRating.toFixed(1)),
             totalRatings
-        };
+        });
     } catch (error) {
         console.error("Error fetching room:", error);
         return null;
@@ -117,7 +130,7 @@ export const getSingleRoom = async (id: string | number) => {
 export const searchRooms = async (search: string) => {
     if (!search) return [];
 
-    return prisma.room.findMany({
+    const rooms = await prisma.room.findMany({
         include: {
             images: true
         },
@@ -129,6 +142,7 @@ export const searchRooms = async (search: string) => {
             ]
         }
     })
+    return serializePrisma(rooms);
 }
 
 interface FilterRoomsParams {

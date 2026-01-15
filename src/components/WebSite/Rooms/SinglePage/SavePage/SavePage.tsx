@@ -35,7 +35,7 @@ const SavePage = ({ user, room }: { room: Room, user: User & { Saved: Saved[] } 
     }
 
     return (
-        <div className=''>
+        <div className='w-fit ml-auto'>
 
             <div
                 onClick={handleSaved}

@@ -1,6 +1,5 @@
 "use client"
 
-import { socket } from '@/lib/socketClints'
 import { DOMAIN } from '@/utils/consant'
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
@@ -25,14 +24,7 @@ const CreateComment = ({ roomId, userId }: { roomId: number, userId: number }) =
 
     try {
       setLoading(true)
-      const res = await axios.post(`${DOMAIN}/api/comments`, { roomId, userId, text })
-
-      const notf = res?.data?.notf
-      if (notf) {
-        const link = "rooms/" + notf.roomId
-        const data = { ...notf.newNofticetion, link }
-        socket.emit("createComment", data)
-      }
+      await axios.post(`${DOMAIN}/api/comments`, { roomId, userId, text })
 
       setText("")
       toast.success("Comment added successfully!")
@@ -59,7 +51,7 @@ const CreateComment = ({ roomId, userId }: { roomId: number, userId: number }) =
           }}
         />
 
-        <div className="flex items-center justify-between px-6 py-4 bg-slate-50 dark:bg-white/5 border-t border-slate-100 dark:border-white/5">
+        <div className="flex-col sm:flex-row flex items-center justify-between px-6 py-4 bg-slate-50 dark:bg-white/5 border-t border-slate-100 dark:border-white/5">
           <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
             Logged in as User #{userId || 'Guest'}
           </p>

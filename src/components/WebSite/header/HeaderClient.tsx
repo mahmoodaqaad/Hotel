@@ -9,7 +9,6 @@ import ThemeMode from '@/components/Dashboard/NavBarDashboard/ThemeMode'
 import Logout from '@/components/Auth/Logout/Logout'
 import Notifiction from '@/components/Notifiction/Notifiction'
 import { User, Notification } from '@prisma/client'
-import { socket } from '@/lib/socketClints'
 import { IsSuperAdminOrAdminOrManagerPage } from '@/utils/roles'
 
 import { usePathname } from 'next/navigation'
@@ -27,7 +26,6 @@ const HeaderClient = ({ user }: HeaderClientProps) => {
     const isHomePage = pathname === '/'
 
     // Determine active state: Scrolled OR Not on Home Page
-    // If we are NOT on home page, we always want the "scrolled" (solid) style
     const isSolid = isScrolled || !isHomePage
 
     useEffect(() => {
@@ -35,13 +33,8 @@ const HeaderClient = ({ user }: HeaderClientProps) => {
             setIsScrolled(window.scrollY > 50)
         }
         window.addEventListener('scroll', handleScroll)
-
-        if (user) {
-            socket.emit("addNewUser", user)
-        }
-
         return () => window.removeEventListener('scroll', handleScroll)
-    }, [user])
+    }, [])
 
     const navLinks = [
         { name: 'Home', href: '/' },
@@ -53,15 +46,15 @@ const HeaderClient = ({ user }: HeaderClientProps) => {
 
     return (
         <header
-            className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${isSolid
+            className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${(isSolid && !isMenuOpen)
                 ? 'bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg py-3 shadow-lg'
                 : 'bg-transparent py-6'
                 }`}
         >
-            <div className="container mx-auto px-6 flex items-center justify-between">
+            <div className={`container mx-auto px-6 flex items-center justify-between  `}>
                 {/* Logo */}
-                <Link href="/" className="relative z-50 group">
-                    <h1 className={`text-2xl font-bold tracking-tighter transition-colors duration-300 ${isSolid ? 'text-slate-900 dark:text-white' : 'text-white'
+                <Link href="/" className={`  p-4 relative z-50 group`}>
+                    <h1 className={`text-2xl  font-bold tracking-tighter transition-colors duration-300 ${isMenuOpen ? "text-black dark:text-white" : isSolid ? 'text-slate-900 dark:text-white' : 'text-white'
                         }`}>
                         Harbor<span className="text-blue-500">Lights</span>
                     </h1>
@@ -89,7 +82,6 @@ const HeaderClient = ({ user }: HeaderClientProps) => {
                         <ThemeMode />
                     </div>
 
-                    {user && <Notifiction user={user} />}
 
 
                     {user ? (
@@ -135,12 +127,14 @@ const HeaderClient = ({ user }: HeaderClientProps) => {
 
                     {/* Mobile Menu Toggle */}
                     <button
-                        className={`lg:hidden text-2xl z-50 ${isSolid ? 'text-slate-900 dark:text-white' : 'text-white'
+                        className={`lg:hidden text-2xl z-50 ${!isMenuOpen ? "dark:text-white text-black" : 'text-slate-900 dark:text-white '
                             }`}
                         onClick={() => setIsMenuOpen(!isMenuOpen)}
                     >
                         {isMenuOpen ? <HiX /> : <HiMenuAlt3 />}
                     </button>
+                    {user && <Notifiction user={user} />}
+
                 </div>
             </div>
 

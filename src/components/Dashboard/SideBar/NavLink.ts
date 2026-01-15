@@ -1,12 +1,13 @@
-import { FaUsers, FaBed, FaMoneyBillWave, FaChartBar, FaCalendarAlt, FaCog, FaClipboardList, FaHotel, FaCalendarCheck, FaFileSignature, FaUserCircle } from 'react-icons/fa';
+import { FaUsers, FaBed, FaMoneyBillWave, FaChartBar, FaUserPlus, FaClipboardList, FaHotel, FaCalendarCheck, FaFileSignature, FaUserCircle } from 'react-icons/fa';
 import { MdOutlineRoomService } from 'react-icons/md';
-import { FaEarthAmericas, FaUserPlus } from 'react-icons/fa6';
+import { FaEarthAmericas } from 'react-icons/fa6';
 export const links = [
-    { href: "/", label: "Web Site", Icon: FaEarthAmericas, allowedRole: ["SuperAdmin", "Admin", "Manager"] },
+    // { href: "/", label: "Web Site", Icon: FaEarthAmericas, allowedRole: ["SuperAdmin", "Admin", "Manager"] },
 
     {
         href: "/dashboard/users?pageNumber=1", label: "Users Management", Icon: FaUsers, allowedRole: ["SuperAdmin", "Admin", "Manager"]
     },
+    { href: "/dashboard/online-users", label: "Online Users", Icon: FaChartBar, allowedRole: ["SuperAdmin", "Admin", "Manager"] },
     { href: "/dashboard/users/adduser", label: "Add User", Icon: FaUserPlus, allowedRole: ["SuperAdmin", "Admin"] },
 
     { href: "/dashboard/rooms?pageNumber=1", label: "Rooms", Icon: MdOutlineRoomService, allowedRole: ["SuperAdmin", "Admin", "Manager"] },

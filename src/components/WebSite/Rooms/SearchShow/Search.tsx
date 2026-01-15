@@ -16,7 +16,7 @@ const Search = ({ result }: { result: room[] }) => {
             <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className='w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 mt-2 absolute z-50 max-h-[420px] overflow-y-auto rounded-2xl shadow-2xl backdrop-blur-xl'
+                className='w-[120%] md:w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 mt-2 absolute z-50 max-h-[420px] overflow-y-auto rounded-2xl shadow-2xl backdrop-blur-xl'
             >
                 <div className="p-2 space-y-1">
                     {result.map((item, i) => (

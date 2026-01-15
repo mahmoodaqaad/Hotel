@@ -1,7 +1,7 @@
 "use client"
 
 import { DOMAIN } from '@/utils/consant'
-import { BookingRequest, Room } from '@prisma/client'
+import { Booking, BookingRequest, Room, User } from '@prisma/client'
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
@@ -10,21 +10,24 @@ import { toast } from 'react-toastify'
 // dynamic import
 import { motion, AnimatePresence } from 'framer-motion'
 
-const Booking_list = ({ room, userId }: { room: Room & { bookingRequests: BookingRequest[] }, userId: number }) => {
+const Booking_list = ({ room, user }: { room: Room & { bookingRequests: BookingRequest[], bookings?: Booking[] }, user: User }) => {
   const router = useRouter()
   const [showModal, setShowModal] = useState(false)
   const [checkIn, setCheckIn] = useState("")
   const [checkOut, setCheckOut] = useState("")
   const [loading, setLoading] = useState(false)
 
-  const BookRequest = room.bookingRequests.find(item => item.roomId === room.id && item.userId === userId)
-  const [isBooked, setIsBooked] = useState(!!BookRequest)
+  const BookRequest = room.bookingRequests.find(item => item.roomId === room.id && item.userId === user.id)
+  const ActiveBooking = room.bookings?.find(item => item.roomId === room.id && item.userId === user.id && item.status === "active")
+
+  const hasActiveBooking = !!BookRequest || !!ActiveBooking
+  const [isBooked, setIsBooked] = useState(hasActiveBooking) // If BookRequest or ActiveBooking exists, show it
 
   const handleBook = async (e: React.FormEvent) => {
     e.preventDefault()
     if (loading) return
 
-    if (!userId) {
+    if (!user?.id) {
       toast.error("Please login to book a room")
       return router.push("/login")
     }
@@ -43,7 +46,7 @@ const Booking_list = ({ room, userId }: { room: Room & { bookingRequests: Bookin
       setShowModal(false)
 
       await axios.post(`${DOMAIN}/api/booking-requests`, {
-        userId,
+        userId: user?.id,
         roomId: room.id,
         checkIn,
         checkOut
@@ -103,6 +106,7 @@ const Booking_list = ({ room, userId }: { room: Room & { bookingRequests: Bookin
       }
     }
   }
+  console.log(user);
 
   return (
     <>
@@ -195,7 +199,17 @@ const Booking_list = ({ room, userId }: { room: Room & { bookingRequests: Bookin
         )}
       </AnimatePresence>
 
-      {isBooked ? (
+      {ActiveBooking ? (
+        <motion.div
+          className="bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-300 font-bold py-4 px-8 rounded-2xl border border-blue-200 dark:border-blue-500/20 flex items-center gap-3"
+        >
+          <HiCheckCircle size={24} className="text-blue-600 dark:text-blue-400" />
+          <div>
+            <div className="font-bold">You have an active booking</div>
+            <div className="text-sm font-normal opacity-80">Check your profile to view booking details</div>
+          </div>
+        </motion.div>
+      ) : isBooked ? (
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
@@ -210,7 +224,7 @@ const Booking_list = ({ room, userId }: { room: Room & { bookingRequests: Bookin
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => setShowModal(true)}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-10 rounded-2xl shadow-xl shadow-blue-500/25 transition-all flex items-center gap-2 group"
+          className="mx-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-10 rounded-2xl shadow-xl shadow-blue-500/25 transition-all flex items-center gap-2 group"
         >
           Book This Room
           <HiChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />

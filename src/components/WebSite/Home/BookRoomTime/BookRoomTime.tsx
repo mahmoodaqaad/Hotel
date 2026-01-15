@@ -87,8 +87,11 @@ const BookRoomTime = () => {
                         onChange={e => setGuest(e.target.value)}
                         className='w-full bg-slate-100 dark:bg-slate-800/50 border-none rounded-2xl py-3 px-4 text-slate-700 dark:text-white focus:ring-2 focus:ring-blue-500/20 transition-all outline-none cursor-pointer appearance-none'
                     >
+                        <option value="" disabled>Select Guest</option>
                         {[1, 2, 3, 4, 5, 6].map(num => (
-                            <option key={num} value={num}>{num} Adult{num > 1 ? 's' : ''}</option>
+                            <>
+                                <option key={num} value={num}>{num} Adult{num > 1 ? 's' : ''}</option>
+                            </>
                         ))}
                     </select>
                 </div>

@@ -31,7 +31,8 @@ export const POST = async (req: NextRequest) => {
             }, select: {
                 id: true,
                 name: true,
-                role: true
+                role: true,
+                email: true
 
             }
 
@@ -39,8 +40,8 @@ export const POST = async (req: NextRequest) => {
         const cookie = setCookie({
             id: newUser.id,
             name: newUser.name,
-            role: newUser?.role
-
+            role: newUser?.role,
+            email: newUser?.email
         })
         return NextResponse.json({ ...newUser, message: "Registered" }, {
             status: 201, headers: { "set-Cookie": cookie }

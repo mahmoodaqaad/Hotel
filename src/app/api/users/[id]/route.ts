@@ -1,6 +1,7 @@
 import { IsSuperAdmin } from "@/utils/CheckRole"
 import prisma from "@/utils/db"
 import { updateUserDto } from "@/utils/Dtos"
+import { supabase } from "@/utils/supabase"
 import { varfiyToken } from "@/utils/verfiyToken"
 import { NextRequest, NextResponse } from "next/server"
 
@@ -65,6 +66,28 @@ export const PUT = async (req: NextRequest, { params: { id } }: Props) => {
 
             }
         })
+
+        // update user info by anther admin
+
+        if (Number(user?.id) !== Number(id)) {
+            // stored in DB 
+            const notification = await prisma.notification.create({
+                data: {
+                    message: `the ${user?.name} (${user?.role}) update your informations `,
+                    link: role !== "User" ? "/dashboard/profile" : "/profile",
+                    type: "auth",
+                    userId: Number(id),
+                }
+            })
+
+            // real time 
+            await supabase.channel(`notifications-${id}`).send({
+                type: "broadcast",
+                event: "new-notification",
+                payload: notification
+            })
+        }
+
         return NextResponse.json({ message: "updated" }, { status: 200 })
 
     } catch (error) {

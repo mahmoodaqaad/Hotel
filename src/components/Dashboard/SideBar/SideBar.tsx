@@ -39,9 +39,9 @@ const SideBar = ({ user }: { user: User }) => {
                     {/* Header/Logo section */}
                     <div className="p-6 md:p-8 flex items-center justify-between">
                         <Link href="/dashboard" className="flex items-center gap-3 group">
-                            <div className="w-10 h-10 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-500/30 group-hover:scale-110 transition-transform">
+                            {/* <div className="w-10 h-10 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-500/30 group-hover:scale-110 transition-transform">
                                 <HiMenuAlt2 size={24} />
-                            </div>
+                            </div> */}
                             <AnimatePresence mode="wait">
                                 {showSidebar && (
                                     <motion.h2
@@ -70,15 +70,16 @@ const SideBar = ({ user }: { user: User }) => {
                             const isAllowed = link.allowedRole.includes(user.role)
                             if (!isAllowed) return null
 
-                            const isActive = pathname === link.href
+                            const isActive = pathname === link.href || pathname === link.href.split("?")[0]
+
 
                             return (
                                 <Link
                                     href={link.href}
                                     key={i}
                                     className={`relative group flex items-center gap-4 p-4 rounded-2xl transition-all duration-300 ${isActive
-                                            ? "text-white shadow-xl shadow-blue-500/25"
-                                            : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5"
+                                        ? "text-white shadow-xl shadow-blue-500/25"
+                                        : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5"
                                         }`}
                                 >
                                     {isActive && (

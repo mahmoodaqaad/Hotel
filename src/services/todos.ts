@@ -1,4 +1,5 @@
 import prisma from "@/utils/db";
+import { serializePrisma } from "@/utils/serialize";
 
 export const getMyTodos = async (userId: number) => {
     try {
@@ -6,7 +7,7 @@ export const getMyTodos = async (userId: number) => {
             where: { userId },
             orderBy: { createdAt: "desc" }
         });
-        return todos;
+        return serializePrisma(todos);
     } catch (error) {
         console.error("Error fetching todos:", error);
         return [];

@@ -5,7 +5,7 @@ import { NextRequest, NextResponse, NextResponse as res } from "next/server";
 
 export const GET = async (req: NextRequest) => {
 
- 
+
     try {
 
         const isAllowd = IsSuperAdminOrAdminOrManager(req)
@@ -33,9 +33,9 @@ export const GET = async (req: NextRequest) => {
                         {
                             booking: {
                                 room: {
-                                    
+
                                     name: {
-                                        
+
                                         contains: search,
                                         mode: "insensitive"
                                     }
@@ -104,7 +104,7 @@ export const GET = async (req: NextRequest) => {
 }
 
 
-export const POSsT = async (req: NextRequest) => {
+export const POST = async (req: NextRequest) => {
 
     try {
         const isAllowd = IsSuperAdminOrAdminOrManager(req)
@@ -115,6 +115,14 @@ export const POSsT = async (req: NextRequest) => {
         }
         const body = await req.json()
         const { method, amount, userId, roomId, bookId } = body
+
+        // Validate amount is positive
+        if (!amount || Number(amount) <= 0) {
+            return NextResponse.json({
+                message: "Payment amount must be positive"
+            }, { status: 400 })
+        }
+
         const book = await prisma.booking.findUnique({ where: { id: Number(bookId) } })
         const user = await prisma.user.findUnique({ where: { id: Number(userId) } })
         const room = await prisma.room.findUnique({ where: { id: Number(roomId) } })
@@ -124,6 +132,15 @@ export const POSsT = async (req: NextRequest) => {
         if (!user) return NextResponse.json({ message: "user not Found" }, { status: 404 })
 
         if (book.paidAmount === book.totalAmount) return NextResponse.json({ message: "Payment has been made in full" }, { status: 400 })
+
+        // Check if amount exceeds remaining balance
+        if (Number(amount) > Number(book.remainingAmount)) {
+            return NextResponse.json({
+                message: "Amount exceeds remaining balance",
+                remainingAmount: book.remainingAmount
+            }, { status: 400 })
+        }
+
         if (Number(book.paidAmount) + Number(amount) > Number(book.totalAmount)) return NextResponse.json({ message: "The amount paid is greater than the requested amount.", method, userId, roomId, amount, book, room }, { status: 400 })
 
         await prisma.payment.create({

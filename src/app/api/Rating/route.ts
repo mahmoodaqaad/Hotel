@@ -1,5 +1,6 @@
-import prisma from '@/utils/db';
-import { NextResponse } from 'next/server';
+import prisma from "@/utils/db";
+import { NextRequest, NextResponse } from "next/server";
+import { supabase } from "@/utils/supabase";
 
 export const POST = async (req: Request) => {
     try {
@@ -7,7 +8,15 @@ export const POST = async (req: Request) => {
         const { roomId, userId, rating } = body;
 
         if (!roomId || !userId || !rating) {
-            return NextResponse.json({ message: 'All Felied Requerd' }, { status: 400 });
+            return NextResponse.json({ message: 'All Fields Required' }, { status: 400 });
+        }
+
+        // Validate rating value
+        const ratingValue = Number(rating)
+        if (!Number.isInteger(ratingValue) || ratingValue < 1 || ratingValue > 5) {
+            return NextResponse.json({
+                message: 'Rating must be an integer between 1 and 5'
+            }, { status: 400 })
         }
 
         // تحقق إذا المستخدم قيّم سابقاً
@@ -29,23 +38,46 @@ export const POST = async (req: Request) => {
             data: {
                 roomId,
                 userId,
-                ratingValue: rating,
+                ratingValue: ratingValue,
             },
         });
+
         const writerComment = await prisma.user.findUnique({ where: { id: Number(userId) }, select: { name: true } })
         const room = await prisma.room.findUnique({ where: { id: Number(roomId) }, select: { name: true } })
-        const users = await prisma.user.findMany({ where: { role: "SuperAdmin" }, select: { id: true } })
-        users.map(async (item) => {
-
-
-            await prisma.notification.create({
-                data: {
-                    message: `${writerComment?.name} Ratin for a room (${room?.name}) ${rating} ${+rating > 1 ? "stars" : "star"}`,
-                    userId: item.id,
-                    type: "booking-requesr"
-                }
-            })
+        const users = await prisma.user.findMany({
+            where: {
+                role: "SuperAdmin",
+                id: { not: Number(userId) }
+            },
+            select: { id: true }
         })
+
+        // Create all notifications at once
+        const notifications = users.map(item => ({
+            message: `${writerComment?.name} rated room (${room?.name}): ${ratingValue} ${ratingValue > 1 ? "stars" : "star"}`,
+            userId: item.id,
+            type: "rating",
+            link: `/dashboard/rooms`
+        }))
+
+        await prisma.notification.createMany({ data: notifications })
+
+        // Broadcast notifications
+        for (const item of users) {
+            const notification = await prisma.notification.findFirst({
+                where: { userId: item.id },
+                orderBy: { createdAt: 'desc' }
+            })
+
+            await supabase
+                .channel(`notifications-${item.id}`)
+                .send({
+                    type: 'broadcast',
+                    event: 'new-notification',
+                    payload: notification,
+                });
+        }
+
         return NextResponse.json({ message: 'تم التقييم بنجاح', rating: newRating });
     } catch (error) {
         console.error(error);

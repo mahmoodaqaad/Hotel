@@ -9,12 +9,12 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async (req: NextRequest) => {
     try {
-        // const isAllowd = IsSuperAdmin(req)
+        const isAllowd = IsSuperAdmin(req)
 
-        // if (!isAllowd) {
+        if (!isAllowd) {
 
-        //     return NextResponse.json({ message: "your not allowd ,for biden" }, { status: 403 })
-        // }
+            return NextResponse.json({ message: "Unauthorized - Admin access required" }, { status: 403 })
+        }
         const pageNumber = Number(req.nextUrl.searchParams.get("pageNumber")) > 0 ? req.nextUrl.searchParams.get("pageNumber") : 1
         const search = req.nextUrl.searchParams.get("search") || ""
         const sort = req.nextUrl.searchParams.get("sort") || "createdAt"
@@ -38,8 +38,6 @@ export const GET = async (req: NextRequest) => {
                 orderBy: {
                     [sort]: order
                 },
-                // skip: ARTICLE_PER_PAGE * (Number(pageNumber) - 1),
-                // take: ARTICLE_PER_PAGE,
                 select: {
                     id: true,
                     name: true,

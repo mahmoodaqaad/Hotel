@@ -8,7 +8,8 @@ import axios from 'axios'
 import { useRouter } from 'next/navigation'
 import React, { useContext, useState } from 'react'
 import Swal from 'sweetalert2'
-
+import { SocketContext } from '@/Context/SocketContext'
+    
 const Logout = () => {
     const router = useRouter()
     const [loading, setLoading] = useState(false)
@@ -18,9 +19,11 @@ const Logout = () => {
     }
     const { isDarkmode } = context
     const context2 = useContext(NavBarContext)
+    const context3 = useContext(SocketContext)
 
     if (!context2) throw new Error("error in context nav bar")
     const { setShowBar } = context2
+
     const logoutHandler = async () => {
         Swal.fire({
             title: "Are you sure?",
@@ -38,7 +41,8 @@ const Logout = () => {
 
                     setLoading(true)
                     await axios.post(`${DOMAIN}/api/users/logout`)
-                    
+
+                    if (context3?.setMyUser) context3.setMyUser(undefined)
 
                     router.replace("/login");
                     router.refresh();

@@ -27,8 +27,6 @@ export const getSingleUser = async (id: string) => {
     const response = await getFetchById("users", id)
     if (response.status === 403) redirect("/dashboard/403")
     if (!response?.ok) {
-        console.log("*******************************************");
-        console.log(response);
         if (response.status !== 404) {
 
             throw new Error("Failed to fetch single user")

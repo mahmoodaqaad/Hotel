@@ -3,7 +3,6 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
-import { socket } from '@/lib/socketClints'
 import { DOMAIN } from '@/utils/consant'
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
@@ -28,10 +27,8 @@ const LoginForm = () => {
             if (!password) return toast.error("Password is required")
 
             setLoading(true)
-            const res = await axios.post(`${DOMAIN}/api/users/login`, { email, password })
-            const user = res?.data.user
+ await axios.post(`${DOMAIN}/api/users/login`, { email, password })
 
-            socket.emit("addNewUser", user)
 
             toast.success("Welcome back! Login successful")
             router.replace("/")
@@ -105,7 +102,7 @@ const LoginForm = () => {
 
 const LoginPage = () => {
     return (
-        <main className="relative min-h-screen flex items-center justify-center overflow-hidden bg-slate-900">
+        <main className="mt-6  relative min-h-screen flex items-center justify-center overflow-hidden bg-slate-900">
             {/* Background Image with Blur */}
             <div className="absolute inset-0 z-0">
                 <Image

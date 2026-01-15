@@ -8,12 +8,12 @@ import { HiHome, HiBookOpen, HiClipboardList, HiBookmark, HiChatAlt2, HiUserCirc
 
 const profileLinks = [
   { label: "Overview", icon: HiHome, href: "/profile" },
-  { label: "My Bookings", icon: HiBookOpen, href: "/profile/booking" },
-  { label: "Booking Requests", icon: HiClipboardList, href: "/profile/requests" },
-  { label: "Saved Rooms", icon: HiBookmark, href: "/profile/saved" },
-  { label: "My Comments", icon: HiChatAlt2, href: "/profile/comments" },
-  { label: "Edit Profile", icon: HiUserCircle, href: "/profile/edit" },
-  { label: "Security", icon: HiLockClosed, href: "/profile/changePassword" }
+  { label: "My Bookings", icon: HiBookOpen, href: "/profile/booking", mobileLabel: "Bookings" },
+  { label: "Booking Requests", icon: HiClipboardList, href: "/profile/requests", mobileLabel: "Requests" },
+  { label: "Saved Rooms", icon: HiBookmark, href: "/profile/saved", mobileLabel: "Saved" },
+  { label: "My Comments", icon: HiChatAlt2, href: "/profile/comments", mobileLabel: "Comments" },
+  { label: "Edit Profile", icon: HiUserCircle, href: "/profile/edit", hideMobile: true },
+  { label: "Security", icon: HiLockClosed, href: "/profile/changePassword", hideMobile: true }
 ];
 
 const SideBar = () => {
@@ -28,10 +28,10 @@ const SideBar = () => {
           {profileLinks.map((link) => {
             const isActive = pathname === link.href
             return (
-              <Link key={link.href} href={link.href} className="group w-full">
+              <Link key={link.href} href={link.href} className={`group w-full ${link.hideMobile ? 'hidden md:block' : ''}`}>
                 <div className={`relative flex flex-col md:flex-row items-center gap-1 md:gap-4 py-4 md:py-3.5 px-4 md:px-6 transition-all duration-300 ${isActive
-                    ? 'text-blue-600 dark:text-blue-400'
-                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                  ? 'text-blue-600 dark:text-blue-400'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                   }`}>
                   {isActive && (
                     <motion.div
@@ -43,7 +43,8 @@ const SideBar = () => {
 
                   <link.icon className={`relative z-10 text-xl md:text-2xl transition-transform group-hover:scale-110 ${isActive ? 'scale-110' : ''}`} />
                   <span className={`relative z-10 text-[10px] md:text-sm font-bold tracking-tight md:tracking-normal ${isActive ? 'opacity-100' : 'opacity-80'}`}>
-                    {link.label}
+                    <span className="hidden md:inline">{link.label}</span>
+                    <span className="md:hidden">{link.mobileLabel || link.label}</span>
                   </span>
 
                   {isActive && (

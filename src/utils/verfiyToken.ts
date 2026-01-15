@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import { JWTPaylod } from "./Types";
 import { NextRequest } from 'next/server';
 import prisma from "@/utils/db";
+import { serializePrisma } from './serialize';
 
 // Types for router compatibility
 interface NextApiRequestLike {
@@ -123,18 +124,19 @@ export async function varfiyMyAccount(includeRelations: boolean = false) {
                                 }
                             }
                         }
-                    }
+                    },
+                    Notification: true
                 }
             });
         } else {
             user = await prisma.user.findUnique({
                 where: { id: userPayload.id },
-                select: { id: true, name: true, email: true, role: true, createdAt: true },
+                select: { id: true, name: true, email: true, role: true, createdAt: true, Notification: true },
             });
         }
 
         if (!user) return null;
-        return user;
+        return serializePrisma(user);
 
     } catch (error) {
         console.log(error);

@@ -1,5 +1,4 @@
 import { Booking, BookingRequest, Comment, Room, RoomImage, User, Rating, Saved } from "@prisma/client";
-import { Comments } from "xlsx";
 
 
 export type OnlienUserType = {
@@ -79,13 +78,14 @@ export interface RoomWithReltionAllAndPorps {
 
     room: RoomWithReltionAll & {
         bookingRequests: BookingRequest[]
+        bookings: Booking[]
     }
     userId: number
 
 }
 export interface UserWithAll {
     Saved: Saved[]
-    comments: Comments[]
+    comments: Comment[]
     bookingRequests: BookingRequest[]
     Booking: Booking[]
 }
@@ -93,18 +93,18 @@ export interface UserWithAll {
 
 export interface UserWithAllRoom {
 
-    Saved: Saved & {
+    Saved: (Saved & {
         room: RoomWithReltionAll
-    }[]
-    comments: Comments & {
+    })[]
+    comments: (Comment & {
         text: string
         room: RoomWithReltionAll
-    }
-    bookingRequests: BookingRequest & {
+    })[]
+    bookingRequests: (BookingRequest & {
         room: RoomWithReltionAll
-    }[]
-    Booking: Booking & {
+    })[]
+    Booking: (Booking & {
         room: RoomWithReltionAll
-    }[]
+    })[]
 
 }

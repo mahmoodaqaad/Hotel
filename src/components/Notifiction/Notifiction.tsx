@@ -19,22 +19,25 @@ const Notifiction = ({ user }: { user: User & { Notification: Notification[] } }
 
 
 
-
     const [showNotification, setShowNotification] = useState(false)
-    const IsNotReadNumber = notifications?.filter(item => !item.isRead)
+    const IsNotReadNumber = (notifications || [])?.filter(item => !item.isRead)
     const router = useRouter()
 
 
 
     useEffect(() => {
-
-        setMyUser(user)
+        if (user) {
+            setMyUser(user)
+        }
     }, [setMyUser, user])
 
     useEffect(() => {
-        setNotification(user?.Notification)
-
-    }, [setNotification, user?.Notification])
+        // Only set initial notifications if we don't have any yet
+        // to avoid overwriting newer SWR updates
+        if (user?.Notification && notifications.length === 0) {
+            setNotification(user.Notification)
+        }
+    }, [user?.Notification, notifications.length, setNotification])
 
     const ReadNotfiction = async (id: number) => {
         try {
@@ -99,13 +102,13 @@ const Notifiction = ({ user }: { user: User & { Notification: Notification[] } }
             {
                 showNotification &&
 
-                <div className='bg-white  w-[350px]  rounded-lg absolute right-0  z-50 text-black dark:text-white border   shadow-lg '>
+                <div className='   bg-white  w-[250px] min-[350px]:w-[350px]  rounded-lg absolute  -right-6  z-50 text-black dark:text-white border   shadow-lg '>
                     <div className=' max-h-[420px] overflow-y-auto scroll-m-8'>
 
                         <div className='text-3xl font-semibold p-3 bg-red-500 text-white' >Notifiction</div>
 
                         {
-                            notifications.map((item, i) => (
+                            (notifications || []).map((item: any, i) => (
                                 <div key={i} className={` ${item.isRead ? "bg-gray-50  dark:bg-gray-900  hover:bg-gray-100 " : "bg-sky-100  dark:bg-sky-950 hover:bg-gray-300 "} border-gray-200 border-2 border-t  transition-all p-1 `}
 
                                     onClick={() => {
