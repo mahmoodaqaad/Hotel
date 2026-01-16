@@ -14,8 +14,8 @@ export function serializePrisma<T>(data: T): T {
     }
 
     // Handle Prisma Decimal
-    if (typeof data === 'object' && 'toNumber' in data && typeof (data as any).toNumber === 'function') {
-        return (data as any).toNumber() as unknown as T;
+    if (data && typeof data === 'object' && 'toNumber' in data && typeof (data as { toNumber: unknown }).toNumber === 'function') {
+        return (data as { toNumber: () => number }).toNumber() as unknown as T;
     }
 
     // Handle Date objects
@@ -24,14 +24,15 @@ export function serializePrisma<T>(data: T): T {
     }
 
     // Handle objects
-    if (typeof data === 'object') {
-        const result: any = {};
-        for (const key in data) {
-            if (Object.prototype.hasOwnProperty.call(data, key)) {
-                result[key] = serializePrisma((data as any)[key]);
+    if (data && typeof data === 'object') {
+        const result = {} as Record<string, unknown>;
+        const obj = data as Record<string, unknown>;
+        for (const key in obj) {
+            if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                result[key] = serializePrisma(obj[key]);
             }
         }
-        return result as T;
+        return result as unknown as T;
     }
 
     return data;

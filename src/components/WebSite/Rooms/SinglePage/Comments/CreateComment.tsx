@@ -29,7 +29,7 @@ const CreateComment = ({ roomId, userId }: { roomId: number, userId: number }) =
       setText("")
       toast.success("Comment added successfully!")
       router.refresh()
-    } catch (error: any) {
+    } catch (error) {
       console.error(error)
       toast.error(error.response?.data?.message || "Failed to add comment")
     } finally {

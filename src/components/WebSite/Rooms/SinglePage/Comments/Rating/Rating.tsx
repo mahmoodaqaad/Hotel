@@ -35,7 +35,7 @@ const Rating = ({ room, user }: { room: Room, user: User }) => {
                 }
             })
             router.refresh()
-        } catch (error: any) {
+        } catch (error) {
             console.error(error)
             toast.error(error.response?.data?.message || "Failed to submit rating")
         } finally {

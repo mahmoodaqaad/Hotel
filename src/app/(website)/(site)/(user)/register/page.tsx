@@ -32,7 +32,7 @@ const RegisterForm = () => {
       toast.success("Account created successfully! Welcome.")
       router.replace("/")
       router.refresh()
-    } catch (error: any) {
+    } catch (error) {
       console.error(error)
       const message = error.response?.data?.message || "Registration failed. Please try again."
       toast.error(message)

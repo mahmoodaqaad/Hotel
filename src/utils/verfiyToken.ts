@@ -41,7 +41,7 @@ export async function varfiyTokenForPage() {
             const { cookies } = await import("next/headers");
             const cookieStore = await cookies();
             token = cookieStore.get("jwt")?.value || "";
-        } catch (_) {
+        } catch {
             console.warn("varfiyTokenForPage called outside App Router context");
             return null;
         }
@@ -53,7 +53,7 @@ export async function varfiyTokenForPage() {
         try {
             const userPayload = jwt.verify(token, privtKey) as JWTPaylod;
             return userPayload || null;
-        } catch (_) {
+        } catch {
             return null;
         }
     } catch (error) {
@@ -69,7 +69,7 @@ export async function varfiyMyAccount(includeRelations: boolean = false) {
             const { cookies } = await import("next/headers");
             const cookieStore = await cookies();
             token = cookieStore.get("jwt")?.value || "";
-        } catch (_) {
+        } catch {
             console.warn("varfiyMyAccount called outside App Router context");
             return null;
         }
@@ -79,7 +79,7 @@ export async function varfiyMyAccount(includeRelations: boolean = false) {
         let userPayload: JWTPaylod;
         try {
             userPayload = jwt.verify(token, privtKey) as JWTPaylod;
-        } catch (_) {
+        } catch {
             return null;
         }
 

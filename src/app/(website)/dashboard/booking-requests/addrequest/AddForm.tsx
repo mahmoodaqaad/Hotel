@@ -63,7 +63,7 @@ const AddForm = () => {
             toast.success("Booking request created successfully")
             router.push("/dashboard/booking-requests?pageNumber=1")
             router.refresh()
-        } catch (error: any) {
+        } catch (error) {
             console.error(error);
             toast.error(error?.response?.data?.message || "Failed to create request");
         } finally {

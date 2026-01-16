@@ -45,8 +45,7 @@ const PaymentForm = () => {
 
 
 
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } catch (error: any) {
+        } catch (error) {
             toast.error(error.response.data.message)
             console.log(error);
 

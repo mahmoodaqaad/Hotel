@@ -1,6 +1,6 @@
 import prisma from "@/utils/db";
 import { ARTICLE_PER_PAGE } from "@/utils/consant";
-import { Prisma, RoomStatus } from "@prisma/client";
+import { Prisma, RoomStatus, RoomType } from "@prisma/client";
 import { serializePrisma } from "@/utils/serialize";
 
 // Types for params to avoid 'any'
@@ -169,7 +169,7 @@ export const getFilteredRooms = async (params: FilterRoomsParams) => {
                 // Looking at page.tsx: <span ...>{type || 'Any Room'}</span>.
                 // But normally specific type is sent. If type is empty string, prisma might find nothing if db has types.
                 // Let's assume strict match if provided.
-                ...(type && { roomType: type as any }),
+                ...(type && { roomType: type as RoomType }),
                 ...(guest && { guest: guest }),
                 OR: [
                     {

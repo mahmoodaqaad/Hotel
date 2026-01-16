@@ -6,7 +6,7 @@ export const getFetchAll = async (key: string, page: string | number = "1", sear
         const { cookies } = await import("next/headers");
         const cookieStore = await cookies();
         token = cookieStore.get("jwt")?.value || "";
-    } catch (e) {
+    } catch {
         // Ignore error if not in App Router context
     }
 
@@ -25,7 +25,7 @@ export const getFetchById = async (key: string, id: string | number) => {
         const { cookies } = await import("next/headers");
         const cookieStore = await cookies();
         token = cookieStore.get("jwt")?.value || "";
-    } catch (e) {
+    } catch {
         // Ignore error if not in App Router context
     }
 

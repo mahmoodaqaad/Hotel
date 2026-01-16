@@ -61,7 +61,7 @@ export const POST = async (req: NextRequest) => {
         }
 
         return NextResponse.json({ message: "Comment Added", comment }, { status: 201 });
-    } catch (error: any) {
+    } catch (error) {
         console.error("FATAL ERROR:", error);
         return NextResponse.json({
             message: "Server Error",
