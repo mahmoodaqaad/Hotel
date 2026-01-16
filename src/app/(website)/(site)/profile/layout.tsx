@@ -10,8 +10,8 @@ export default async function ProfileLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-    const user = await varfiyMyAccount() as unknown as User
-    if (!user) redirect("/login")
+    // const user = await varfiyMyAccount() as unknown as User
+    // if (!user) redirect("/login")
     return (
         <main className="min-h-screen bg-slate-50 dark:bg-slate-950 pt-[120px] pb-24 md:pb-0" >
             <div className="container sm:max-w-[1200px] lg:max-w-[1400px] mx-auto px-4 md:px-6">

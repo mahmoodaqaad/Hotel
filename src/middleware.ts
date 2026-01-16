@@ -8,9 +8,10 @@ export async function middleware(req: NextRequest) {
     // Helper to check if we are on login or register pages
     const isAuthPage = pathname === "/login" || pathname === "/register";
     const isDashboardPage = pathname.startsWith("/dashboard");
+    const isProfile = pathname.startsWith("/profile");
 
     // If it's not a page we care about, skip early
-    if (!isAuthPage && !isDashboardPage) {
+    if (!isAuthPage && !isDashboardPage && !isProfile) {
         return NextResponse.next();
     }
 
@@ -35,7 +36,7 @@ export async function middleware(req: NextRequest) {
     }
 
     // ❌ If unauthenticated user tries to access /dashboard routes -> Redirect to Login
-    if (!user && isDashboardPage) {
+    if ((!user && isDashboardPage )|| (!user && isProfile)) {
         return NextResponse.redirect(new URL("/login", req.url));
     }
 
@@ -43,5 +44,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-    matcher: ["/login", "/register", "/dashboard/:path*"],
+    matcher: ["/login", "/register", "/profile/:path*", "/dashboard/:path*"],
 };

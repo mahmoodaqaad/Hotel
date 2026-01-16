@@ -8,7 +8,7 @@ import { HiMail, HiCalendar, HiBadgeCheck, HiUserCircle, HiChevronRight, HiLockC
 const page = async () => {
 
     const user = await varfiyMyAccount() as unknown as User
-    if (!user) redirect("/login")
+    // if (!user) redirect("/login")
     return (
         <div className="space-y-8">
             {/* Header */}
