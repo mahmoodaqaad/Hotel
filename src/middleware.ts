@@ -36,7 +36,7 @@ export async function middleware(req: NextRequest) {
     }
 
     // ❌ If unauthenticated user tries to access /dashboard routes -> Redirect to Login
-    if ((!user && isDashboardPage )|| (!user && isProfile)) {
+    if ((!user && isDashboardPage) || (!user && isProfile)) {
         return NextResponse.redirect(new URL("/login", req.url));
     }
 
