@@ -20,6 +20,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Hotel Book",
   description: "Hotel Book website for booking hotel",
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({

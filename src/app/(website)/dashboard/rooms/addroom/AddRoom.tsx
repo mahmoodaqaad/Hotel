@@ -35,9 +35,9 @@ const AddRoom = ({ user }: { user: User }) => {
             const uploadPromises = images.map(async (image) => {
                 const formData = new FormData()
                 formData.append("file", image)
-                formData.append("upload_preset", "HotelWithNext")
-                formData.append("cloud_name", "ddoj9gsda")
-                const res = await axios.post(`https://api.cloudinary.com/v1_1/ddoj9gsda/image/upload`, formData);
+                formData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET as string)
+                formData.append("cloud_name", process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME as string)
+                const res = await axios.post(`https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`, formData);
                 return res.data.secure_url;
             })
 

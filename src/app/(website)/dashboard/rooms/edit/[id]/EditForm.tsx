@@ -26,16 +26,15 @@ const EditRoom = ({ room }: { room: RoomWithImages }) => {
     const [name, setName] = useState(room.name)
     const [price, setPrice] = useState(Number(room.price))
     const [discrption, setDiscrption] = useState(room.discrption)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const [imagesServer, setImagesServer] = useState<any[]>(room.images as any[])
+    const [imagesServer, setImagesServer] = useState<RoomImage[]>(room.images)
     const [images, setImages] = useState<File[]>([])
     const [loading, setLoading] = useState(false)
     const router = useRouter()
     const { isDarkmode } = context
 
 
-    const showImageFromServer = imagesServer.map((img: { imageUrl: string, id: string }, i: number) => {
-        async function deleteImgFromServer(id: string) {
+    const showImageFromServer = imagesServer.map((img, i: number) => {
+        async function deleteImgFromServer(id: number) {
             try {
                 const result = await Swal.fire({
                     title: "Are you sure?",
@@ -51,13 +50,17 @@ const EditRoom = ({ room }: { room: RoomWithImages }) => {
 
                 if (result.isConfirmed) {
                     await axios.delete(`${DOMAIN}/api/rooms/images/${id}`)
-                    const newImgServer = imagesServer.filter((img: { id: string }) => img.id !== id)
+                    const newImgServer = imagesServer.filter((img) => img.id !== id)
                     setImagesServer(newImgServer)
                     toast.success("Image deleted")
                 }
-            } catch (error: any) {
+            } catch (error) {
                 console.log(error);
-                toast.error(error.response?.data?.message || "Failed to delete image")
+                if (axios.isAxiosError(error)) {
+                    toast.error(error.response?.data?.message || "Failed to delete image")
+                } else {
+                    toast.error("An unexpected error occurred")
+                }
             }
         }
 
@@ -102,9 +105,9 @@ const EditRoom = ({ room }: { room: RoomWithImages }) => {
                 const uploadPromises = images.map(async (image) => {
                     const formData = new FormData()
                     formData.append("file", image)
-                    formData.append("upload_preset", "HotelWithNext")
-                    formData.append("cloud_name", "ddoj9gsda")
-                    const res = await axios.post(`https://api.cloudinary.com/v1_1/ddoj9gsda/image/upload`, formData);
+                    formData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET as string)
+                    formData.append("cloud_name", process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME as string)
+                    const res = await axios.post(`https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`, formData);
                     return res.data.secure_url;
                 })
                 const urls = await Promise.all(uploadPromises)
@@ -120,9 +123,13 @@ const EditRoom = ({ room }: { room: RoomWithImages }) => {
             router.push("/dashboard/rooms?pageNumber=1")
             router.refresh()
 
-        } catch (e: any) {
+        } catch (e) {
             console.log(e);
-            toast.error(e.response?.data?.message || "Failed to update room")
+            if (axios.isAxiosError(e)) {
+                toast.error(e.response?.data?.message || "Failed to update room")
+            } else {
+                toast.error("An unexpected error occurred")
+            }
         } finally {
             setLoading(false)
         }
