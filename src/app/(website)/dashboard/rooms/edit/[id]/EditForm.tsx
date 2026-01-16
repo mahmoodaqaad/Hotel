@@ -105,9 +105,19 @@ const EditRoom = ({ room }: { room: RoomWithImages }) => {
                 const uploadPromises = images.map(async (image) => {
                     const formData = new FormData()
                     formData.append("file", image)
-                    formData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET as string)
-                    formData.append("cloud_name", process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME as string)
-                    const res = await axios.post(`https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`, formData);
+
+                    const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+                    const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+
+                    if (!uploadPreset || !cloudName) {
+                        console.error("Missing Cloudinary environment variables:", { uploadPreset, cloudName });
+                        throw new Error("Cloudinary configuration is missing. Please check your .env file.");
+                    }
+
+                    formData.append("upload_preset", uploadPreset)
+                    formData.append("cloud_name", cloudName)
+
+                    const res = await axios.post(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, formData);
                     return res.data.secure_url;
                 })
                 const urls = await Promise.all(uploadPromises)

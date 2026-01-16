@@ -9,7 +9,7 @@ import ThemeMode from '@/components/Dashboard/NavBarDashboard/ThemeMode'
 import Logout from '@/components/Auth/Logout/Logout'
 import Notifiction from '@/components/Notifiction/Notifiction'
 import { User, Notification } from '@prisma/client'
-import { IsSuperAdminOrAdminOrManagerPage } from '@/utils/roles'
+import { IsSuperAdminOrAdminOrManagerPage } from '@/utils/CheckRole'
 
 import { usePathname } from 'next/navigation'
 

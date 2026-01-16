@@ -33,13 +33,13 @@ export interface CreateBookingRequestDto {
 
 export interface CreateRoomDto {
     name: string;
-    price: string;
+    price: string | number;
     discrption: string
     imageUrls: string[]; // تخزين روابط الصور بعد رفعها إلى السحابة
 }
 export interface UpdateRoomDto {
     name?: string;
-    price?: string;
+    price?: string | number;
     discrption: string
 
     imageUrls?: string[]; // تخزين روابط الصور بعد رفعها إلى السحابة

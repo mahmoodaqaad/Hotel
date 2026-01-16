@@ -1,7 +1,7 @@
 import NavBarDashboard from "@/components/Dashboard/NavBarDashboard/NavBarDashboard";
 import SideBar from "@/components/Dashboard/SideBar/SideBar";
 import DashboardContextProvider from "@/Context/DashboardContext";
-import { IsSuperAdminOrAdminOrManagerPage } from "@/utils/roles";
+import { IsSuperAdminOrAdminOrManagerPage } from "@/utils/CheckRole";
 import { varfiyMyAccount } from "@/utils/verfiyToken";
 import { User, Notification as PrismaNotification } from "@prisma/client";
 import { redirect } from "next/navigation";

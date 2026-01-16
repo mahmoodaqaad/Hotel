@@ -16,9 +16,9 @@ export const RegisterSchema = z.object({
 })
 export const CreateRoomSchema = z.object({
     name: z.string().min(2),
-    price: z.string(),
-    discrption: z.string().min(6)
-
+    price: z.union([z.string(), z.number()]),
+    discrption: z.string().min(6),
+    imageUrls: z.array(z.string()).min(1, { message: "At least one image is required" })
 })
 export const CreateBookingSchema = z.object({
     userId: z.string(),
