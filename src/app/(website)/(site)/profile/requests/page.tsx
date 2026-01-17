@@ -4,7 +4,6 @@ import { varfiyMyAccount } from '@/utils/verfiyToken'
 import React from 'react'
 
 const page = async () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const user = await varfiyMyAccount(true) as any;
     if (!user) return null;
 
