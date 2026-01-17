@@ -35,7 +35,7 @@ const LoginForm = () => {
             router.refresh()
         } catch (error) {
             console.error(error)
-            const message = (error as any).response?.data?.message || "Login failed. Please try again."
+            const message = (error as { response: { data: { message: string } } }).response?.data?.message || "Login failed. Please try again."
             toast.error(message)
         } finally {
             setLoading(false)
