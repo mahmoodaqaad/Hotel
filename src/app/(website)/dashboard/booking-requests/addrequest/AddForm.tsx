@@ -101,7 +101,7 @@ const AddForm = () => {
                                     value={userId}
                                 >
                                     <option value="" disabled className="dark:bg-slate-900">Choose a Guest...</option>
-                                    {user.map(u => (
+                                    {user?.map(u => (
                                         <option value={u.id} key={u.id} className="dark:bg-slate-900">{u.name}</option>
                                     ))}
                                 </select>

@@ -9,7 +9,7 @@ import { redirect } from "next/navigation";
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
     const user = await varfiyMyAccount() as User & { Notification: PrismaNotification[] }
     if (!user) redirect("/login")
-    if (!IsSuperAdminOrAdminOrManagerPage(user.role)) redirect("/403")
+    if (!IsSuperAdminOrAdminOrManagerPage(user?.role)) redirect("/403")
 
     return (
         <DashboardContextProvider>

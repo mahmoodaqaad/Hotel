@@ -6,7 +6,9 @@ import { HiMail, HiCalendar, HiBadgeCheck, HiUserCircle, HiChevronRight, HiLockC
 
 const page = async () => {
 
-    const user = await varfiyMyAccount() as unknown as User
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const user = await varfiyMyAccount() as any
+    if (!user) return null;
     return (
         <div className="space-y-8">
             {/* Header */}
@@ -33,10 +35,10 @@ const page = async () => {
                     {/* Info */}
                     <div className="flex-1 text-center md:text-left space-y-6 w-full">
                         <div>
-                            <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight mb-1">{user.name}</h2>
+                            <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight mb-1">{user?.name}</h2>
                             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 text-xs font-bold uppercase tracking-wider">
                                 <HiBadgeCheck size={16} />
-                                {user.role}
+                                {user?.role}
                             </span>
                         </div>
 
@@ -47,7 +49,7 @@ const page = async () => {
                                 </div>
                                 <div className="text-left overflow-hidden">
                                     <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Email Address</p>
-                                    <p className="font-semibold text-slate-700 dark:text-slate-200 truncate" title={user.email}>{user.email}</p>
+                                    <p className="font-semibold text-slate-700 dark:text-slate-200 truncate" title={user?.email}>{user?.email}</p>
                                 </div>
                             </div>
 
@@ -57,7 +59,7 @@ const page = async () => {
                                 </div>
                                 <div className="text-left">
                                     <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Member Since</p>
-                                    <p className="font-semibold text-slate-700 dark:text-slate-200">{new Date(user.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                                    <p className="font-semibold text-slate-700 dark:text-slate-200">{new Date(user?.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</p>
                                 </div>
                             </div>
                         </div>

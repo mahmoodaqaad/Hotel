@@ -5,6 +5,7 @@ import React from 'react'
 
 const page = async () => {
     const user = await varfiyMyAccount(true) as any
+    if (!user) return null;
 
     return (
         <div className='pt-[86px] lg:pt-[104px] '>

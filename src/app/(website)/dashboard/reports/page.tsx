@@ -23,6 +23,7 @@ const page = async () => {
   const Booking: BookingtWithRelations[] = await GetBooking(1)
   const BookingRequest: BookingRequestWithRelations[] = await GetRoomsRequest(1)
   const singleUser = await varfiyTokenForPage() as User
+  if (!singleUser) return null;
 
 
   const data = [

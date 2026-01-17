@@ -39,6 +39,8 @@ const UserPage = async ({ searchParams }: SearchProps) => {
 
   const count: number = await getRoomsCount()
   const SignUser = await varfiyTokenForPage() as User
+  if (!SignUser) return null;
+
   return (
     <section >
       <div className='flex items-center justify-between px-2 '>

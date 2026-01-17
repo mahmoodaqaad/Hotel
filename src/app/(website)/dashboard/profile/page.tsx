@@ -7,7 +7,9 @@ import { HiBadgeCheck, HiCalendar, HiMail, HiUserCircle } from 'react-icons/hi';
 
 const page = async () => {
 
-    const user = await varfiyMyAccount() as User;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const user = await varfiyMyAccount() as User | any;
+    if (!user) return null;
 
     return (
         <section className='space-y-8'>
@@ -33,15 +35,15 @@ const page = async () => {
                 {/* Details */}
                 <div className="flex-1 text-center md:text-left space-y-4">
                     <div>
-                        <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">{user.name}</h2>
+                        <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">{user?.name}</h2>
                         <div className="flex items-center justify-center md:justify-start gap-2 mt-2">
                             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-xs font-bold uppercase tracking-wider">
                                 <HiBadgeCheck size={16} />
-                                {user.role}
+                                {user?.role}
                             </span>
                             <span className="text-slate-400">•</span>
                             <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">
-                                {new Date(user.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
+                                {new Date(user?.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
                             </span>
                         </div>
                     </div>
@@ -53,7 +55,7 @@ const page = async () => {
                             </div>
                             <div className="text-left overflow-hidden">
                                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Email</p>
-                                <p className="font-bold text-slate-700 dark:text-slate-200 truncate">{user.email}</p>
+                                <p className="font-bold text-slate-700 dark:text-slate-200 truncate">{user?.email}</p>
                             </div>
                         </div>
                         <div className="flex items-center gap-3 p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-100 dark:border-white/5">
@@ -62,7 +64,7 @@ const page = async () => {
                             </div>
                             <div className="text-left">
                                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Joined</p>
-                                <p className="font-bold text-slate-700 dark:text-slate-200">{new Date(user.createdAt).toLocaleDateString()}</p>
+                                <p className="font-bold text-slate-700 dark:text-slate-200">{new Date(user?.createdAt).toLocaleDateString()}</p>
                             </div>
                         </div>
                     </div>

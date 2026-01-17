@@ -11,6 +11,7 @@ const UserPage = async ({ searchParams }: SearchProps) => {
   const users = await getAllUsers({ pageNumber, search, sort, order, filter })
   const count = await getUsersCount()
   const SignUser = await varfiyTokenForPage() as User
+  if (!SignUser) return null;
 
   return (
 

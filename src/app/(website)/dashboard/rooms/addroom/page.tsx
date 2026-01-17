@@ -6,12 +6,13 @@ import { User } from '@prisma/client'
 
 const page = async () => {
     const user = await varfiyTokenForPage() as User
+    if (!user) return null;
     return (
         <AuthGuardPage allowedRole={["SuperAdmin", "Admin"]}>
 
             <section className='vh-dash flex justify-center items-center'  >
-            
-                    <AddRoom user={user} />
+
+                <AddRoom user={user} />
 
             </section>
         </AuthGuardPage>

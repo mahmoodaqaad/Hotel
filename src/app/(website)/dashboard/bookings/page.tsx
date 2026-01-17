@@ -3,12 +3,16 @@ import React from 'react'
 import Table from './Table'
 import { getAllBookings, getBookingsCount } from '@/services/bookings'
 import { SearchProps } from '@/utils/Types'
+import { varfiyTokenForPage } from '@/utils/verfiyToken'
+import { User } from '@prisma/client'
 
 
 const BookingPage = async ({ searchParams }: SearchProps) => {
-  const { pageNumber, search = "" } = await searchParams
+  const { pageNumber, search } = await searchParams;
   const Booking = await getAllBookings({ pageNumber, search })
   const count = await getBookingsCount()
+  const SignUser = await varfiyTokenForPage() as User
+  if (!SignUser) return null;
 
   return (
     <section >

@@ -81,8 +81,8 @@ const AddForm = () => {
                                     value={userId}
                                 >
                                     <option value="" disabled className="dark:bg-slate-900">Choose a Guest...</option>
-                                    {user.map(u => (
-                                        <option value={u.id} key={u.id} className="dark:bg-slate-900">{u.name}</option>
+                                    {user?.map(u => (
+                                        <option value={u.id} key={u.id} className="dark:bg-slate-900">{u?.name}</option>
                                     ))}
                                 </select>
                                 <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none text-slate-400 group-hover:text-blue-500 transition-colors">
@@ -103,7 +103,7 @@ const AddForm = () => {
                                     value={roomId}
                                 >
                                     <option value="" disabled className="dark:bg-slate-900">Choose a Room...</option>
-                                    {room.map(r => (
+                                    {room?.map(r => (
                                         <option value={r.id} key={r.id} className="dark:bg-slate-900">{r.name}</option>
                                     ))}
                                 </select>
