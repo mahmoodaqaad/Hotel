@@ -1,5 +1,4 @@
 import { varfiyMyAccount } from '@/utils/verfiyToken'
-import { User } from '@prisma/client'
 import Link from 'next/link'
 import React from 'react'
 import { HiMail, HiCalendar, HiBadgeCheck, HiUserCircle, HiChevronRight, HiLockClosed, HiCog } from 'react-icons/hi'

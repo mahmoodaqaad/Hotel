@@ -1,6 +1,4 @@
 import { varfiyMyAccount } from '@/utils/verfiyToken'
-import { User } from '@prisma/client'
-import React from 'react'
 import TodoPage from './Todo';
 import EditPassword from './EditPassword';
 import { HiBadgeCheck, HiCalendar, HiMail, HiUserCircle } from 'react-icons/hi';
@@ -8,7 +6,7 @@ import { HiBadgeCheck, HiCalendar, HiMail, HiUserCircle } from 'react-icons/hi';
 const page = async () => {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const user = await varfiyMyAccount() as User | any;
+    const user = await varfiyMyAccount() as  any;
     if (!user) return null;
 
     return (
