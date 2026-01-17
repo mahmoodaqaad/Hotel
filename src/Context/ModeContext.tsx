@@ -11,12 +11,13 @@ interface ModeContextProviderType {
 export const ModeContext = createContext<ModeContextProviderType | undefined>(undefined)
 
 const ModeContextProvider = ({ children }: { children: React.ReactNode }) => {
-    const [isDarkmode, setDarkMode] = useState()
+    const [isDarkmode, setDarkMode] = useState<boolean>(false)
 
     useEffect(() => {
         setDarkMode(!document?.documentElement?.classList.contains("dark"))
     }, [])
-
+   
+    
     return (
         <ModeContext.Provider value={{ isDarkmode, setDarkMode }}>
             {children}
