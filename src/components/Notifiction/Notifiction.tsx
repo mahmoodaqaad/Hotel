@@ -108,7 +108,7 @@ const Notifiction = ({ user }: { user: User & { Notification: Notification[] } }
                         <div className='text-3xl font-semibold p-3 bg-red-500 text-white' >Notifiction</div>
 
                         {
-                            (notifications || []).map((item: any, i) => (
+                            (notifications || []).map((item, i) => (
                                 <div key={i} className={` ${item.isRead ? "bg-gray-50  dark:bg-gray-900  hover:bg-gray-100 " : "bg-sky-100  dark:bg-sky-950 hover:bg-gray-300 "} border-gray-200 border-2 border-t  transition-all p-1 `}
 
                                     onClick={() => {

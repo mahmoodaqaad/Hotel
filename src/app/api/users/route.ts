@@ -21,6 +21,7 @@ export const GET = async (req: NextRequest) => {
         const order = req.nextUrl.searchParams.get("order") === "asc" ? "asc" : "desc"
         const filter = req.nextUrl.searchParams.get("filter") || ""
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const whereClause: any = {
             OR: [
                 { name: { contains: search, mode: "insensitive" } },

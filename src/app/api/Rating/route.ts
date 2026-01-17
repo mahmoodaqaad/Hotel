@@ -1,5 +1,5 @@
 import prisma from "@/utils/db";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { supabase } from "@/utils/supabase";
 
 export const POST = async (req: Request) => {

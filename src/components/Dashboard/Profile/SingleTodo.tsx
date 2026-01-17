@@ -5,7 +5,7 @@ import { DOMAIN } from '@/utils/consant'
 import { Todo } from '@prisma/client'
 import axios from 'axios'
 import React, { useContext, useState } from 'react'
-import { HiTrashe, HiCheckCircle, HiTrash } from 'react-icons/hi' // HiTrash might be missing in some versions, check imports
+import { HiCheckCircle } from 'react-icons/hi'
 import { MdDelete } from 'react-icons/md'
 import { toast } from 'react-toastify'
 import Swal from 'sweetalert2'
@@ -18,7 +18,7 @@ interface SingleTodoProps {
 const SingleTodo = ({ todo, setTodos }: SingleTodoProps) => {
   const [loading, setLoading] = useState(false)
   const context = useContext(ModeContext)
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   const { isDarkmode } = context || { isDarkmode: false } // Fallback if context missing, though page should wrap it
 
   const handleToggleStatus = async (id: number) => {
@@ -74,16 +74,16 @@ const SingleTodo = ({ todo, setTodos }: SingleTodoProps) => {
 
   return (
     <div className={`group flex items-start gap-4 p-4 rounded-xl border transition-all duration-300 ${isCompleted
-        ? 'bg-slate-50 dark:bg-slate-900/50 border-slate-100 dark:border-white/5 opacity-70'
-        : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-white/10 shadow-sm hover:shadow-md hover:border-blue-200 dark:hover:border-blue-800'
+      ? 'bg-slate-50 dark:bg-slate-900/50 border-slate-100 dark:border-white/5 opacity-70'
+      : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-white/10 shadow-sm hover:shadow-md hover:border-blue-200 dark:hover:border-blue-800'
       }`}>
 
       {/* Checkbox */}
       <div
         onClick={() => handleToggleStatus(todo.id)}
         className={`mt-1 w-6 h-6 rounded-full border-2 cursor-pointer flex items-center justify-center transition-colors ${isCompleted
-            ? 'bg-green-500 border-green-500 text-white'
-            : 'border-slate-300 dark:border-slate-600 hover:border-blue-500'
+          ? 'bg-green-500 border-green-500 text-white'
+          : 'border-slate-300 dark:border-slate-600 hover:border-blue-500'
           }`}
       >
         {isCompleted && <HiCheckCircle size={20} />}

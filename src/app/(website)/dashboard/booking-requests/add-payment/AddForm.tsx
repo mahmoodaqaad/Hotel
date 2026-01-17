@@ -10,9 +10,9 @@ import { toast } from "react-toastify";
 
 const PaymentForm = () => {
 
-    const [userId, setUserId] = useState("")
-    const [roomId, setRoomId] = useState("")
-    const [bookId, setBookId] = useState("")
+    const [userId] = useState("")
+    const [roomId] = useState("")
+    const [bookId] = useState("")
     const [paymentMethod, setPaymentMethod] = useState("cash");
     const [cardNumber, setCardNumber] = useState("");
     const [cvv, setCvv] = useState("");
@@ -45,7 +45,9 @@ const PaymentForm = () => {
 
 
 
-        } catch (error) {
+
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (error: any) {
             toast.error(error.response.data.message)
             console.log(error);
 

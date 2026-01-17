@@ -1,4 +1,4 @@
-import { Booking, Payment, User } from '@prisma/client'
+
 // import Link from 'next/link'
 import React from 'react'
 import Table from './Table'

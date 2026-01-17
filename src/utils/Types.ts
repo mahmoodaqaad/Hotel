@@ -59,11 +59,12 @@ export interface SearchProps {
 export type BookingWithRelations = Booking & {
     user: { name: string };
     room: { name: string };
-    totalAmount: string
-    paidAmount: string
-    remainingAmount: string
-    pageNumber: string,
-    count: number
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    totalAmount: any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    paidAmount: any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    remainingAmount: any
 };
 
 export type tableProps = {

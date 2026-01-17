@@ -2,7 +2,7 @@ import { getSingleBooking } from '@/services/bookings'
 import { notFound } from 'next/navigation'
 import React from 'react'
 import Image from 'next/image'
-import { HiCalendar, HiCreditCard, HiUser, HiOfficeBuilding, HiCash, HiCheckCircle, HiXCircle } from 'react-icons/hi'
+import { HiCalendar, HiCreditCard, HiUser, HiOfficeBuilding, HiCash, HiCheckCircle } from 'react-icons/hi'
 import Link from 'next/link'
 
 interface BookingDetailsProps {
@@ -14,9 +14,9 @@ const BookingDetailsPage = async ({ params }: BookingDetailsProps) => {
 
     if (!booking) return notFound()
 
-    const startDate = new Date(booking.startDate).toLocaleDateString()
-    const endDate = new Date(booking.endDate).toLocaleDateString()
-    const diffTime = Math.abs(new Date(booking.endDate).getTime() - new Date(booking.startDate).getTime());
+    const startDate = new Date(booking.checkIn).toLocaleDateString()
+    const endDate = new Date(booking.checkOut).toLocaleDateString()
+    const diffTime = Math.abs(new Date(booking.checkOut).getTime() - new Date(booking.checkIn).getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     const isPaid = booking.payment && booking.payment.status === 'paid';
 

@@ -1,6 +1,6 @@
 import { FaUsers, FaBed, FaMoneyBillWave, FaChartBar, FaUserPlus, FaClipboardList, FaHotel, FaCalendarCheck, FaFileSignature, FaUserCircle } from 'react-icons/fa';
 import { MdOutlineRoomService } from 'react-icons/md';
-import { FaEarthAmericas } from 'react-icons/fa6';
+
 export const links = [
     // { href: "/", label: "Web Site", Icon: FaEarthAmericas, allowedRole: ["SuperAdmin", "Admin", "Manager"] },
 

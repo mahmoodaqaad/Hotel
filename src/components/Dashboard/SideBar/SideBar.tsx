@@ -5,7 +5,7 @@ import { links } from './NavLink';
 import { useContext } from 'react';
 import { usePathname } from 'next/navigation';
 import { DashboardContext } from '@/Context/DashboardContext';
-import { HiMenuAlt2, HiChevronLeft } from 'react-icons/hi';
+import { HiChevronLeft } from 'react-icons/hi';
 import { User } from '@prisma/client';
 import { motion, AnimatePresence } from 'framer-motion';
 

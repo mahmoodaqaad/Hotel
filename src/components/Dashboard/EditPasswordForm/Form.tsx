@@ -5,7 +5,7 @@ import { HiLockClosed, HiKey } from 'react-icons/hi'
 import { toast } from 'react-toastify'
 import { LoadingBtn } from '@/app/loading'
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
 const Form = ({ setShowMore }: { setShowMore?: React.Dispatch<SetStateAction<boolean>> }) => {
     const [oldPassword, setOldPassword] = useState("")
     const [newPassword1, setNewPassword1] = useState("")

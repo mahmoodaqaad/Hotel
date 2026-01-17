@@ -1,6 +1,6 @@
 import React from 'react'
 import EditForm from './EditForm'
-import { User } from '@prisma/client'
+
 import { getSingleUser } from '@/services/users'
 import { notFound } from 'next/navigation'
 import AuthGuardPage from '@/components/Auth/AuthGuard/AuthGuard'

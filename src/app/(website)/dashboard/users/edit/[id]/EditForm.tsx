@@ -38,6 +38,7 @@ const EditForm = ({ user, ShowRole = true, redirect = true }: { user: User, Show
                 router.push("/dashboard/users?pageNumber=1")
                 router.refresh()
             }
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (e: any) {
             console.log(e);
             toast.error(e.response?.data?.message || "Failed to update user")

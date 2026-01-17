@@ -25,7 +25,7 @@ export async function middleware(req: NextRequest) {
                 const { payload } = await jwtVerify(token, secret);
                 user = payload;
             }
-        } catch (error) {
+        } catch {
             // Token is invalid or expired - just treat as unauthenticated
         }
     }

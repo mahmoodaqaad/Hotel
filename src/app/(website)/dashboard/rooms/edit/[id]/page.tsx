@@ -1,5 +1,5 @@
 import React from 'react'
-import { Room } from '@prisma/client'
+
 import { getSingleRoom } from '@/services/rooms'
 import EditForm from './EditForm'
 import AuthGuardPage from '@/components/Auth/AuthGuard/AuthGuard'

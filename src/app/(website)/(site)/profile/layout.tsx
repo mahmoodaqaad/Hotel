@@ -1,9 +1,7 @@
 
 import React from "react";
 import SideBar from "@/components/WebSite/profile/SideBar/SideBar";
-import { varfiyMyAccount } from "@/utils/verfiyToken";
-import { redirect } from "next/navigation";
-import { User } from "@prisma/client";
+
 
 export default async function ProfileLayout({
     children,

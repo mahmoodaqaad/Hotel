@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server"
+import { NextResponse } from "next/server"
 
-export const GET = async (req: NextRequest) => {
-    try { 
+export const GET = async () => {
+    try {
 
 
     } catch (error) {

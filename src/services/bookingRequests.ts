@@ -1,7 +1,7 @@
 
 import prisma from "@/utils/db";
 import { ARTICLE_PER_PAGE } from "@/utils/consant";
-import { Prisma } from "@prisma/client";
+
 import { serializePrisma } from "@/utils/serialize";
 
 interface GetRequestsParams {

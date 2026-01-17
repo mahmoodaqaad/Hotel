@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import prisma from "@/utils/db";
 
-export const GET = async (req: NextRequest) => {
+export const GET = async () => {
     try {
         // Define "online" as having been seen in the last 5 minutes
         const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);

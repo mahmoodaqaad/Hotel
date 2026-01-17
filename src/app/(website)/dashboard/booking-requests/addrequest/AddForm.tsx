@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import { motion } from 'framer-motion'
-import { HiUser, HiOfficeBuilding, HiCalendar, HiPlus, HiCheck, HiClipboardList } from 'react-icons/hi'
+import { HiUser, HiOfficeBuilding, HiCalendar, HiCheck, HiClipboardList } from 'react-icons/hi'
 import { LoadingPage } from '@/app/loading'
 
 const AddForm = () => {
@@ -63,7 +63,9 @@ const AddForm = () => {
             toast.success("Booking request created successfully")
             router.push("/dashboard/booking-requests?pageNumber=1")
             router.refresh()
-        } catch (error) {
+            router.refresh()
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (error: any) {
             console.error(error);
             toast.error(error?.response?.data?.message || "Failed to create request");
         } finally {

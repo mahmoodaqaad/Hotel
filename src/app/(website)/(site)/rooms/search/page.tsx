@@ -16,7 +16,7 @@ const SearchPage = async ({ searchParams: { search } }: { searchParams: { search
                         Search Results
                     </h1>
                     <p className="text-slate-500 dark:text-slate-400">
-                        {rooms.length} {rooms.length === 1 ? 'room' : 'rooms'} found for "{search}"
+                        {rooms.length} {rooms.length === 1 ? 'room' : 'rooms'} found for &quot;{search}&quot;
                     </p>
                 </div>
 

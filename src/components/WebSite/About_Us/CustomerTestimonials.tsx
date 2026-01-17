@@ -22,7 +22,7 @@ const CustomerTestimonials = () => {
                 {testimonials.map((t, i) => (
                     <div key={i} className="bg-white dark:bg-gray-700 p-6 rounded shadow max-w-sm">
                         <Image src={t.img} width={20} height={20} className="w-20 h-20 mx-auto rounded-full mb-4" alt={t.name} />
-                        <p className="text-gray-600 dark:text-gray-300 italic mb-2">"{t.text}"</p>
+                        <p className="text-gray-600 dark:text-gray-300 italic mb-2">&quot;{t.text}&quot;</p>
                         <h4 className="text-gray-800 dark:text-gray-100 font-bold">{t.name}</h4>
                     </div>
                 ))}

@@ -1,21 +1,15 @@
 import { getAllBookingRequests, getBookingRequestsCount } from '@/services/bookingRequests'
-import { BookingRequest } from '@prisma/client'
+
 import Link from 'next/link'
 import React from 'react'
 import Table from './Table'
 import { SearchProps } from '@/utils/Types'
-type BookingRequestWithRelations = BookingRequest & {
-    user: { name: string };
-    room: { name: string };
-};
+
 const BookingRequestPage = async ({ searchParams }: SearchProps) => {
 
     const params = await searchParams; // لازم await
     const pageNumber = params?.pageNumber || 1;
-    const search = params?.search || "";
-    const sort = params?.sort || "";
-    const order = params?.order || "";
-    const filter = params?.filter || "";
+
 
     const BookingRequest = await getAllBookingRequests({ pageNumber })
 

@@ -27,7 +27,7 @@ const SavePage = ({ user, room }: { room: Room, user: User & { Saved: Saved[] } 
                 setItSave(!itsave)
             }
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } catch (error) {
+        } catch (error: any) {
             toast.error(error.response.data.message)
             console.log(error);
 

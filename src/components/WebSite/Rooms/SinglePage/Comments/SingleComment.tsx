@@ -39,6 +39,7 @@ const SingleComment = ({ item, user }: { item: CommentWithUser, user: User }) =>
                 await axios.delete(`${DOMAIN}/api/comments/${item.id}`)
                 toast.success("Comment deleted successfully")
                 router.refresh()
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
             } catch (error: any) {
                 console.error(error)
                 toast.error(error.response?.data?.message || "Failed to delete comment")

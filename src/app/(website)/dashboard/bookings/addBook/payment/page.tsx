@@ -4,7 +4,7 @@ import { DOMAIN } from "@/utils/consant";
 import axios from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
-import { FaBackward, FaPaypal } from "react-icons/fa";
+import { FaPaypal } from "react-icons/fa";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import { GrVisa } from "react-icons/gr";
 import { IoIosCash } from "react-icons/io";

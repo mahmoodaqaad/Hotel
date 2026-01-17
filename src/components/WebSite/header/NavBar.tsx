@@ -1,11 +1,10 @@
 "use client"
 import { NavBarContext } from '@/Context/navBarContext'
 import Link from 'next/link'
-import React, { useContext, useEffect } from 'react'
+import React, { useContext } from 'react'
 import stay from "./header.module.css"
 import { User } from '@prisma/client'
 import Logout from '@/components/Auth/Logout/Logout'
-import { SocketContext } from '@/Context/SocketContext'
 const NavBar = ({ user }: { user: User }) => {
     const context = useContext(NavBarContext)
 

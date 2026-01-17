@@ -5,6 +5,7 @@ import { HiUser, HiOfficeBuilding, HiCalendar, HiOutlineExternalLink } from 'rea
 import axios from 'axios'
 import { DOMAIN } from '@/utils/consant'
 import { motion, AnimatePresence } from 'framer-motion'
+import Image from 'next/image'
 
 interface SearchResults {
     users: { id: number; name: string; email: string; role: string }[]
@@ -77,12 +78,12 @@ const SearchInput = () => {
                             <div className="p-4 text-center text-slate-500 text-sm">Searching...</div>
                         ) : (
                             <>
-                                {results?.users.length === 0 && results?.rooms.length === 0 && results?.bookings.length === 0 ? (
+                                {(results?.users?.length || 0) === 0 && (results?.rooms?.length || 0) === 0 && (results?.bookings?.length || 0) === 0 ? (
                                     <div className="p-4 text-center text-slate-400 text-sm">No results found.</div>
                                 ) : (
                                     <div className="py-2">
                                         {/* Users Section */}
-                                        {results?.users?.length! > 0 && (
+                                        {(results?.users?.length || 0) > 0 && (
                                             <div className="px-2 mb-2">
                                                 <h3 className="px-3 py-2 text-xs font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
                                                     <HiUser /> Users
@@ -108,7 +109,7 @@ const SearchInput = () => {
                                         )}
 
                                         {/* Rooms Section */}
-                                        {results?.rooms?.length! > 0 && (
+                                        {(results?.rooms?.length || 0) > 0 && (
                                             <>
                                                 <div className="h-px bg-slate-100 dark:bg-white/5 mx-4 my-2" />
                                                 <div className="px-2 mb-2">
@@ -123,7 +124,14 @@ const SearchInput = () => {
                                                             className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group"
                                                         >
                                                             {room.images && room.images[0] ? (
-                                                                <img src={room.images[0].imageUrl} alt="" className="w-10 h-10 rounded-lg object-cover bg-slate-200" />
+                                                                <div className="relative w-10 h-10 rounded-lg overflow-hidden bg-slate-200">
+                                                                    <Image
+                                                                        src={room.images[0].imageUrl}
+                                                                        alt=""
+                                                                        fill
+                                                                        className="object-cover"
+                                                                    />
+                                                                </div>
                                                             ) : (
                                                                 <div className="w-10 h-10 rounded-lg bg-slate-100 dark:bg-white/5 flex items-center justify-center">
                                                                     <HiOfficeBuilding className="text-slate-400" />
@@ -140,7 +148,7 @@ const SearchInput = () => {
                                         )}
 
                                         {/* Bookings Section */}
-                                        {results?.bookings?.length! > 0 && (
+                                        {(results?.bookings?.length || 0) > 0 && (
                                             <>
                                                 <div className="h-px bg-slate-100 dark:bg-white/5 mx-4 my-2" />
                                                 <div className="px-2">

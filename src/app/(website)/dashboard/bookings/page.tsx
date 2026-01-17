@@ -6,7 +6,7 @@ import { SearchProps } from '@/utils/Types'
 
 
 const BookingPage = async ({ searchParams }: SearchProps) => {
-  const { pageNumber, search = "", sort = "", order = "", filter = "" } = await searchParams
+  const { pageNumber, search = "" } = await searchParams
   const Booking = await getAllBookings({ pageNumber, search })
   const count = await getBookingsCount()
 

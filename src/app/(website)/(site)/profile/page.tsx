@@ -1,6 +1,5 @@
 import { varfiyMyAccount } from '@/utils/verfiyToken'
 import { User } from '@prisma/client'
-import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import React from 'react'
 import { HiMail, HiCalendar, HiBadgeCheck, HiUserCircle, HiChevronRight, HiLockClosed, HiCog } from 'react-icons/hi'
@@ -8,7 +7,6 @@ import { HiMail, HiCalendar, HiBadgeCheck, HiUserCircle, HiChevronRight, HiLockC
 const page = async () => {
 
     const user = await varfiyMyAccount() as unknown as User
-    // if (!user) redirect("/login")
     return (
         <div className="space-y-8">
             {/* Header */}
