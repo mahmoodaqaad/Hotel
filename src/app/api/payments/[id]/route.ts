@@ -2,11 +2,12 @@ import prisma from "@/utils/db";
 import { NextRequest, NextResponse } from "next/server";
 
 
-export const GET = async (req: NextRequest, { params }: { params: { id: string } }) => {
+export const GET = async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+    const { id } = await params;
 
     try {
         const payment = await prisma.payment.findUnique({
-            where: { id: Number(params.id) },
+            where: { id: Number(id) },
             select: {
                 id: true,
                 amount: true,
@@ -33,10 +34,11 @@ export const GET = async (req: NextRequest, { params }: { params: { id: string }
 }
 
 
-export const PUT = async (req: NextRequest, { params }: { params: { id: string } }) => {
+export const PUT = async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+    const { id } = await params;
 
     try {
-        const payment = await prisma.payment.findUnique({ where: { id: Number(params.id) } })
+        const payment = await prisma.payment.findUnique({ where: { id: Number(id) } })
         if (!payment) return NextResponse.json({ message: "Payment not found" }, { status: 404 })
         const book = await prisma.booking.findUnique({ where: { id: Number(payment.bookingId) } })
         const body = await req.json()
@@ -55,7 +57,7 @@ export const PUT = async (req: NextRequest, { params }: { params: { id: string }
         const isPaid = newBookingPaid >= totalBookingAmount
 
         await prisma.payment.update({
-            where: { id: Number(params.id) },
+            where: { id: Number(id) },
             data: {
                 method: body.method,
                 amount: newPaymentAmount,
@@ -82,10 +84,11 @@ export const PUT = async (req: NextRequest, { params }: { params: { id: string }
 }
 
 
-export const DELETE = async (req: NextRequest, { params }: { params: { id: string } }) => {
+export const DELETE = async (req: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+    const { id } = await params;
 
     try {
-        const payment = await prisma.payment.findUnique({ where: { id: Number(params.id) } })
+        const payment = await prisma.payment.findUnique({ where: { id: Number(id) } })
         if (!payment) return NextResponse.json({ message: "Payment not found" }, { status: 404 })
         // const book = await prisma.booking.findUnique({ where: { id: Number(payment.bookingId) } })
 
@@ -93,7 +96,7 @@ export const DELETE = async (req: NextRequest, { params }: { params: { id: strin
 
 
 
-        await prisma.payment.delete({ where: { id: Number(params.id) } })
+        await prisma.payment.delete({ where: { id: Number(id) } })
 
         // await prisma.booking.update({
         //     where: { id: Number(payment.bookingId) },

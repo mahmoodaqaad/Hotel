@@ -7,19 +7,19 @@ import { supabase } from "@/utils/supabase";
 import { varfiyToken } from "@/utils/verfiyToken";
 
 interface Props {
-    params: { id: string }
-
+    params: Promise<{ id: string }>
 }
 
-export const PUT = async (req: NextRequest, context: { params: { id: string } }) => {
+export const PUT = async (req: NextRequest, context: { params: Promise<{ id: string }> }) => {
+
     try {
+        const { id } = await context.params;
         const isAllowd = IsSuperAdminOrAdminOrManager(req)
 
         if (!isAllowd) {
 
             return NextResponse.json({ message: "your not allowd ,for biden" }, { status: 403 })
         }
-        const { id } = context.params
 
         // find booking
 
@@ -70,7 +70,8 @@ export const PUT = async (req: NextRequest, context: { params: { id: string } })
 
 }
 
-export const DELETE = async (req: NextRequest, { params: { id } }: Props) => {
+export const DELETE = async (req: NextRequest, { params }: Props) => {
+    const { id } = await params;
 
     try {
         const isAllowd = IsSuperAdminOrAdminOrManager(req)

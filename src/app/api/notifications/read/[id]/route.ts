@@ -1,10 +1,10 @@
 import prisma from "@/utils/db";
 import { NextRequest, NextResponse } from "next/server";
 interface Props {
-    params: { id: string }
-
+    params: Promise<{ id: string }>
 }
-export const PUT = async (req: NextRequest, { params: { id } }: Props) => {
+export const PUT = async (req: NextRequest, { params }: Props) => {
+    const { id } = await params;
     try {
 
         await prisma.notification.update({
@@ -18,7 +18,8 @@ export const PUT = async (req: NextRequest, { params: { id } }: Props) => {
         return NextResponse.json({ message: "Internal error", error }, { status: 500 });
     }
 };
-export const PATCH = async (req: NextRequest, { params: { id } }: Props) => {
+export const PATCH = async (req: NextRequest, { params }: Props) => {
+    const { id } = await params;
     try {
 
         await prisma.notification.updateMany({

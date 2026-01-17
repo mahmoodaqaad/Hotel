@@ -3,12 +3,10 @@ import React from 'react'
 import { getSingleRoom } from '@/services/rooms'
 import EditForm from './EditForm'
 import AuthGuardPage from '@/components/Auth/AuthGuard/AuthGuard'
-interface EditFormProps {
-    params: { id: string }
+interface EditRoomProps {
+    params: Promise<{ id: string }>
 }
-const EditRoom = async ({ params }: EditFormProps) => {
-    // Await params if needed in improved next.js versions, but currently props.
-    // However, getSingleRoom expects id.
+const EditRoom = async ({ params }: EditRoomProps) => {
     const { id } = await params;
     // Prisma returns Room with images.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

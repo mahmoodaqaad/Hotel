@@ -8,12 +8,13 @@ import { notFound } from 'next/navigation'
 import { RoomWithReltionAll } from '@/utils/Types'
 
 interface SingleArticlesPageProps {
-    params: { id: string }
+    params: Promise<{ id: string }>
 }
 
 const RoomPage = async ({ params }: SingleArticlesPageProps) => {
+    const { id } = await params;
     const [roomData, user] = await Promise.all([
-        getSingleRoom(params.id),
+        getSingleRoom(id),
         varfiyMyAccount() as Promise<User>
     ])
 

@@ -4,12 +4,12 @@ import SearchRoom from '@/components/WebSite/Rooms/SearchRoom/SearchRoom'
 import React from 'react'
 
 interface FilterProps {
-    searchParams: {
+    searchParams: Promise<{
         guest: string
         checkIn: string
         checkOut: string
         type: string
-    }
+    }>
 
 }
 const RoomsFilter = async ({ searchParams }: FilterProps) => {

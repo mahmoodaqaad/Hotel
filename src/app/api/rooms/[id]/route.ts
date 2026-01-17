@@ -3,11 +3,13 @@ import { IsSuperAdminOrAdmin } from "@/utils/CheckRole";
 import prisma from "@/utils/db";
 import { UpdateRoomDto } from "@/utils/Dtos";
 import { NextRequest, NextResponse } from "next/server";
+
 interface props {
-    params: { id: string }
+    params: Promise<{ id: string }>
 }
 
-export const GET = async (req: NextRequest, { params: { id } }: props) => {
+export const GET = async (req: NextRequest, { params }: props) => {
+    const { id } = await params;
     try {
         const room = await getSingleRoom(id);
 
@@ -20,17 +22,15 @@ export const GET = async (req: NextRequest, { params: { id } }: props) => {
     }
 }
 
-export const PUT = async (req: NextRequest, context: { params: { id: string } }) => {
-
+export const PUT = async (req: NextRequest, context: { params: Promise<{ id: string }> }) => {
     try {
         const isAllowd = IsSuperAdminOrAdmin(req)
 
         if (!isAllowd) {
-
             return NextResponse.json({ message: "your not allowd ,for biden" }, { status: 403 })
         }
 
-        const { id } = context.params;
+        const { id } = await context.params;
         const room = await prisma.room.findUnique({ where: { id: Number(id) } })
         if (!room) return NextResponse.json({ message: "room Not found" }, { status: 404 });
 
@@ -54,20 +54,17 @@ export const PUT = async (req: NextRequest, context: { params: { id: string } })
 
 
     } catch (error) {
-
-
         return NextResponse.json({ message: "internal server error", error }, { status: 500 })
-
-
     }
 
 }
-export const DELETE = async (req: NextRequest, { params: { id } }: props) => {
+
+export const DELETE = async (req: NextRequest, { params }: props) => {
+    const { id } = await params;
     try {
         const isAllowd = IsSuperAdminOrAdmin(req)
 
         if (!isAllowd) {
-
             return NextResponse.json({ message: "your not allowd ,for biden" }, { status: 403 })
         }
 
@@ -79,8 +76,6 @@ export const DELETE = async (req: NextRequest, { params: { id } }: props) => {
         return NextResponse.json({ message: "Deleted" }, { status: 200 })
 
     } catch (error) {
-
         return NextResponse.json({ message: "internal server error", error }, { status: 500 })
     }
-
 }

@@ -3,11 +3,12 @@ import { varfiyToken } from "@/utils/verfiyToken"
 import { NextRequest, NextResponse } from "next/server"
 
 interface Props {
-    params: { id: string }
+    params: Promise<{ id: string }>
 
 }
 
-export const GET = async (req: NextRequest, { params: { id } }: Props) => {
+export const GET = async (req: NextRequest, { params }: Props) => {
+    const { id } = await params;
     try {
         const MyUser = varfiyToken(req)
 
@@ -33,7 +34,8 @@ export const GET = async (req: NextRequest, { params: { id } }: Props) => {
 
 }
 
-export const PUT = async (req: NextRequest, { params: { id } }: Props) => {
+export const PUT = async (req: NextRequest, { params }: Props) => {
+    const { id } = await params;
     try {
         const MyUser = varfiyToken(req)
 
@@ -44,21 +46,22 @@ export const PUT = async (req: NextRequest, { params: { id } }: Props) => {
 
             return NextResponse.json({ message: "your not allowd ,for biden" }, { status: 403 })
         }
-        
+
         await prisma.todo.update({
             where: { id: Number(id) },
             data: {
                 status: todo?.status === "completed" ? "pending" : "completed"
             }
         })
-        return NextResponse.json({ message: "Updated" }, { status:200 })
-        
+        return NextResponse.json({ message: "Updated" }, { status: 200 })
+
     } catch (error) {
-        
+
         return NextResponse.json({ message: "internal server error", error }, { status: 500 })
- }
- }
-export const DELETE = async (req: NextRequest, { params: { id } }: Props) => {
+    }
+}
+export const DELETE = async (req: NextRequest, { params }: Props) => {
+    const { id } = await params;
     try {
         const MyUser = varfiyToken(req)
 

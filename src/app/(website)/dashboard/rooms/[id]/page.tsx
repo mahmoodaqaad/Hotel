@@ -6,12 +6,13 @@ import Image from 'next/image'
 import { HiStar, HiOfficeBuilding, HiPencilAlt, HiUserGroup, HiEye } from 'react-icons/hi'
 import Link from 'next/link'
 
-interface RoomDetailsProps {
-    params: { id: string }
+interface SingleRoomProps {
+    params: Promise<{ id: string }>
 }
 
-const RoomDetailsPage = async ({ params }: RoomDetailsProps) => {
-    const room = await getSingleRoom(params.id)
+const SingleRoom = async ({ params }: SingleRoomProps) => {
+    const { id } = await params;
+    const room = await getSingleRoom(id)
 
     if (!room) return notFound()
 
@@ -156,4 +157,4 @@ const RoomDetailsPage = async ({ params }: RoomDetailsProps) => {
     )
 }
 
-export default RoomDetailsPage
+export default SingleRoom

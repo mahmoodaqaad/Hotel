@@ -5,19 +5,19 @@ import prisma from "@/utils/db";
 import { NextRequest, NextResponse } from "next/server";
 
 interface Props {
-    params: { id: string }
+    params: Promise<{ id: string }>
 
 }
 
-export const PUT = async (req: NextRequest, context: { params: { id: string } }) => {
+export const PUT = async (req: NextRequest, context: { params: Promise<{ id: string }> }) => {
     try {
-        const { id } = context.params
-const isAllowd = IsSuperAdminOrAdminOrManager(req)
+        const { id } = await context.params;
+        const isAllowd = IsSuperAdminOrAdminOrManager(req)
 
-    if (!isAllowd) {
+        if (!isAllowd) {
 
-      return NextResponse.json({ message: "your not allowd ,for biden" }, { status: 403 })
-    }
+            return NextResponse.json({ message: "your not allowd ,for biden" }, { status: 403 })
+        }
         // find booking
 
         const booking = await prisma.booking.findUnique({ where: { id: Number(id) } })
@@ -45,7 +45,8 @@ const isAllowd = IsSuperAdminOrAdminOrManager(req)
 
 }
 
-export const DELETE = async (req: NextRequest, { params: { id } }: Props) => {
+export const DELETE = async (req: NextRequest, { params }: Props) => {
+    const { id } = await params;
     /**
      * حذف من البوكنك 
      *  ريكوست حذف من البكونك

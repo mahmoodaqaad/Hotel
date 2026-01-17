@@ -2,7 +2,7 @@ import prisma from "@/utils/db";
 import { varfiyToken } from "@/utils/verfiyToken";
 import { NextRequest, NextResponse } from "next/server"
 interface Props {
-    params: { id: string }
+    params: Promise<{ id: string }>
 
 }
 
@@ -24,7 +24,7 @@ interface Props {
 
 //         const body = await (req.json())
 
-        
+
 
 //         return NextResponse.json({ message: 'Booking confirmed successfully' }, { status: 200 });
 
@@ -37,9 +37,10 @@ interface Props {
 
 // }
 
-export const DELETE = async (req: NextRequest, { params: { id } }: Props) => {
+export const DELETE = async (req: NextRequest, { params }: Props) => {
+    const { id } = await params;
     try {
-    const ISuser = varfiyToken(req)
+        const ISuser = varfiyToken(req)
         if (!ISuser) {
 
             return NextResponse.json({ message: "your not allowd ,for bidena" }, { status: 403 })

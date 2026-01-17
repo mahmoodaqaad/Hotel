@@ -5,9 +5,10 @@ import { getSingleUser } from '@/services/users'
 import { notFound } from 'next/navigation'
 import AuthGuardPage from '@/components/Auth/AuthGuard/AuthGuard'
 interface EditFormProps {
-    params: { id: string }
+    params: Promise<{ id: string }>
 }
-const page = async ({ params: { id } }: EditFormProps) => {
+const page = async ({ params }: EditFormProps) => {
+    const { id } = await params;
     const user = await getSingleUser(id)
     if (!user) notFound()
 

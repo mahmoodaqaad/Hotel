@@ -2,9 +2,9 @@ import prisma from "@/utils/db"
 import { NextRequest, NextResponse } from "next/server"
 
 
-export const DELETE = async (req: NextRequest, context: { params: { id: string } }) => {
+export const DELETE = async (req: NextRequest, context: { params: Promise<{ id: string }> }) => {
     try {
-        const { id } = context.params; // ✅ استخراج `id` من `context`
+        const { id } = await context.params; // ✅ استخراج `id` من `context`
 
         const roomId = Number(id);
         if (isNaN(roomId)) {

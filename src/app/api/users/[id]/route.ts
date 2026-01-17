@@ -6,11 +6,11 @@ import { varfiyToken } from "@/utils/verfiyToken"
 import { NextRequest, NextResponse } from "next/server"
 
 interface Props {
-    params: { id: string }
-
+    params: Promise<{ id: string }>
 }
 
-export const GET = async (req: NextRequest, { params: { id } }: Props) => {
+export const GET = async (req: NextRequest, { params }: Props) => {
+    const { id } = await params;
     try {
         const isAllowd = IsSuperAdmin(req)
 
@@ -40,7 +40,8 @@ export const GET = async (req: NextRequest, { params: { id } }: Props) => {
     }
 
 }
-export const PUT = async (req: NextRequest, { params: { id } }: Props) => {
+export const PUT = async (req: NextRequest, { params }: Props) => {
+    const { id } = await params;
 
     try {
         const user = varfiyToken(req)
@@ -97,12 +98,10 @@ export const PUT = async (req: NextRequest, { params: { id } }: Props) => {
 
 }
 
-
-
-export const DELETE = async (req: NextRequest, { params: { id } }: Props) => {
+export const DELETE = async (req: NextRequest, { params }: Props) => {
+    const { id } = await params;
 
     try {
-
         const isAllowd = IsSuperAdmin(req)
 
         if (!isAllowd) {
@@ -112,11 +111,6 @@ export const DELETE = async (req: NextRequest, { params: { id } }: Props) => {
 
         const isExistUser = await prisma.user.findUnique({ where: { id: Number(id) } })
         if (!isExistUser) return NextResponse.json({ message: "user Not found" }, { status: 404 });
-
-
-
-
-
 
         await prisma.user.delete({
             where: { id: Number(id) },

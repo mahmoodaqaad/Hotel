@@ -1,21 +1,10 @@
 
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "@/app/globals.css"
-import { ToastContainer } from "react-toastify";
 import NavBarContextProvider from "@/Context/navBarContext"
 import "react-toastify/dist/ReactToastify.css"
 import Header from "@/components/WebSite/header/Header";
 import Footer from "@/components/WebSite/Footer/Footer";
-const geistSans = Geist({
-    variable: "--font-geist-sans",
-    subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-    variable: "--font-geist-mono",
-    subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
     title: "Hotel Book",
@@ -28,18 +17,12 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en" >
-
-            <body className={`${geistSans.variable} ${geistMono.variable} antialiased dark:bg-gray-600`} >
-                <Header />
-                <ToastContainer theme="colored" />
-                <NavBarContextProvider>
-
-
-                    {children}
-                </NavBarContextProvider>
-                <Footer />
-            </body>
-        </html>
+        <div className="flex flex-col min-h-screen">
+            <Header />
+            <NavBarContextProvider>
+                {children}
+            </NavBarContextProvider>
+            <Footer />
+        </div>
     );
 }

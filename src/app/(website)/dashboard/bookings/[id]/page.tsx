@@ -6,11 +6,12 @@ import { HiCalendar, HiCreditCard, HiUser, HiOfficeBuilding, HiCash, HiCheckCirc
 import Link from 'next/link'
 
 interface BookingDetailsProps {
-    params: { id: string }
+    params: Promise<{ id: string }>
 }
 
 const BookingDetailsPage = async ({ params }: BookingDetailsProps) => {
-    const booking = await getSingleBooking(params.id)
+    const { id } = await params;
+    const booking = await getSingleBooking(id)
 
     if (!booking) return notFound()
 

@@ -4,10 +4,11 @@ import { varfiyToken } from "@/utils/verfiyToken";
 import { NextRequest, NextResponse } from "next/server"
 
 interface Props {
-    params: { id: string }
+    params: Promise<{ id: string }>
 }
 
-export const PUT = async (req: NextRequest, { params: { id } }: Props) => {
+export const PUT = async (req: NextRequest, { params }: Props) => {
+    const { id } = await params;
     try {
         const isAllowd = IsSuperAdminOrAdminOrManager(req)
         const user = varfiyToken(req)
@@ -72,7 +73,8 @@ export const PUT = async (req: NextRequest, { params: { id } }: Props) => {
     }
 }
 
-export const DELETE = async (req: NextRequest, { params: { id } }: Props) => {
+export const DELETE = async (req: NextRequest, { params }: Props) => {
+    const { id } = await params;
     try {
         const isAllowd = IsSuperAdminOrAdminOrManager(req)
 
@@ -118,7 +120,8 @@ export const DELETE = async (req: NextRequest, { params: { id } }: Props) => {
     }
 }
 
-export const PATCH = async (req: NextRequest, { params: { id } }: Props) => {
+export const PATCH = async (req: NextRequest, { params }: Props) => {
+    const { id } = await params;
     try {
         const isAllowd = IsSuperAdminOrAdminOrManager(req)
 

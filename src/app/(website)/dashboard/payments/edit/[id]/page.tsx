@@ -6,10 +6,11 @@ import { Payment, Booking } from '@prisma/client'
 import { getSinglePayment } from "@/services/payments"
 import { notFound } from 'next/navigation'
 
-interface props {
-    params: { id: string }
+interface EditPaymentProps {
+    params: Promise<{ id: string }>
 }
-const page = async ({ params }: props) => {
+
+const Page = async ({ params }: EditPaymentProps) => {
     const { id } = await params;
     const payment = await getSinglePayment(id) as (Payment & { booking: Booking })
 
@@ -25,4 +26,4 @@ const page = async ({ params }: props) => {
     )
 }
 
-export default page
+export default Page

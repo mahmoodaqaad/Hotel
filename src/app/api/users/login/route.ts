@@ -39,7 +39,9 @@ export const POST = async (req: NextRequest) => {
             id: user.id,
             name: user.name,
             role: user.role,
+            email: user.email
         })
+
         return NextResponse.json(
             { message: "Authenticated", user: user },
             {
@@ -48,16 +50,12 @@ export const POST = async (req: NextRequest) => {
             })
     }
     catch (error) {
-        console.log(error);
-
-
-        return NextResponse.json({ message: "internal server error", error }, { status: 500 })
-
+        console.log("Login API Error:", error);
+        return NextResponse.json(
+            { message: "internal server error", error: error instanceof Error ? error.message : "Unknown error" },
+            { status: 500 }
+        )
     }
 
 }
 
-export const GET = () => {
-
-    return NextResponse.json("errlrvdds")
-}

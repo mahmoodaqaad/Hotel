@@ -3,7 +3,11 @@ import { JWTPaylod } from './Types';
 import { serialize } from 'cookie';
 
 export function generateToken(jwtPaylod: JWTPaylod): string {
-    const privateKey = process.env.JWT_SECRET_KEY as string
+    const privateKey = process.env.JWT_SECRET_KEY as string;
+    if (!jwtPaylod) {
+        console.error("generateToken Error: jwtPaylod is null or undefined!");
+    }
+    console.log("generateToken payload:", jwtPaylod);
     return jwt.sign(jwtPaylod, privateKey, { expiresIn: "30d" })
 
 }

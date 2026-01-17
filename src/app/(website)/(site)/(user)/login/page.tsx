@@ -27,7 +27,7 @@ const LoginForm = () => {
             if (!password) return toast.error("Password is required")
 
             setLoading(true)
- await axios.post(`${DOMAIN}/api/users/login`, { email, password })
+            await axios.post(`${DOMAIN}/api/users/login`, { email, password })
 
 
             toast.success("Welcome back! Login successful")
@@ -35,7 +35,7 @@ const LoginForm = () => {
             router.refresh()
         } catch (error) {
             console.error(error)
-            const message = error.response?.data?.message || "Login failed. Please try again."
+            const message = (error as any).response?.data?.message || "Login failed. Please try again."
             toast.error(message)
         } finally {
             setLoading(false)

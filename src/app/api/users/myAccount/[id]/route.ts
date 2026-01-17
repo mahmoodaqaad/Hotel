@@ -4,11 +4,12 @@ import { User } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 interface Props {
-    params: { id: string }
+    params: Promise<{ id: string }>
 
 }
 
-export const GET = async (req: NextRequest, { params: { id } }: Props) => {
+export const GET = async (req: NextRequest, { params }: Props) => {
+    const { id } = await params;
     try {
         const Myuser = await varfiyToken(req) as User
 
@@ -19,7 +20,7 @@ export const GET = async (req: NextRequest, { params: { id } }: Props) => {
         const user = await prisma.user.findUnique({
             where: { id: Number(id) }, include: {
                 Notification: {
-                    
+
                     orderBy: {
                         createdAt: "desc"
                     }

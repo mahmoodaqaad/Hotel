@@ -5,7 +5,12 @@ import { RoomWithReltionAll } from '@/utils/Types'
 import React from 'react'
 
 
-const SearchPage = async ({ searchParams: { search } }: { searchParams: { search: string } }) => {
+interface SearchPageProps {
+    searchParams: Promise<{ search: string }>
+}
+
+const SearchPage = async ({ searchParams }: SearchPageProps) => {
+    const { search } = await searchParams;
     const rooms: RoomWithReltionAll[] = await getRoomsBySearch(search)
 
     return (
