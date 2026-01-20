@@ -26,6 +26,10 @@ const EditRoom = ({ room }: { room: RoomWithImages }) => {
     const [name, setName] = useState(room.name)
     const [price, setPrice] = useState(Number(room.price))
     const [discrption, setDiscrption] = useState(room.discrption)
+    const [guest, setGuest] = useState(room.guest)
+    const [size, setSize] = useState(room.size)
+    const [view, setView] = useState(room.view)
+    const [roomType, setRoomType] = useState(room.roomType)
     const [imagesServer, setImagesServer] = useState<RoomImage[]>(room.images)
     const [images, setImages] = useState<File[]>([])
     const [loading, setLoading] = useState(false)
@@ -81,7 +85,7 @@ const EditRoom = ({ room }: { room: RoomWithImages }) => {
                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                     <button
                         onClick={(e) => { e.preventDefault(); deleteImgFromServer(img.id); }}
-                        className='bg-red-500 p-2 rounded-full text-white hover:bg-red-600 transition-colors shadow-lg'
+                        className='bg-red-500 p-2 rounded-full text-white hover:bg-red600 transition-colors shadow-lg'
                         title="Delete Image"
                     >
                         <LuTrash size={20} />
@@ -97,7 +101,14 @@ const EditRoom = ({ room }: { room: RoomWithImages }) => {
         try {
             if (!name) return toast.error("Name is required");
             if (!price) return toast.error("Price is required");
-
+            if (!guest) return toast.error("Guest capacity is required");
+            if (!size) return toast.error("Size is required");
+            if (!view) return toast.error("View is required");
+            if (!roomType) return toast.error("Room Type is required");
+   const guestNum = Number(guest)
+        if ((roomType === "Single" && guestNum > 1) || (roomType === "Double" && guestNum > 2) || (roomType === "Deluxe" && guestNum > 3)) {
+            return toast.error("Room type doesn't match guest count")
+        }
             setLoading(true)
 
             const uplpadProductImgs = []
@@ -124,10 +135,16 @@ const EditRoom = ({ room }: { room: RoomWithImages }) => {
                 uplpadProductImgs.push(...urls)
             }
 
-            // Note: using relative path or DOMAIN constant for consistency? 
-            // Original used http://localhost:3000 explicitly which is bad. 
-            // DOMAIN constant is better.
-            await axios.put(`${DOMAIN}/api/rooms/${room.id}`, { name, price, discrption, imageUrls: uplpadProductImgs })
+            await axios.put(`${DOMAIN}/api/rooms/${room.id}`, {
+                name,
+                price,
+                discrption,
+                guest: Number(guest),
+                size,
+                view,
+                roomType,
+                imageUrls: uplpadProductImgs
+            })
 
             toast.success("Room updated successfully")
             router.push("/dashboard/rooms?pageNumber=1")
@@ -168,6 +185,7 @@ const EditRoom = ({ room }: { room: RoomWithImages }) => {
                 </div>
 
                 <form onSubmit={handleEditRoom} className="space-y-8">
+                    {/* Basic Info */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
                         {/* Name */}
                         <div className="space-y-3">
@@ -195,6 +213,75 @@ const EditRoom = ({ room }: { room: RoomWithImages }) => {
                                 value={price}
                                 onChange={e => setPrice(Number(e.target.value))}
                             />
+                        </div>
+                    </div>
+
+                    {/* Additional Details */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                        {/* View */}
+                        <div className="space-y-3">
+                            <label className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 flex items-center gap-2">
+                                <HiInformationCircle className="text-blue-500" /> View Type
+                            </label>
+                            <input
+                                type="text"
+                                placeholder='e.g. Ocean View'
+                                className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl py-4 px-6 text-slate-900 dark:text-white font-bold outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                                value={view}
+                                onChange={e => setView(e.target.value)}
+                            />
+                        </div>
+
+                        {/* Size */}
+                        <div className="space-y-3">
+                            <label className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 flex items-center gap-2">
+                                <HiInformationCircle className="text-blue-500" /> Room Size
+                            </label>
+                            <input
+                                type="text"
+                                placeholder='e.g. 50m²'
+                                className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl py-4 px-6 text-slate-900 dark:text-white font-bold outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                                value={size}
+                                onChange={e => setSize(e.target.value)}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                        {/* Guest */}
+                        <div className="space-y-3">
+                            <label className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 flex items-center gap-2">
+                                <HiInformationCircle className="text-blue-500" /> Max Guests
+                            </label>
+                            <input
+                                type="number"
+                                placeholder='2'
+                                className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl py-4 px-6 text-slate-900 dark:text-white font-bold outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                                value={guest}
+                                onChange={e => setGuest(e.target.value as any)}
+                            />
+                        </div>
+
+                        {/* Room Type */}
+                        <div className="space-y-3">
+                            <label className="text-xs font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 flex items-center gap-2">
+                                <HiInformationCircle className="text-blue-500" /> Room Type
+                            </label>
+                            <div className="relative">
+                                <select
+                                    className="w-full bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl py-4 px-6 text-slate-900 dark:text-white font-bold outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 transition-all appearance-none cursor-pointer"
+                                    value={roomType}
+                                    onChange={e => setRoomType(e.target.value as any)}
+                                >
+                                    <option value="Single" className="dark:bg-slate-900">Single</option>
+                                    <option value="Double" className="dark:bg-slate-900">Double</option>
+                                    <option value="Deluxe" className="dark:bg-slate-900">Deluxe</option>
+                                    <option value="Other" className="dark:bg-slate-900">Other</option>
+                                </select>
+                                <div className="absolute inset-y-0 right-6 flex items-center pointer-events-none text-slate-400">
+                                    <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" fillRule="evenodd"></path></svg>
+                                </div>
+                            </div>
                         </div>
                     </div>
 

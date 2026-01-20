@@ -36,11 +36,19 @@ export interface CreateRoomDto {
     price: string | number;
     discrption: string
     imageUrls: string[]; // تخزين روابط الصور بعد رفعها إلى السحابة
+    guest: number;
+    size: string;
+    view: string;
+    roomType: string;
 }
 export interface UpdateRoomDto {
     name?: string;
     price?: string | number;
     discrption: string
+    guest?: number;
+    size?: string;
+    view?: string;
+    roomType?: string;
 
     imageUrls?: string[]; // تخزين روابط الصور بعد رفعها إلى السحابة
 }

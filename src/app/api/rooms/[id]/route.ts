@@ -34,8 +34,8 @@ export const PUT = async (req: NextRequest, context: { params: Promise<{ id: str
         const room = await prisma.room.findUnique({ where: { id: Number(id) } })
         if (!room) return NextResponse.json({ message: "room Not found" }, { status: 404 });
 
-        const { name, price, imageUrls, discrption } = await req.json() as UpdateRoomDto
-        if (!name || !price || !discrption || !imageUrls) return NextResponse.json({ message: "ALL filed are requied" }, { status: 400 })
+        const { name, price, imageUrls, discrption, guest, size, view, roomType } = await req.json() as UpdateRoomDto
+        if (!name || !price || !discrption || !imageUrls || !guest || !size || !view || !roomType) return NextResponse.json({ message: "ALL filed are requied" }, { status: 400 })
 
 
         await prisma.room.update({
@@ -44,6 +44,10 @@ export const PUT = async (req: NextRequest, context: { params: Promise<{ id: str
                 name,
                 price,
                 discrption,
+                guest: String(guest), // Ensure string if schema is string, or match AddRoom logic
+                size,
+                view,
+                roomType: roomType as any, // Cast to any or RoomType to avoid lint if strict
                 images: {
                     create: imageUrls.map((url: string) => ({ imageUrl: url })),
                 }

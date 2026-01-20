@@ -8,11 +8,13 @@ const SearchTable = ({ path }: { path: string }) => {
     const params = useSearchParams()
 
     const [search, setSearch] = useState(params.get("search") || "")
+    const [loading, setLoading] = useState(false)
     const router = useRouter()
 
     const handleSearch = async (e: React.FormEvent) => {
         try {
             e.preventDefault()
+            setLoading(true)
             if (!search.trim()) {
                 setSearch("")
                 return router.push(`/dashboard/${path}?pageNumber=1`)
@@ -30,6 +32,8 @@ const SearchTable = ({ path }: { path: string }) => {
             setSearch("")
         } catch (error) {
             console.error(error);
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -50,12 +54,20 @@ const SearchTable = ({ path }: { path: string }) => {
                 </div>
 
                 <div className="flex gap-1.5">
+
+
                     <button
                         type="submit"
                         className='bg-blue-600 text-white p-2.5 rounded-xl hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-500/30 transition-all active:scale-95'
                         title="Search"
                     >
-                        <FaSearch size={14} />
+                        {loading ?
+                            <div className="flex items-center">
+                                <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-blue-500"></div>
+                            </div>
+                            :
+                            <FaSearch size={14} />
+                        }
                     </button>
                     {search && (
                         <button
@@ -68,6 +80,7 @@ const SearchTable = ({ path }: { path: string }) => {
                         </button>
                     )}
                 </div>
+
             </div>
         </form>
     )

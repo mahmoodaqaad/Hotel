@@ -9,6 +9,7 @@ import { motion } from 'framer-motion'
 import { HiUser, HiMail, HiLockClosed } from 'react-icons/hi'
 import Link from 'next/link'
 import Image from 'next/image'
+import { LoadingPage } from '@/app/loading'
 
 const RegisterForm = () => {
   const [name, setName] = useState("")
@@ -32,7 +33,7 @@ const RegisterForm = () => {
       toast.success("Account created successfully! Welcome.")
       router.replace("/")
       router.refresh()
-    } catch (error) {
+    } catch (error: any) {
       console.error(error)
       const message = error.response?.data?.message || "Registration failed. Please try again."
       toast.error(message)
@@ -43,6 +44,7 @@ const RegisterForm = () => {
 
   return (
     <form onSubmit={handleRegister} className='space-y-6'>
+      {loading && <LoadingPage />}
       <div className='space-y-2'>
         <div className='relative group'>
           <div className='absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500 group-focus-within:text-blue-500 transition-colors'>

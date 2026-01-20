@@ -4,6 +4,7 @@ import { ARTICLE_PER_PAGE } from "@/utils/consant";
 import prisma from "@/utils/db";
 import { CreateRoomDto } from "@/utils/Dtos";
 import { CreateRoomSchema } from "@/utils/schema";
+import { RoomType, Guest } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async (req: NextRequest) => {
@@ -45,15 +46,19 @@ export const POST = async (req: NextRequest) => {
 
         const validtion = CreateRoomSchema.safeParse(body)
         if (!validtion.success) return NextResponse.json({ message: validtion.error.errors[0].message }, { status: 400 })
-        const { name, price, imageUrls, discrption } = body
+        const { name, price, imageUrls, discrption, guest, size, view, roomType } = body
 
-
+        // return console.log(body);
 
         const room = await prisma.room.create({
             data: {
                 name,
                 price,
                 discrption,
+                size,
+                view,
+                roomType: roomType as RoomType,
+                guest: guest as Guest,
                 images: {
                     create: imageUrls.map((url: string) => ({ imageUrl: url })),
                 },

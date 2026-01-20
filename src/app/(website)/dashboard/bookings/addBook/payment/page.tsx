@@ -9,6 +9,7 @@ import { FaArrowLeftLong } from "react-icons/fa6";
 import { GrVisa } from "react-icons/gr";
 import { IoIosCash } from "react-icons/io";
 import { toast } from "react-toastify";
+import { LoadingPage } from "@/app/loading";
 
 const PaymentForm = () => {
 
@@ -20,6 +21,7 @@ const PaymentForm = () => {
     const [cvv, setCvv] = useState("");
     const [paypalEmail, setPaypalEmail] = useState("");
     const [amount, setAmount] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const handlePayment = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -38,27 +40,30 @@ const PaymentForm = () => {
         //     paymentDetails = { ...paymentDetails, paypalEmail };
         // }
         try {
-
             if (paymentMethod == "visa" && cardNumber.length !== 12) return toast.error("Card Number must be 12 number")
             if (paymentMethod == "visa" && cvv.length !== 3) return toast.error("cvv must be 3 number")
             if (!amount) return toast.error("amount is required")
-            await axios.post(`${DOMAIN}/api/booking`, paymentDetails)
 
+            setLoading(true);
+            await axios.post(`${DOMAIN}/api/bookings`, paymentDetails)
 
             toast.success("Add Book Successfully")
             router.push("/dashboard/bookings?pageNumber=1")
 
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
-            toast.error(error.response.data.message)
+            toast.error(error.response?.data?.message || "Failed to add booking")
             console.log(error);
 
+        } finally {
+            setLoading(false);
         }
         // alert("Payment successful!");
     };
 
     return (
         <section className='vh-dash flex justify-center items-center '  >
+            {loading && <LoadingPage />}
             <div
                 className=" p-6 bg-white dark:bg-gray-800 shadow-lg border rounded-2xl w-full sm:w-10/12 md:w-7/12 lg:w-5/12">
 
@@ -138,14 +143,13 @@ const PaymentForm = () => {
                     </div>
 
                     {/* Submit Button */}
-                    <button type="submit" className=" bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-lg text-lg font-semibold transition duration-300">
+                    <button disabled={loading} type="submit" className=" bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-lg text-lg font-semibold transition duration-300 disabled:bg-blue-400">
                         Complete Payment
                     </button>
                 </form>
             </div>
 
         </section >
-
     );
 };
 
