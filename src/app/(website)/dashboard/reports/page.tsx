@@ -1,7 +1,9 @@
-import { GetBooking } from '@/apiCall/Booking'
-import { GetRoomsRequest } from '@/apiCall/BookingRequest'
-import { getRooms } from '@/apiCall/Rooms'
-import { getUser } from '@/apiCall/users'
+"client "
+
+import { getAllBookings } from '@/services/bookings'
+import { getAllBookingRequests } from '@/services/bookingRequests'
+import { getAllRooms } from '@/services/rooms'
+import { getAllUsers } from '@/services/users'
 import React from 'react'
 import { FaBed, FaClipboardList, FaUsers } from 'react-icons/fa'
 import { MdOutlineEventAvailable } from 'react-icons/md'
@@ -18,10 +20,10 @@ import Card from '@/components/Dashboard/Report/Card'
 
 const page = async () => {
 
-  const Users: User[] = await getUser(1)
-  const Room: RoomWithReltion[] = await getRooms(1)
-  const Booking: BookingtWithRelations[] = await GetBooking(1)
-  const BookingRequest: BookingRequestWithRelations[] = await GetRoomsRequest(1)
+  const Users = await getAllUsers({ pageNumber: 1 }) as User[]
+  const Room = await getAllRooms({ pageNumber: 1 }) as RoomWithReltion[]
+  const Booking = await getAllBookings({ pageNumber: 1 }) as unknown as BookingtWithRelations[]
+  const BookingRequest = await getAllBookingRequests({ pageNumber: 1 }) as BookingRequestWithRelations[]
   const singleUser = await varfiyTokenForPage() as User
   if (!singleUser) return null;
 
