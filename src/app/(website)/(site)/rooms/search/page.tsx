@@ -1,4 +1,6 @@
-import { getRoomsBySearch } from '@/apiCall/Rooms'
+
+
+import { searchRooms } from '@/services/rooms'
 import SearchRoom from '@/components/WebSite/Rooms/SearchRoom/SearchRoom'
 import SingleRoom from '@/components/WebSite/Rooms/SingleRoom/SingleRoom'
 import { RoomWithReltionAll } from '@/utils/Types'
@@ -11,7 +13,7 @@ interface SearchPageProps {
 
 const SearchPage = async ({ searchParams }: SearchPageProps) => {
     const { search } = await searchParams;
-    const rooms: RoomWithReltionAll[] = await getRoomsBySearch(search)
+    const rooms: RoomWithReltionAll[] = await searchRooms(search)
 
     return (
         <main className='min-h-screen bg-slate-50 dark:bg-slate-950 pt-[120px] pb-24'>

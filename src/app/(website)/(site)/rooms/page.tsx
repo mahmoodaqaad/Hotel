@@ -1,4 +1,4 @@
-import { getRoomsCount } from '@/apiCall/Rooms'
+import { getRoomsCount } from '@/services/rooms'
 import Header from '@/components/WebSite/header/Header'
 import Rooms from '@/components/WebSite/Rooms/Rooms'
 import React from 'react'
