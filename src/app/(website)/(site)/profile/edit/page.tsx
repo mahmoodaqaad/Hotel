@@ -5,13 +5,14 @@ import React from 'react'
 
 const page = async () => {
     const user = await varfiyMyAccount() as User
+    if (!user) return null;
 
     return (
         <div className='pt-[86px] lg:pt-[104px] '>
 
 
-         
-                <EditForm user={user} ShowRole={false} redirect={false} />
+
+            <EditForm user={user} ShowRole={false} redirect={false} />
         </div>
     )
 }

@@ -10,9 +10,9 @@ import { HiUser, HiMail, HiShieldCheck, HiPencilAlt, HiSave } from 'react-icons/
 import { LoadingPage } from '@/app/loading'
 
 const EditForm = ({ user, ShowRole = true, redirect = true }: { user: User, ShowRole: boolean, redirect: boolean }) => {
-    const [name, setName] = useState(user.name)
-    const [email, setEmail] = useState(user.email)
-    const [role, setRole] = useState(user.role as string)
+    const [name, setName] = useState(user?.name)
+    const [email, setEmail] = useState(user?.email)
+    const [role, setRole] = useState(user?.role as string)
     const [loading, setLoading] = useState(false)
     const router = useRouter()
 
@@ -41,7 +41,7 @@ const EditForm = ({ user, ShowRole = true, redirect = true }: { user: User, Show
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (e: any) {
             console.log(e);
-            toast.error(e.response?.data?.message || "Failed to update user")
+            toast.error(e?.response?.data?.message || "Failed to update user")
         } finally {
             setLoading(false)
         }
