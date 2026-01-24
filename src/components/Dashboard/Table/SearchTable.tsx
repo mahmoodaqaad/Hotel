@@ -23,6 +23,9 @@ const SearchTable = ({ path }: { path: string }) => {
         } catch (error) {
             console.error(error);
         }
+        finally {
+            setLoading(false)
+        }
     }
 
     const handleReset = (e: React.MouseEvent) => {
