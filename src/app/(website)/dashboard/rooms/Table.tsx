@@ -33,7 +33,16 @@ const Table = ({ rooms, user, action = true, pageNumber = 1, count, showOtherTab
                 tow='available'
                 data={rooms} header={head} singleUser={user}
                 three={''} four={''}
-
+                sortOptions={[
+                    { value: "createdAt", label: "Date" },
+                    { value: "price", label: "Price" },
+                    { value: "status", label: "Status" },
+                    { value: "roomType", label: "Type" }
+                ]}
+                filterOptions={{
+                    label: "Status",
+                    options: ["available", "booked", "requested"]
+                }}
             />
 
         </div>

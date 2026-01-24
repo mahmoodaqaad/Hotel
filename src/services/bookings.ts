@@ -1,13 +1,15 @@
 import prisma from "@/utils/db";
 import { ARTICLE_PER_PAGE } from "@/utils/consant";
-import { Prisma } from "@prisma/client";
+import { Prisma, BookingState } from "@prisma/client";
 import { serializePrisma } from "@/utils/serialize";
 
 // Types for params
 interface GetBookingsParams {
     pageNumber?: string | number;
     search?: string;
-    // sort/order/filter can be added as needed
+    sort?: string;
+    order?: string;
+    filter?: string;
 }
 
 export const getAllBookings = async (params: GetBookingsParams = {}) => {
@@ -16,11 +18,16 @@ export const getAllBookings = async (params: GetBookingsParams = {}) => {
         search = "",
     } = params;
 
+    const sort = params.sort || "createdAt";
+    const order = (params.order === "asc" ? "asc" : "desc") as Prisma.SortOrder;
+    const filter = params.filter || "";
+
+
     const take = ARTICLE_PER_PAGE;
     const skip = (Number(pageNumber) - 1) * take;
 
     // Booking sort order defaulting to newest first
-    const orderBy: Prisma.BookingOrderByWithRelationInput = { createdAt: 'desc' };
+    const orderBy: Prisma.BookingOrderByWithRelationInput = { [sort]: order };
 
     const where: Prisma.BookingWhereInput = {};
 
@@ -37,6 +44,10 @@ export const getAllBookings = async (params: GetBookingsParams = {}) => {
                 }
             }
         ];
+    }
+
+    if (filter) {
+        where.status = filter as BookingState;
     }
 
     try {

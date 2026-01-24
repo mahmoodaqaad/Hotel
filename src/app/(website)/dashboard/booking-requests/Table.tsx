@@ -31,7 +31,17 @@ const Table = ({ requests, action = true, pageNumber = 1, count, showOtherTable 
                 path='booking-requests'
 
 
-                data={requests} header={head} singleUser={undefined} three={''} four={''} />
+                data={requests} header={head} singleUser={undefined} three={''} four={''}
+                sortOptions={[
+                    { value: "createdAt", label: "Date" },
+                    { value: "status", label: "Status" },
+                    { value: "checkIn", label: "Check In" }
+                ]}
+                filterOptions={{
+                    label: "Status",
+                    options: ["pending", "approved", "rejected"]
+                }}
+            />
 
         </div >
 

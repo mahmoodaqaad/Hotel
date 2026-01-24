@@ -14,6 +14,16 @@ import { SocketContext } from '@/Context/SocketContext'
 import TableRow from './TableRow'
 import { motion, AnimatePresence } from 'framer-motion'
 
+interface FilterOption {
+    label: string;
+    options: string[];
+}
+
+interface SortOption {
+    value: string;
+    label: string;
+}
+
 interface Props {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     data: any[]
@@ -28,17 +38,12 @@ interface Props {
     count: number
     showOtherTable: boolean
     page: number
-}
-
-const FilterConfig: Record<string, { key: string, options: string[] }> = {
-    "users": { key: "Role", options: ["SuperAdmin", "Admin", "Manager", "User"] },
-    "rooms": { key: "Status", options: ["available", "booked", "requested"] },
-    "bookings": { key: "Status", options: ["active", "completed", "canceled"] },
-    "booking-requests": { key: "Status", options: ["pending", "approved", "rejected"] },
+    filterOptions?: FilterOption;
+    sortOptions?: SortOption[];
 }
 
 const TableShow = (props: Props) => {
-    const { data, singleUser, action, header, one, tow, three = "", four = "", path, page, count, showOtherTable = false } = props
+    const { data, singleUser, action, header, one, tow, three = "", four = "", path, page, count, showOtherTable = false, filterOptions, sortOptions } = props
     const [isPending, startTransition] = useTransition()
 
     const contextSocket = useContext(SocketContext)
@@ -211,12 +216,16 @@ const TableShow = (props: Props) => {
                             <select
                                 onChange={(e) => handleSort("sort", e.target.value)}
                                 disabled={isPending}
-                                defaultValue={searchParams.get("sort") || "createdAt"}
+                                defaultValue={searchParams.get("sort") || ""}
                                 className='bg-transparent text-sm p-1.5 outline-none font-medium cursor-pointer disabled:opacity-50'
                             >
-                                <option value="createdAt">Sort by Date</option>
-                                <option value="totalAmount">By Amount</option>
-                                <option value="status">By Status</option>
+                                {sortOptions?.map((option) => (
+                                    <option key={option.value} value={option.value}>{option.label}</option>
+                                )) || (
+                                        <>
+                                            <option value="createdAt">Sort by Date</option>
+                                        </>
+                                    )}
                             </select>
                             <select
                                 onChange={(e) => handleSort("order", e.target.value)}
@@ -229,7 +238,7 @@ const TableShow = (props: Props) => {
                             </select>
                         </div>
 
-                        {FilterConfig[path] && (
+                        {filterOptions && (
                             <div className='flex gap-2 items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-lg'>
                                 <select
                                     onChange={(e) => setFilter(e.target.value)}
@@ -237,8 +246,8 @@ const TableShow = (props: Props) => {
                                     disabled={isPending}
                                     className='bg-transparent text-sm p-1.5 outline-none font-medium cursor-pointer disabled:opacity-50 min-w-[120px]'
                                 >
-                                    <option value="">All {FilterConfig[path].key}s</option>
-                                    {FilterConfig[path].options.map((opt) => (
+                                    <option value="">All {filterOptions.label}s</option>
+                                    {filterOptions.options.map((opt) => (
                                         <option key={opt} value={opt}>{opt}</option>
                                     ))}
                                 </select>

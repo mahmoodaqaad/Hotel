@@ -40,6 +40,15 @@ const Table = ({ payments, action = true, count, pageNumber, showOtherTable }: {
                 four={''}
                 count={count}
                 page={pageNumber}
+                sortOptions={[
+                    { value: "createdAt", label: "Date" },
+                    { value: "amount", label: "Amount" },
+                    { value: "status", label: "Status" }
+                ]}
+                filterOptions={{
+                    label: "Status",
+                    options: ["paid", "failed", "pending"]
+                }}
             />
 
 

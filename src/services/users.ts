@@ -37,8 +37,7 @@ export const getAllUsers = async (params: GetUsersParams = {}) => {
     }
 
     if (params.filter) {
-        // Safe casting if filter matches Role enum, otherwise ignore or handle specifically
-        // where.role = params.filter as Role; 
+        where.role = params.filter as Prisma.EnumRoleFilter;
     }
 
     try {

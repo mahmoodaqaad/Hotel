@@ -28,6 +28,16 @@ const Table = ({ users, SignUser, action = true, count, pageNumber, showOtherTab
                 three={''}
                 four={''}
                 data={users} header={head} singleUser={SignUser}
+                sortOptions={[
+                    { value: "createdAt", label: "Date" },
+                    { value: "role", label: "Role" },
+                    { value: "name", label: "Name" },
+                    { value: "email", label: "Email" }
+                ]}
+                filterOptions={{
+                    label: "Role",
+                    options: ["SuperAdmin", "Admin", "Manager", "User"]
+                }}
             />
 
 

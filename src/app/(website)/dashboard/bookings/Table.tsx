@@ -10,7 +10,7 @@ const Table = ({ Booking, action = true, pageNumber = 1, count, showOtherTable }
 
 
 
-   
+
 
 
 
@@ -45,7 +45,19 @@ const Table = ({ Booking, action = true, pageNumber = 1, count, showOtherTable }
                     three='failed'
                     four='paid'
                     data={Booking} header={head}
-                    singleUser={undefined} />
+                    singleUser={undefined}
+                    sortOptions={[
+                        { value: "createdAt", label: "Date" },
+                        { value: "totalAmount", label: "Amount" },
+                        { value: "status", label: "Status" },
+                        { value: "checkIn", label: "Check In" },
+                        { value: "checkOut", label: "Check Out" }
+                    ]}
+                    filterOptions={{
+                        label: "Status",
+                        options: ["active", "completed", "canceled"]
+                    }}
+                />
 
             </div>
 

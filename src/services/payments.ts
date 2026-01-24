@@ -1,12 +1,15 @@
 
 import prisma from "@/utils/db";
 import { ARTICLE_PER_PAGE } from "@/utils/consant";
-import { Prisma } from "@prisma/client";
+import { Prisma, PaymentStatus } from "@prisma/client";
 import { serializePrisma } from "@/utils/serialize";
 
 interface GetPaymentsParams {
     pageNumber?: string | number;
     search?: string;
+    sort?: string;
+    order?: string;
+    filter?: string;
 }
 
 export const getAllPayments = async (params: GetPaymentsParams = {}) => {
@@ -14,6 +17,11 @@ export const getAllPayments = async (params: GetPaymentsParams = {}) => {
         pageNumber = 1,
         search = "",
     } = params;
+
+    const sort = params.sort || "createdAt";
+    const order = (params.order === "asc" ? "asc" : "desc") as Prisma.SortOrder;
+    const filter = params.filter || "";
+
 
     const take = ARTICLE_PER_PAGE;
     const skip = (Number(pageNumber) - 1) * take;
@@ -30,12 +38,16 @@ export const getAllPayments = async (params: GetPaymentsParams = {}) => {
         };
     }
 
+    if (filter) {
+        where.status = filter as PaymentStatus;
+    }
+
     try {
         const payments = await prisma.payment.findMany({
             where,
             skip,
             take,
-            orderBy: { createdAt: 'desc' },
+            orderBy: { [sort]: order },
             include: {
                 user: true,
                 booking: {
