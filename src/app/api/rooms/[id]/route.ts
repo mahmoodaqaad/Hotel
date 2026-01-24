@@ -47,6 +47,7 @@ export const PUT = async (req: NextRequest, context: { params: Promise<{ id: str
                 guest: String(guest), // Ensure string if schema is string, or match AddRoom logic
                 size,
                 view,
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 roomType: roomType as any, // Cast to any or RoomType to avoid lint if strict
                 images: {
                     create: imageUrls.map((url: string) => ({ imageUrl: url })),

@@ -34,6 +34,7 @@ const LoginForm = () => {
             toast.success("Welcome back! Login successful")
             router.replace("/")
             router.refresh()
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             console.error(error)
             const message = (error as { response: { data: { message: string } } }).response?.data?.message || "Login failed. Please try again."

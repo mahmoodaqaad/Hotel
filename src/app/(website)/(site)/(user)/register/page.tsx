@@ -33,6 +33,7 @@ const RegisterForm = () => {
       toast.success("Account created successfully! Welcome.")
       router.replace("/")
       router.refresh()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error(error)
       const message = error.response?.data?.message || "Registration failed. Please try again."
