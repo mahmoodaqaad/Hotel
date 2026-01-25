@@ -21,7 +21,7 @@ const SingleTodo = ({ todo, setTodos }: SingleTodoProps) => {
 
   const { isDarkmode } = context || { isDarkmode: false } // Fallback if context missing, though page should wrap it
 
-  const handleToggleStatus = async (id: number) => {
+  const handleToggleStatus = async (id: string) => {
     try {
       await axios.put(`${DOMAIN}/api/todo/myTodo/${id}`)
       // Assuming existing API toggles it. 
@@ -38,7 +38,7 @@ const SingleTodo = ({ todo, setTodos }: SingleTodoProps) => {
     }
   };
 
-  const deleteTodo = async (id: number) => {
+  const deleteTodo = async (id: string) => {
     Swal.fire({
       title: "Delete this task?",
       text: "This action cannot be undone.",

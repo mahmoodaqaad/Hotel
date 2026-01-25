@@ -25,7 +25,7 @@ interface TableRowProps {
     tow: string
     three: string
     four: string
-    handleDelete: (id: number) => void
+    handleDelete: (id: string) => void
     UpdateStatus: (data: any) => React.ReactNode
 }
 

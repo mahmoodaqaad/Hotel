@@ -1,4 +1,6 @@
 "use client"
+import { LoadingBtn } from '@/app/(website)/dashboard/loading';
+import { LoadingPage } from '@/app/loading';
 import { SocketContext } from '@/Context/SocketContext';
 import { DOMAIN } from '@/utils/consant';
 import { Notification, User } from '@prisma/client'
@@ -38,14 +40,15 @@ const Notifiction = ({ user }: { user: User & { Notification: Notification[] } }
             setNotification(user.Notification)
         }
     }, [user?.Notification, notifications.length, setNotification])
+    console.log(notifications);
 
-    const ReadNotfiction = async (id: number) => {
+    const ReadNotfiction = async (id: string) => {
         try {
             axios.put(`${DOMAIN}/api/notifications/read/${id}`)
 
             const newnNotif = notifications.map(item => {
 
-                if (+id === +item.id) {
+                if (id === item.id) {
 
                     item.isRead = true
                     return item
@@ -107,12 +110,17 @@ const Notifiction = ({ user }: { user: User & { Notification: Notification[] } }
 
                         <div className='text-3xl font-semibold p-3 bg-red-500 text-white' >Notifiction</div>
 
-                        {
+                        {notifications.length > 0 ?
                             (notifications || []).map((item, i) => (
                                 <div key={i} className={` ${item.isRead ? "bg-gray-50  dark:bg-gray-900  hover:bg-gray-100 " : "bg-sky-100  dark:bg-sky-950 hover:bg-gray-300 "} border-gray-200 border-2 border-t  transition-all p-1 `}
 
                                     onClick={() => {
-                                        if (item?.link) { router.push(`${DOMAIN}/${item?.link}`) }
+                                        if (item?.link) {
+                                            <LoadingBtn />
+                                            router.push(`${DOMAIN}/${item?.link}`
+
+                                            )
+                                        }
                                         if (!item.isRead) {
                                             ReadNotfiction(item.id)
                                         }
@@ -131,19 +139,23 @@ const Notifiction = ({ user }: { user: User & { Notification: Notification[] } }
                                     </div>
                                 </div>
                             ))
+                            :
+                            <p className='text-center p-2 text-gray-400 dark:text-gray-600 '>No notifications</p>
                         }
                     </div>
+                    {
+                        notifications?.some(item => !item.isRead) &&
+                        <button
+                            onClick={() => {
+                                notifications?.some(item => !item.isRead)
 
-                    <button
-                        onClick={() => {
-                            notifications?.some(item => !item.isRead)
+                                ReadAllNotfiction()
 
-                            ReadAllNotfiction()
-
-                        }}
-                        disabled={!notifications?.some(item => !item.isRead)} className='bg-gray-300 dark:bg-gray-800  text-2xl p-2 text-center transition-all hover:bg-gray-400 disabled:bg-gray-200 dark:disabled:disabled:bg-gray-700 w-full'>
-                        Read All
-                    </button>
+                            }}
+                            disabled={!notifications?.some(item => !item.isRead)} className='bg-gray-300 dark:bg-gray-800  text-2xl p-2 text-center transition-all hover:bg-gray-400 disabled:bg-gray-200 dark:disabled:disabled:bg-gray-700 w-full'>
+                            Read All
+                        </button>
+                    }
                 </div>
             }
         </div >

@@ -21,7 +21,7 @@ export const GET = async (req: NextRequest, { params }: Props) => {
 
         const user = await prisma.user.findUnique({
             where: {
-                id: Number(id)
+                id: id as string
 
 
             },
@@ -47,12 +47,12 @@ export const PUT = async (req: NextRequest, { params }: Props) => {
         const user = varfiyToken(req)
         const isAllowd = IsSuperAdmin(req)
 
-        if (!isAllowd && Number(user?.id) !== Number(id)) {
+        if (!isAllowd && user?.id !== id) {
 
             return NextResponse.json({ message: "your not allowd ,for biden" }, { status: 403 })
         }
 
-        const isExistUser = await prisma.user.findUnique({ where: { id: Number(id) } })
+        const isExistUser = await prisma.user.findUnique({ where: { id: id as string } })
         if (!isExistUser) return NextResponse.json({ message: "user Not found" }, { status: 404 });
 
 
@@ -61,7 +61,7 @@ export const PUT = async (req: NextRequest, { params }: Props) => {
 
 
         await prisma.user.update({
-            where: { id: Number(id) },
+            where: { id: id as string },
             data: {
                 name, email, role
 
@@ -70,14 +70,14 @@ export const PUT = async (req: NextRequest, { params }: Props) => {
 
         // update user info by anther admin
 
-        if (Number(user?.id) !== Number(id)) {
+        if (user?.id !== id) {
             // stored in DB 
             const notification = await prisma.notification.create({
                 data: {
                     message: `the ${user?.name} (${user?.role}) update your informations `,
                     link: role !== "User" ? "/dashboard/profile" : "/profile",
                     type: "auth",
-                    userId: Number(id),
+                    userId: id as string,
                 }
             })
 
@@ -109,11 +109,11 @@ export const DELETE = async (req: NextRequest, { params }: Props) => {
             return NextResponse.json({ message: "your not allowd ,for biden" }, { status: 403 })
         }
 
-        const isExistUser = await prisma.user.findUnique({ where: { id: Number(id) } })
+        const isExistUser = await prisma.user.findUnique({ where: { id: id as string } })
         if (!isExistUser) return NextResponse.json({ message: "user Not found" }, { status: 404 });
 
         await prisma.user.delete({
-            where: { id: Number(id) },
+            where: { id: id as string },
 
         })
         return NextResponse.json({ message: "Deleted" }, { status: 200 })

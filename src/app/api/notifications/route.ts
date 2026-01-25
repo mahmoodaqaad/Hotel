@@ -13,7 +13,7 @@ export const POST = async (req: NextRequest) => {
             data: {
                 message,
                 type: type || "info",
-                userId: Number(userId),
+                userId: userId,
                 link: link || "", // link is required in schema
             },
         });

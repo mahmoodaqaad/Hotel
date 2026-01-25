@@ -1,7 +1,7 @@
 import prisma from "@/utils/db";
 import { serializePrisma } from "@/utils/serialize";
 
-export const getMyTodos = async (userId: number) => {
+export const getMyTodos = async (userId: string) => {
     try {
         const todos = await prisma.todo.findMany({
             where: { userId },

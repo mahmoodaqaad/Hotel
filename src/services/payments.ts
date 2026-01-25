@@ -73,7 +73,7 @@ export const getPaymentsCount = async () => {
 export const getSinglePayment = async (id: string | number) => {
     try {
         const payment = await prisma.payment.findUnique({
-            where: { id: Number(id) },
+            where: { id: id },
             include: {
                 booking: true
             }

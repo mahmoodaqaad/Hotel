@@ -5,7 +5,7 @@ import React, { useState } from 'react'
 
 const TodoShow = ({ todo }: { todo: Todo[] }) => {
     const [todos, setTodos] = useState(todo)
-    const handleToggleStatus = async (id: number) => {
+    const handleToggleStatus = async (id: string) => {
         try {
             // await updateTodoStatus(id); // استدعاء API لتحديث الحالة
             setTodos((prev) =>

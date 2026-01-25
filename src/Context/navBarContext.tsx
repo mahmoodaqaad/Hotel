@@ -11,6 +11,9 @@ export const NavBarContext = createContext<NavBarContextProps | undefined>(undef
 const NavBarContextProvider = ({ children }: { children: React.ReactNode }) => {
     const [showbar, setShowBar] = useState(false);
 
+
+
+
     return (
         <NavBarContext.Provider value={{ showbar, setShowBar }}>
             {children}

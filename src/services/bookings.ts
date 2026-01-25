@@ -75,7 +75,7 @@ export const getBookingsCount = async () => {
 export const getSingleBooking = async (id: string | number) => {
     try {
         const booking = await prisma.booking.findUnique({
-            where: { id: Number(id) },
+            where: { id: id as string },
             include: {
                 user: { select: { id: true, name: true, email: true } },
                 room: { select: { id: true, name: true, price: true, images: { take: 1 } } },

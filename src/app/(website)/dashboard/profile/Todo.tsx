@@ -6,7 +6,7 @@ import { getMyTodos } from '@/services/todos'
 const TodoPage = async () => {
   const user = await varfiyTokenForPage()
   if (!user) return null;
-  const todo = await getMyTodos(Number(user.id))
+  const todo = await getMyTodos(user.id)
 
   return (
     <div className="h-full flex flex-col p-6 lg:p-8">
@@ -16,7 +16,7 @@ const TodoPage = async () => {
       </div>
 
       <div className='flex-1 bg-slate-50/50 dark:bg-slate-950/30 rounded-2xl p-4 border border-slate-100 dark:border-white/5'>
-        <TodoForm userId={Number(user?.id)} todo={todo} />
+        <TodoForm userId={user.id} todo={todo} />
       </div>
     </div>
   )

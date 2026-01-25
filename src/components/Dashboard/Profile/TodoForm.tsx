@@ -7,7 +7,7 @@ import { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { HiClipboardList } from 'react-icons/hi'
 
-const TodoForm = ({ userId, todo }: { userId: number, todo: Todo[] }) => {
+const TodoForm = ({ userId, todo }: { userId: string, todo: Todo[] }) => {
 
     const [todos, setTodos] = useState(todo)
 

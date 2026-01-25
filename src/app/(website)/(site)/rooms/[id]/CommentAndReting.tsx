@@ -65,7 +65,7 @@ const CommentAndReting = ({ room, user }: { room: RoomWithReltionAll, user: User
                                     <HiChatAlt2 className="text-blue-500" />
                                     Share Your Thoughts
                                 </h3>
-                                <CreateComment roomId={room?.id} userId={Number(user?.id)} />
+                                <CreateComment roomId={room?.id} userId={user?.id} />
                             </div>
                         </div>
                     )}

@@ -7,7 +7,7 @@ interface room {
     name: string,
     guest?: string | number,
     view?: string,
-    id: number
+    id: string
 }
 
 const Search = ({ result }: { result: room[] }) => {

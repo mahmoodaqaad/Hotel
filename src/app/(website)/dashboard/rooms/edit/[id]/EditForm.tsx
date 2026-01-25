@@ -39,7 +39,7 @@ const EditRoom = ({ room }: { room: RoomWithImages }) => {
 
 
     const showImageFromServer = imagesServer.map((img, i: number) => {
-        async function deleteImgFromServer(id: number) {
+        async function deleteImgFromServer(id:string) {
             try {
                 const result = await Swal.fire({
                     title: "Are you sure?",

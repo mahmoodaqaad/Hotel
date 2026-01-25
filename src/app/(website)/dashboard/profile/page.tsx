@@ -6,7 +6,9 @@ import { HiBadgeCheck, HiCalendar, HiMail, HiUserCircle } from 'react-icons/hi';
 const page = async () => {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const user = await varfiyMyAccount() as  any;
+    const user = await varfiyMyAccount() as any;
+    console.log(user);
+    
     if (!user) return null;
 
     return (

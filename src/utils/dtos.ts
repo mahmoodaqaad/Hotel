@@ -24,8 +24,8 @@ export interface updateUserDto {
 
 export interface CreateBookingRequestDto {
 
-    userId: number
-    roomId: number
+    userId: string
+    roomId: string
     checkIn: string
     checkOut: string
 
@@ -55,8 +55,8 @@ export interface UpdateRoomDto {
 
 export interface CreateBooking {
 
-    userId: number
-    roomId: number
+    userId: string
+    roomId: string
     checkIn: string
     checkOut: string
     method: string
@@ -67,7 +67,7 @@ export interface CreateBooking {
 export interface CreateTodoDto {
     title: string
     discrption: string
-    userId: number
+    userId: string
     status?: TodoStatus
 }
 export interface updatePasswordDto {
@@ -87,7 +87,7 @@ export interface FilterData {
 
 export interface SavedDto {
 
-    userId: number
-    roomId: number
+    userId: string
+    roomId: string
 
 }

@@ -13,7 +13,7 @@ export const DELETE = async (req: NextRequest, { params }: Props) => {
 
         const isAllowd = IsSuperAdminOrAdmin(req)
         const comment = await prisma.comment.findUnique({
-            where: { id: Number(id) }
+            where: { id: id as string }
         })
         if (!isAllowd && comment?.userId !== user?.id) {
 
@@ -24,7 +24,7 @@ export const DELETE = async (req: NextRequest, { params }: Props) => {
         if (!comment) return NextResponse.json({ error: 'Comment not found' }, { status: 404 });
 
 
-        await prisma.comment.delete({ where: { id: Number(id) } })
+        await prisma.comment.delete({ where: { id: id as string } })
 
 
         return NextResponse.json({ message: 'Comment deleted successfully' }, { status: 200 });

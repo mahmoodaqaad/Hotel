@@ -71,7 +71,7 @@ export const getRoomsCount = async () => {
 export const getSingleRoom = async (id: string | number) => {
     try {
         const room = await prisma.room.findUnique({
-            where: { id: Number(id) },
+            where: { id: id },
             include: {
 
                 images: true,

@@ -12,13 +12,13 @@ export const GET = async (req: NextRequest, { params }: Props) => {
     try {
         const MyUser = varfiyToken(req)
 
-        if (Number(MyUser?.id) !== Number(id)) {
+        if (MyUser?.id !== id) {
 
             return NextResponse.json({ message: "your not allowd ,for biden" }, { status: 403 })
         }
 
         const MyTodo = await prisma.todo.findMany({
-            where: { userId: Number(id) },
+            where: { userId: id as string },
             orderBy: {
                 createdAt: "desc"
             }
@@ -39,16 +39,16 @@ export const PUT = async (req: NextRequest, { params }: Props) => {
     try {
         const MyUser = varfiyToken(req)
 
-        const todo = await prisma.todo.findUnique({ where: { id: Number(id) } })
+        const todo = await prisma.todo.findUnique({ where: { id: id as string } })
         if (!todo) return NextResponse.json({ message: "Not Found Todo" }, { status: 404 })
 
-        if (Number(MyUser?.id) !== Number(todo?.userId)) {
+        if (MyUser?.id !== todo?.userId) {
 
             return NextResponse.json({ message: "your not allowd ,for biden" }, { status: 403 })
         }
 
         await prisma.todo.update({
-            where: { id: Number(id) },
+            where: { id: id as string },
             data: {
                 status: todo?.status === "completed" ? "pending" : "completed"
             }
@@ -65,15 +65,15 @@ export const DELETE = async (req: NextRequest, { params }: Props) => {
     try {
         const MyUser = varfiyToken(req)
 
-        const todo = await prisma.todo.findUnique({ where: { id: Number(id) } })
+        const todo = await prisma.todo.findUnique({ where: { id: id } })
         if (!todo) return NextResponse.json({ message: "Not Found Todo" }, { status: 404 })
 
-        if (Number(MyUser?.id) !== Number(todo?.userId)) {
+        if (MyUser?.id !== todo?.userId) {
 
             return NextResponse.json({ message: "your not allowd ,for biden" }, { status: 403 })
         }
 
-        await prisma.todo.delete({ where: { id: Number(id) } })
+        await prisma.todo.delete({ where: { id: id } })
 
         return NextResponse.json({ message: "Deleted Todo Successfully" }, { status: 200 })
 

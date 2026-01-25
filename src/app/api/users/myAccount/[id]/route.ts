@@ -13,12 +13,12 @@ export const GET = async (req: NextRequest, { params }: Props) => {
     try {
         const Myuser = await varfiyToken(req) as User
 
-        if (Myuser.id !== +id) {
+        if (Myuser.id !== id) {
             return NextResponse.json({ message: "not allowed,for bidden" }, { status: 403 })
         }
 
         const user = await prisma.user.findUnique({
-            where: { id: Number(id) }, include: {
+            where: { id: id as string }, include: {
                 Notification: {
 
                     orderBy: {

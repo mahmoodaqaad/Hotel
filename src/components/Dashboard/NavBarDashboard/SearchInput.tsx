@@ -8,9 +8,9 @@ import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
 
 interface SearchResults {
-    users: { id: number; name: string; email: string; role: string }[]
-    rooms: { id: number; name: string; price: number; images: { imageUrl: string }[] }[]
-    bookings: { id: number; startDate: string; endDate: string; user: { name: string }; room: { name: string } }[]
+    users: { id: string; name: string; email: string; role: string }[]
+    rooms: { id: string; name: string; price: number; images: { imageUrl: string }[] }[]
+    bookings: { id: string; startDate: string; endDate: string; user: { name: string }; room: { name: string } }[]
 }
 
 const SearchInput = () => {

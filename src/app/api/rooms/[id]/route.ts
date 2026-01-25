@@ -31,7 +31,7 @@ export const PUT = async (req: NextRequest, context: { params: Promise<{ id: str
         }
 
         const { id } = await context.params;
-        const room = await prisma.room.findUnique({ where: { id: Number(id) } })
+        const room = await prisma.room.findUnique({ where: { id: id as string } })
         if (!room) return NextResponse.json({ message: "room Not found" }, { status: 404 });
 
         const { name, price, imageUrls, discrption, guest, size, view, roomType } = await req.json() as UpdateRoomDto
@@ -39,7 +39,7 @@ export const PUT = async (req: NextRequest, context: { params: Promise<{ id: str
 
 
         await prisma.room.update({
-            where: { id: Number(id) },
+            where: { id: id as string },
             data: {
                 name,
                 price,
@@ -73,11 +73,11 @@ export const DELETE = async (req: NextRequest, { params }: props) => {
             return NextResponse.json({ message: "your not allowd ,for biden" }, { status: 403 })
         }
 
-        const room = await prisma.room.findUnique({ where: { id: Number(id) } })
+        const room = await prisma.room.findUnique({ where: { id: id as string } })
         if (!room) return NextResponse.json({ message: "room Not found" }, { status: 404 });
         if (room.status !== "available") return NextResponse.json({ message: "room is Booked" }, { status: 404 });
 
-        await prisma.room.delete({ where: { id: Number(id) } })
+        await prisma.room.delete({ where: { id: id as string } })
         return NextResponse.json({ message: "Deleted" }, { status: 200 })
 
     } catch (error) {

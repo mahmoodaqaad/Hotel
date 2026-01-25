@@ -8,7 +8,7 @@ import { toast } from 'react-toastify'
 import { motion } from 'framer-motion'
 import { HiPaperAirplane } from 'react-icons/hi'
 
-const CreateComment = ({ roomId, userId }: { roomId: number, userId: number }) => {
+const CreateComment = ({ roomId, userId }: { roomId: string, userId: string }) => {
   const [text, setText] = useState("")
   const [loading, setLoading] = useState(false)
   const router = useRouter()

@@ -56,7 +56,7 @@ const TableShow = (props: Props) => {
     const { isDarkmode } = contextMode
     const router = useRouter()
 
-    const handleUpdateStatus = useCallback(async (id: number, comf: boolean) => {
+    const handleUpdateStatus = useCallback(async (id: string, comf: boolean) => {
         const Swal = (await import('sweetalert2')).default
         try {
             if (comf) {
@@ -125,7 +125,7 @@ const TableShow = (props: Props) => {
         }
     }, [isDarkmode, path, router])
 
-    const handleDelete = useCallback(async (id: number) => {
+    const handleDelete = useCallback(async (id: string) => {
         const Swal = (await import('sweetalert2')).default
         const result = await Swal.fire({
             title: "Are you sure?",
@@ -160,7 +160,7 @@ const TableShow = (props: Props) => {
         }
     }, [isDarkmode, path, router])
 
-    const UpdateStatus = useCallback((data: { id: number, status: string, paidAmount: string, totalAmount: string }) => {
+    const UpdateStatus = useCallback((data: { id: string, status: string, paidAmount: string, totalAmount: string }) => {
         const access = data.status === "active" || data.status === "pending"
         return access ? (
             <div className='flex gap-2 items-center justify-center'>

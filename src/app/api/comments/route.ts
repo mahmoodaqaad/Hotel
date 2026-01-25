@@ -20,18 +20,18 @@ export const POST = async (req: NextRequest) => {
         const comment = await prisma.comment.create({
             data: {
                 text: text.trim(),
-                userId: Number(userId),
-                roomId: Number(roomId),
+                userId: userId,
+                roomId: roomId,
             }
         });
 
         // Add Notification for Admins
-        const room = await prisma.room.findUnique({ where: { id: Number(roomId) }, select: { name: true } });
-        const user = await prisma.user.findUnique({ where: { id: Number(userId) }, select: { name: true } });
+        const room = await prisma.room.findUnique({ where: { id: roomId }, select: { name: true } });
+        const user = await prisma.user.findUnique({ where: { id: userId }, select: { name: true } });
         const admins = await prisma.user.findMany({
             where: {
                 role: "SuperAdmin",
-                id: { not: Number(userId) }
+                id: { not: userId }
             },
             select: { id: true }
         });

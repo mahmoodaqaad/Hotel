@@ -10,7 +10,7 @@ export const POST = async (req: NextRequest) => {
         }
 
         await prisma.user.update({
-            where: { id: Number(userId) },
+            where: { id: userId },
             data: { lastSeen: new Date() },
         });
 

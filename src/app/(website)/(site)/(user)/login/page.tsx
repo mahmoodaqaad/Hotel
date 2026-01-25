@@ -9,7 +9,6 @@ import { useRouter } from 'next/navigation'
 import { toast } from 'react-toastify'
 import { HiMail, HiLockClosed } from 'react-icons/hi'
 import Link from 'next/link'
-import { LoadingPage } from '@/app/loading'
 
 const LoginForm = () => {
     const [email, setEmail] = useState("")
@@ -46,7 +45,7 @@ const LoginForm = () => {
 
     return (
         <form onSubmit={handleLogin} className='space-y-6'>
-            {loading && <LoadingPage />}
+            {/* {loading && <LoadingPage />} */}
             <div className='space-y-2'>
                 <div className='relative group'>
                     <div className='absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500 group-focus-within:text-blue-500 transition-colors'>

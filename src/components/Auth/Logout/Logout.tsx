@@ -9,7 +9,8 @@ import { useRouter } from 'next/navigation'
 import React, { useContext, useState } from 'react'
 import Swal from 'sweetalert2'
 import { SocketContext } from '@/Context/SocketContext'
-    
+import { toast } from 'react-toastify'
+
 const Logout = () => {
     const router = useRouter()
     const [loading, setLoading] = useState(false)
@@ -44,12 +45,16 @@ const Logout = () => {
 
                     if (context3?.setMyUser) context3.setMyUser(undefined)
 
-                    router.replace("/login");
+                    window.location.pathname = "/login";
                     router.refresh();
                     setShowBar(false)
+                    toast.success("Logged out successfully")
                 } catch (error) {
                     console.log(error);
 
+                }
+                finally {
+                    setLoading(false)
                 }
 
             }
@@ -65,7 +70,7 @@ const Logout = () => {
 
             {
                 loading ?
-                    <LoadingBtn /> : "Logout"
+                    <LoadingBtn size="7" /> : "Logout"
             }
         </button>
     )

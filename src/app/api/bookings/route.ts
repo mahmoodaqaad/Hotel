@@ -132,8 +132,8 @@ export const POST = async (req: NextRequest) => {
     if (!val.success) return NextResponse.json({ message: val.error.errors[0].message }, { status: 400 })
     const { amount, checkIn, checkOut, method, roomId, userId } = body
 
-    const room = await prisma.room.findUnique({ where: { id: Number(roomId) } })
-    const user = await prisma.user.findUnique({ where: { id: Number(userId) } })
+    const room = await prisma.room.findUnique({ where: { id: roomId } })
+    const user = await prisma.user.findUnique({ where: { id: userId } })
     if (!user) return NextResponse.json({ message: "No user has this ID" }, { status: 400 })
     if (!room) return NextResponse.json({ message: "No Room has this ID" }, { status: 400 })
     if (room?.status == "booked") return NextResponse.json({ message: "this room is booked" }, { status: 400 })
@@ -146,8 +146,8 @@ export const POST = async (req: NextRequest) => {
     if (+Number(room.price) < Number(amount)) return NextResponse.json({ message: "this amount is biiger for the room price" }, { status: 400 })
     const createBooking = await prisma.booking.create({
       data: {
-        userId: Number(userId),
-        roomId: Number(roomId),
+        userId: userId,
+        roomId: roomId,
         checkIn: new Date(checkIn),
         checkOut: new Date(checkOut),
         totalAmount: Number(room?.price),
@@ -161,7 +161,7 @@ export const POST = async (req: NextRequest) => {
 
 
     await prisma.room.update({
-      where: { id: Number(roomId) },
+      where: { id: roomId },
       data: {
         status: "booked"
 
@@ -170,7 +170,7 @@ export const POST = async (req: NextRequest) => {
 
     await prisma.payment.create({
       data: {
-        userId: Number(userId),
+        userId: userId,
         bookingId: createBooking.id,
         amount: Number(amount),
         method,

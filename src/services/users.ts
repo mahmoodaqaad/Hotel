@@ -63,7 +63,7 @@ export const getUsersCount = async () => {
 export const getSingleUser = async (id: string | number) => {
     try {
         const user = await prisma.user.findUnique({
-            where: { id: Number(id) },
+            where: { id: id as string },
         });
         return user;
     } catch (error) {

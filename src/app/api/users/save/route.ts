@@ -12,12 +12,12 @@ export const POST = async (req: NextRequest) => {
 
         if (!roomId) return NextResponse.json({ message: "roomId not Found" }, { status: 404 })
 
-        const user = await prisma.user.findUnique({ where: { id: Number(userId) } })
+        const user = await prisma.user.findUnique({ where: { id: userId } })
 
         if (!user) return NextResponse.json({ message: "userId not Found" }, { status: 404 })
 
         const Room = await prisma.room.findUnique({
-            where: { id: Number(roomId) }, include: {
+            where: { id: roomId }, include: {
                 Saved: true
             }
         })
@@ -25,7 +25,7 @@ export const POST = async (req: NextRequest) => {
         if (!Room) return NextResponse.json({ message: "roomId not Found" }, { status: 404 })
         const ISsaved = Room.Saved.find(item => item.roomId === roomId && item.userId === userId)
         if (ISsaved) {
-            await prisma.saved.delete({ where: { id: Number(ISsaved.id) } })
+            await prisma.saved.delete({ where: { id: ISsaved.id } })
             return NextResponse.json({ message: "Not Saved" }, { status: 200 })
         }
 

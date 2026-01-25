@@ -105,7 +105,7 @@ const SideBar = ({ user }: { user: User }) => {
                                         )}
                                     </AnimatePresence>
 
-                                    {!showSidebar && (
+                                    {showSidebar && (
                                         <div className="absolute left-full ml-4 px-3 py-1.5 bg-slate-800 text-white text-xs font-bold rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-[60]">
                                             {link.label}
                                         </div>

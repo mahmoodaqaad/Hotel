@@ -52,7 +52,7 @@ enum RoomType {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
+  id        String   @id      @default(uuid())
   name      String   @db.VarChar(100)
   email     String   @unique
   password  String
@@ -73,7 +73,7 @@ model User {
 }
 
 model Room {
-  id         Int     @id @default(autoincrement())
+  id        String   @id      @default(uuid())
   name       String  @db.VarChar(100)
   discrption String
   price      Decimal
@@ -96,8 +96,8 @@ model Room {
 }
 
 model RoomImage {
-  id        Int      @id @default(autoincrement())
-  roomId    Int
+  id        String   @id      @default(uuid())
+  roomId    String
   imageUrl  String   @db.Text // تخزين رابط الصورة
   createdAt DateTime @default(now())
 
@@ -105,9 +105,9 @@ model RoomImage {
 }
 
 model BookingRequest {
-  id        Int           @id @default(autoincrement())
-  userId    Int
-  roomId    Int
+  id        String   @id      @default(uuid())
+  userId    String
+  roomId    String
   checkIn   DateTime
   checkOut  DateTime
   status    BookingStatus @default(pending)
@@ -118,9 +118,9 @@ model BookingRequest {
 }
 
 model Booking {
-  id              Int           @id @default(autoincrement())
-  userId          Int
-  roomId          Int
+  id        String   @id      @default(uuid())
+  userId          String
+  roomId          String
   checkIn         DateTime
   checkOut        DateTime
   status          BookingState  @default(active)
@@ -136,9 +136,9 @@ model Booking {
 }
 
 model Payment {
-  id        Int     @id @default(autoincrement())
-  userId    Int
-  bookingId Int     @unique
+  id        String   @id      @default(uuid())
+  userId    String
+  bookingId String     @unique
   amount    Decimal
 
   method    String        @db.VarChar(50)
@@ -150,12 +150,12 @@ model Payment {
 }
 
 model Rating {
-  id          Int      @id @default(autoincrement())
+  id        String   @id      @default(uuid())
   ratingValue Int // التقييم من 1 إلى 5
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  roomId      Int
-  userId      Int
+  roomId      String
+  userId      String
   room        Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -163,52 +163,52 @@ model Rating {
 }
 
 model Comment {
-  id        Int      @id @default(autoincrement())
+  id        String   @id      @default(uuid())
   text      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  roomId    Int
-  userId    Int
+  roomId    String
+  userId    String
 
   room Room @relation(fields: [roomId], references: [id], onDelete: Cascade)
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Setting {
-  id        Int      @id @default(autoincrement())
+  id        String   @id      @default(uuid())
   key       String   @unique
   value     String
   updatedAt DateTime @updatedAt
 }
 
 model Todo {
-  id         Int        @id @default(autoincrement())
+  id        String   @id      @default(uuid())
   title      String
   discrption String
   status     TodoStatus @default(pending)
-  userId     Int
+  userId     String
   createdAt  DateTime   @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Saved {
-  id Int @id @default(autoincrement())
+  id        String   @id      @default(uuid())
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  roomId    Int
-  userId    Int
+  roomId    String
+  userId    String
 
   room Room @relation(fields: [roomId], references: [id], onDelete: Cascade)
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Notification {
-  id        Int      @id @default(autoincrement())
+  id        String   @id      @default(uuid())
   message   String
   type      String
-  userId    Int
+  userId    String
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
   link      String 

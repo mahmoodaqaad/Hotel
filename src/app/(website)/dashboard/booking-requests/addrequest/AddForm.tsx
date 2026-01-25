@@ -16,8 +16,8 @@ const AddForm = () => {
     const [checkOut, setCheckOut] = useState("")
     const [loading, setLoading] = useState(true)
 
-    const [user, setUser] = useState<{ name: string, id: number }[]>([])
-    const [room, setRoom] = useState<{ name: string, id: number }[]>([])
+    const [user, setUser] = useState<{ name: string, id: string }[]>([])
+    const [room, setRoom] = useState<{ name: string, id: string }[]>([])
 
     const router = useRouter()
 

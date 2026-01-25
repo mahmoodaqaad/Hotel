@@ -16,7 +16,7 @@ interface Props {
 //     return NextResponse.json({ message: "your not allowd ,for biden" }, { status: 403 })
 // }
 //         const request = await prisma.bookingRequest.findUnique({
-//             where: { id: Number(id) }
+//             where: { id: id }
 //         })
 //         if (!request) {
 //             return NextResponse.json({ error: 'Request not found' }, { status: 404 });
@@ -47,16 +47,16 @@ export const DELETE = async (req: NextRequest, { params }: Props) => {
         }
 
         const request = await prisma.bookingRequest.findUnique({
-            where: { id: Number(id) }
+            where: { id: id as string }
         })
         if (!request) return NextResponse.json({ error: 'Request not found' }, { status: 404 });
 
 
-        await prisma.bookingRequest.delete({ where: { id: Number(id) } })
+        await prisma.bookingRequest.delete({ where: { id: id as string } })
 
 
         await prisma.room.update({
-            where: { id: Number(request.roomId) },
+            where: { id: request.roomId },
             data: {
                 status: "available"
             }

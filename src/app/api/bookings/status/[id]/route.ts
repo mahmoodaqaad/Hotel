@@ -23,23 +23,23 @@ export const PUT = async (req: NextRequest, context: { params: Promise<{ id: str
 
         // find booking
 
-        const booking = await prisma.booking.findUnique({ where: { id: Number(id) } })
+        const booking = await prisma.booking.findUnique({ where: { id: id as string } })
 
         if (!booking) return NextResponse.json({ message: "book is not found" }, { status: 404 })
 
         if (booking.status !== "active") return NextResponse.json({ message: "you can not update status for this room" }, { status: 400 })
 
         await prisma.booking.update({
-            where: { id: Number(id) },
+            where: { id: id as string },
             data: { status: "completed" }
         })
         await prisma.room.update({
-            where: { id: Number(booking.roomId) },
+            where: { id: booking.roomId },
             data: { status: "available" }
         })
 
 
-        const room = await prisma.room.findUnique({ where: { id: Number(booking.roomId) }, select: { name: true } })
+        const room = await prisma.room.findUnique({ where: { id: booking.roomId }, select: { name: true } })
 
 
         const notification = await prisma.notification.create({
@@ -84,31 +84,31 @@ export const DELETE = async (req: NextRequest, { params }: Props) => {
         }
 
         // find booking
-        const booking = await prisma.booking.findUnique({ where: { id: Number(id) } })
+        const booking = await prisma.booking.findUnique({ where: { id: id as string } })
 
         if (!booking) return NextResponse.json({ message: "book is not found" }, { status: 404 })
 
         // Allow if admin/manager OR if user owns the booking
-        if (!isAllowd && Number(user?.id) !== Number(booking.userId)) {
+        if (!isAllowd && user?.id !== booking.userId) {
             return NextResponse.json({ message: "Not allowed" }, { status: 403 })
         }
 
         if (booking.status !== "active") return NextResponse.json({ message: "you can not update status for this room" }, { status: 400 })
 
         await prisma.booking.update({
-            where: { id: Number(id) },
+            where: { id: id as string },
             data: { status: "canceled" }
         })
         await prisma.room.update({
-            where: { id: Number(booking.roomId) },
+            where: { id: booking.roomId },
             data: { status: "available" }
         })
 
-        const room = await prisma.room.findUnique({ where: { id: Number(booking.roomId) }, select: { name: true } })
+        const room = await prisma.room.findUnique({ where: { id: booking.roomId }, select: { name: true } })
 
 
         // Only notify the user if the action was performed by someone else (e.g., an Admin)
-        if (Number(user?.id) !== Number(booking.userId)) {
+        if (user?.id !== booking.userId) {
             const notification = await prisma.notification.create({
                 data: {
                     message: `your booking is Canceled for room ${room?.name}`,

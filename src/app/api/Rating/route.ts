@@ -42,12 +42,12 @@ export const POST = async (req: Request) => {
             },
         });
 
-        const writerComment = await prisma.user.findUnique({ where: { id: Number(userId) }, select: { name: true } })
-        const room = await prisma.room.findUnique({ where: { id: Number(roomId) }, select: { name: true } })
+        const writerComment = await prisma.user.findUnique({ where: { id: userId }, select: { name: true } })
+        const room = await prisma.room.findUnique({ where: { id: roomId }, select: { name: true } })
         const users = await prisma.user.findMany({
             where: {
                 role: "SuperAdmin",
-                id: { not: Number(userId) }
+                id: { not: userId }
             },
             select: { id: true }
         })

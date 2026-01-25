@@ -6,7 +6,7 @@ export const DELETE = async (req: NextRequest, context: { params: Promise<{ id: 
     try {
         const { id } = await context.params; // ✅ استخراج `id` من `context`
 
-        const roomId = Number(id);
+        const roomId = id as string;
         if (isNaN(roomId)) {
             return NextResponse.json({ message: "Invalid room ID" }, { status: 400 });
         }

@@ -6,7 +6,7 @@ export type OnlienUserType = {
     socketId: string
 }
 export type JWTPaylod = {
-    id: number;
+    id: string;
     email: string;
     name: string;
     role: string;
@@ -81,7 +81,7 @@ export interface RoomWithReltionAllAndPorps {
         bookingRequests: BookingRequest[]
         bookings: Booking[]
     }
-    userId: number
+    userId: string
 
 }
 export interface UserWithAll {

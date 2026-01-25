@@ -125,13 +125,13 @@ export const POST = async (req: NextRequest) => {
         }
 
         // Verify user exists
-        const IdUser = await prisma.user.findUnique({ where: { id: Number(userId) } })
+        const IdUser = await prisma.user.findUnique({ where: { id: userId } })
         if (!IdUser) return NextResponse.json({ message: "User not Found" }, { status: 404 })
 
         // Use transaction to prevent race conditions
         const result = await prisma.$transaction(async (tx) => {
             // Get room with lock (using findUnique inside transaction)
-            const Room = await tx.room.findUnique({ where: { id: Number(roomId) } })
+            const Room = await tx.room.findUnique({ where: { id: roomId } })
 
             if (!Room) {
                 throw new Error("Room not Found")
@@ -145,7 +145,7 @@ export const POST = async (req: NextRequest) => {
             // Check for date overlaps with active bookings
             const overlappingBookings = await tx.booking.findFirst({
                 where: {
-                    roomId: Number(roomId),
+                    roomId: roomId,
                     status: "active",
                     AND: [
                         { checkIn: { lte: checkOutn } },
@@ -161,7 +161,7 @@ export const POST = async (req: NextRequest) => {
             // Check for overlapping pending requests
             const overlappingRequests = await tx.bookingRequest.findFirst({
                 where: {
-                    roomId: Number(roomId),
+                    roomId: roomId,
                     status: "pending",
                     AND: [
                         { checkIn: { lte: checkOutn } },
@@ -177,8 +177,8 @@ export const POST = async (req: NextRequest) => {
             // Create booking request
             const newRequst = await tx.bookingRequest.create({
                 data: {
-                    userId: Number(userId),
-                    roomId: Number(roomId),
+                    userId: userId,
+                    roomId: roomId,
                     checkIn: checkInn,
                     checkOut: checkOutn
                 }
@@ -186,7 +186,7 @@ export const POST = async (req: NextRequest) => {
 
             // Update room status
             await tx.room.update({
-                where: { id: Number(roomId) },
+                where: { id: roomId },
                 data: { status: "requested" }
             })
 
@@ -194,12 +194,12 @@ export const POST = async (req: NextRequest) => {
         })
 
         // Send notifications after successful transaction
-        const writerComment = await prisma.user.findUnique({ where: { id: Number(userId) }, select: { name: true } })
-        const room = await prisma.room.findUnique({ where: { id: Number(roomId) }, select: { name: true } })
+        const writerComment = await prisma.user.findUnique({ where: { id: userId }, select: { name: true } })
+        const room = await prisma.room.findUnique({ where: { id: roomId }, select: { name: true } })
         const users = await prisma.user.findMany({
             where: {
                 role: "SuperAdmin",
-                id: { not: Number(userId) }
+                id: { not: userId }
             },
             select: { id: true }
         })

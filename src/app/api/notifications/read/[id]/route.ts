@@ -8,7 +8,7 @@ export const PUT = async (req: NextRequest, { params }: Props) => {
     try {
 
         await prisma.notification.update({
-            where: { id: Number(id) },
+            where: { id: id as string },
             data: { isRead: true },
         });
 
@@ -23,7 +23,7 @@ export const PATCH = async (req: NextRequest, { params }: Props) => {
     try {
 
         await prisma.notification.updateMany({
-            where: { userId: Number(id) },
+            where: { userId: id as string },
             data: { isRead: true },
         });
 

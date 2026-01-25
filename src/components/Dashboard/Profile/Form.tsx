@@ -8,7 +8,7 @@ import React, { FormEvent, useState } from 'react'
 import { HiPlus, HiPencilAlt, HiViewList } from 'react-icons/hi'
 import { toast } from 'react-toastify'
 
-const Form = ({ userId, setTodos }: { userId: number, setTodos: React.Dispatch<React.SetStateAction<Todo[]>> }) => {
+const Form = ({ userId, setTodos }: { userId: string, setTodos: React.Dispatch<React.SetStateAction<Todo[]>> }) => {
     const [title, setTitle] = useState("")
     const [discrption, setDiscrption] = useState("") // Keeping typo "discrption" from schema for now
     const [loading, setLoading] = useState(false)

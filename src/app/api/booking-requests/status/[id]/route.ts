@@ -17,13 +17,13 @@ export const PUT = async (req: NextRequest, { params }: Props) => {
         }
 
         const request = await prisma.bookingRequest.findUnique({
-            where: { id: Number(id) }
+            where: { id: id as string }
         })
         if (!request) {
             return NextResponse.json({ error: 'Request not found' }, { status: 404 });
         }
 
-        const room = await prisma.room.findUnique({ where: { id: Number(request.roomId) } })
+        const room = await prisma.room.findUnique({ where: { id: request.roomId } })
 
         const Newbook = await prisma.booking.create({
             data: {
@@ -46,16 +46,16 @@ export const PUT = async (req: NextRequest, { params }: Props) => {
         })
 
         await prisma.bookingRequest.update({
-            where: { id: Number(id) },
+            where: { id: id as string },
             data: { status: "approved" }
         })
 
         await prisma.room.update({
-            where: { id: Number(request.roomId) },
+            where: { id: request.roomId },
             data: { status: "booked" }
         })
 
-        if (Number(user?.id) !== Number(request.userId)) {
+        if (user?.id !== request.userId) {
             await prisma.notification.create({
                 data: {
                     message: "Your booking request has been approved!",
@@ -80,29 +80,29 @@ export const DELETE = async (req: NextRequest, { params }: Props) => {
 
         const user = varfiyToken(req)
         const request = await prisma.bookingRequest.findUnique({
-            where: { id: Number(id) }
+            where: { id: id as string }
         })
         if (!request) {
             return NextResponse.json({ error: 'Request not found' }, { status: 404 });
         }
 
-        if (!isAllowd && Number(user?.id) != Number(request.userId)) {
+        if (!isAllowd && user?.id != request.userId) {
             return NextResponse.json({ message: "Not allowed" }, { status: 403 })
         }
 
 
 
         await prisma.bookingRequest.update({
-            where: { id: Number(id) },
+            where: { id: id as string },
             data: { status: "rejected" }
         })
 
         await prisma.room.update({
-            where: { id: Number(request.roomId) },
+            where: { id: request.roomId },
             data: { status: "available" }
         })
 
-        if (Number(user?.id) !== Number(request.userId)) {
+        if (user?.id !== request.userId) {
             await prisma.notification.create({
                 data: {
                     message: "Sorry, your booking request was rejected. Please contact us for details.",
@@ -133,24 +133,24 @@ export const PATCH = async (req: NextRequest, { params }: Props) => {
         }
 
         const request = await prisma.bookingRequest.findUnique({
-            where: { id: Number(id) }
+            where: { id: id as string }
         })
         if (!request) {
             return NextResponse.json({ error: 'Request not found' }, { status: 404 });
         }
 
         // Allow if admin/manager OR if user owns the booking request
-        if (!isAllowd && Number(user?.id) !== Number(request.userId)) {
+        if (!isAllowd && user?.id !== request.userId) {
             return NextResponse.json({ message: "Not allowed" }, { status: 403 })
         }
 
         await prisma.bookingRequest.update({
-            where: { id: Number(id) },
+            where: { id: id as string },
             data: { status: "rejected" }
         })
 
         await prisma.room.update({
-            where: { id: Number(request.roomId) },
+            where: { id: request.roomId },
             data: { status: "available" }
         })
 

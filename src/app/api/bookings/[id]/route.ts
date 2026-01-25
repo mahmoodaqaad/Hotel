@@ -20,18 +20,18 @@ export const PUT = async (req: NextRequest, context: { params: Promise<{ id: str
         }
         // find booking
 
-        const booking = await prisma.booking.findUnique({ where: { id: Number(id) } })
+        const booking = await prisma.booking.findUnique({ where: { id: id as string } })
 
         if (!booking) return NextResponse.json({ message: "book is not found" }, { status: 404 })
 
         if (booking.status !== "active") return NextResponse.json({ message: "you can not update status for this room" }, { status: 400 })
 
         await prisma.booking.update({
-            where: { id: Number(id) },
+            where: { id: id as string },
             data: { status: "completed" }
         })
         await prisma.room.update({
-            where: { id: Number(booking.roomId) },
+            where: { id: booking.roomId },
             data: { status: "available" }
         })
 
@@ -62,14 +62,14 @@ export const DELETE = async (req: NextRequest, { params }: Props) => {
 
         // find booking
 
-        const booking = await prisma.booking.findUnique({ where: { id: Number(id) } })
+        const booking = await prisma.booking.findUnique({ where: { id: id as string } })
 
         if (!booking) return NextResponse.json({ message: "book is not found" }, { status: 404 })
 
 
-        await prisma.booking.delete({ where: { id: Number(id) } })
+        await prisma.booking.delete({ where: { id: id as string } })
         await prisma.room.update({
-            where: { id: Number(booking.roomId) }, data: {
+            where: { id: booking.roomId }, data: {
                 status: "available"
             }
         })

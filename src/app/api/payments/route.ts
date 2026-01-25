@@ -123,9 +123,9 @@ export const POST = async (req: NextRequest) => {
             }, { status: 400 })
         }
 
-        const book = await prisma.booking.findUnique({ where: { id: Number(bookId) } })
-        const user = await prisma.user.findUnique({ where: { id: Number(userId) } })
-        const room = await prisma.room.findUnique({ where: { id: Number(roomId) } })
+        const book = await prisma.booking.findUnique({ where: { id: bookId } })
+        const user = await prisma.user.findUnique({ where: { id: userId } })
+        const room = await prisma.room.findUnique({ where: { id: roomId } })
 
         if (!book) return NextResponse.json({ message: "booked not Found" }, { status: 404 })
         if (!room) return NextResponse.json({ message: "room not Found" }, { status: 404 })
@@ -146,8 +146,8 @@ export const POST = async (req: NextRequest) => {
         await prisma.payment.create({
             data: {
 
-                userId: Number(userId),
-                bookingId: Number(bookId),
+                userId: userId,
+                bookingId: bookId,
                 amount: Number(amount),
                 method: method,
                 // status: (Number(book.paidAmount) + Number(amount)) === Number(room.price) ? "paid" : "pending",
@@ -157,7 +157,7 @@ export const POST = async (req: NextRequest) => {
         })
 
         await prisma.booking.update({
-            where: { id: Number(bookId) }
+            where: { id: bookId }
             , data: {
                 paidAmount: Number(book.paidAmount) + Number(amount),
                 remainingAmount: Number(book.totalAmount) - (Number(book.paidAmount) + Number(amount)),
