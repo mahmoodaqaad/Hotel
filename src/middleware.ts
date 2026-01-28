@@ -26,7 +26,17 @@ export async function middleware(req: NextRequest) {
                 user = payload;
             }
         } catch {
-            // Token is invalid or expired - just treat as unauthenticated
+            // Token is invalid or expired - treat as unauthenticated
+            // and clear the cookie to avoid confusion
+            const response = NextResponse.next();
+            response.cookies.delete("jwt");
+
+            // If the user was trying to access a protected page, they will be redirected anyway
+            // because 'user' is null. If they are on a public/auth page, we just clear the cookie.
+            if (isDashboardPage || isProfile) {
+                return NextResponse.redirect(new URL("/login", req.url));
+            }
+            return response;
         }
     }
 

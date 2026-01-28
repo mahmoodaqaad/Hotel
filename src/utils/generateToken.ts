@@ -8,7 +8,7 @@ export function generateToken(jwtPaylod: JWTPaylod): string {
         console.error("generateToken Error: jwtPaylod is null or undefined!");
     }
     console.log("generateToken payload:", jwtPaylod);
-    return jwt.sign(jwtPaylod, privateKey, { expiresIn: "30d" })
+    return jwt.sign(jwtPaylod, privateKey, { expiresIn: "90d" })
 
 }
 
@@ -22,7 +22,7 @@ export function setCookie(jwtPaylod: JWTPaylod): string {
         secure: process.env.NODE_ENV === "production",// development = http , production=https
         sameSite: "strict",
         path: "/",
-        maxAge: 60 * 60 * 24 * 30//30 day
+        maxAge: 60 * 60 * 24 * 90//90 day
     })
     return cookie
 }
