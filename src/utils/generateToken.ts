@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { JWTPaylod } from './Types';
 import { serialize } from 'cookie';
+import { JWT_COOKIE_NAME } from './consant';
 
 export function generateToken(jwtPaylod: JWTPaylod): string {
     const privateKey = process.env.JWT_SECRET_KEY as string;
@@ -16,7 +17,7 @@ export function generateToken(jwtPaylod: JWTPaylod): string {
 export function setCookie(jwtPaylod: JWTPaylod): string {
     const token = generateToken(jwtPaylod)
 
-    const cookie = serialize("jwt", token, {
+    const cookie = serialize(JWT_COOKIE_NAME, token, {
         httpOnly: true,
         // secure:false ,    //=>http || true => https
         secure: process.env.NODE_ENV === "production",// development = http , production=https

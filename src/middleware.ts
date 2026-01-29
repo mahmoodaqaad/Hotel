@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
+import { JWT_COOKIE_NAME } from "./utils/consant";
 
 export async function middleware(req: NextRequest) {
     const { pathname } = req.nextUrl;
-    const token = req.cookies.get("jwt")?.value;
+    const token = req.cookies.get(JWT_COOKIE_NAME)?.value;
 
     // Helper to check if we are on login or register pages
     const isAuthPage = pathname === "/login" || pathname === "/register";
@@ -29,7 +30,7 @@ export async function middleware(req: NextRequest) {
             // Token is invalid or expired - treat as unauthenticated
             // and clear the cookie to avoid confusion
             const response = NextResponse.next();
-            response.cookies.delete("jwt");
+            response.cookies.delete(JWT_COOKIE_NAME);
 
             // If the user was trying to access a protected page, they will be redirected anyway
             // because 'user' is null. If they are on a public/auth page, we just clear the cookie.

@@ -8,12 +8,13 @@
 
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
+import { JWT_COOKIE_NAME } from "@/utils/consant";
 
 
 
 export const POST = async () => {
     try {
-        (await cookies()).delete("jwt")
+        (await cookies()).delete(JWT_COOKIE_NAME)
         return NextResponse.json({ message: "Logout" }, { status: 200 })
 
     }

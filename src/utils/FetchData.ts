@@ -1,11 +1,11 @@
-import { DOMAIN } from "./consant"
+import { DOMAIN, JWT_COOKIE_NAME } from "./consant"
 
 export const getFetchAll = async (key: string, page: string | number = "1", search: string = "", sort: string = "", order: string = "asc", filter: string = "") => {
     let token = "";
     try {
         const { cookies } = await import("next/headers");
         const cookieStore = await cookies();
-        token = cookieStore.get("jwt")?.value || "";
+        token = cookieStore.get(JWT_COOKIE_NAME)?.value || "";
     } catch {
         // Ignore error if not in App Router context
     }
@@ -13,7 +13,7 @@ export const getFetchAll = async (key: string, page: string | number = "1", sear
     const response = await fetch(`${DOMAIN}/api/${key}?pageNumber=${page}&search=${search}&sort=${sort}&order=${order}&filter=${filter}`, {
         credentials: "include",
         headers: {
-            Cookie: `jwt=${token}`
+            Cookie: `${JWT_COOKIE_NAME}=${token}`
         }
     })
     return response
@@ -24,7 +24,7 @@ export const getFetchById = async (key: string, id: string | number) => {
     try {
         const { cookies } = await import("next/headers");
         const cookieStore = await cookies();
-        token = cookieStore.get("jwt")?.value || "";
+        token = cookieStore.get(JWT_COOKIE_NAME)?.value || "";
     } catch {
         // Ignore error if not in App Router context
     }
@@ -32,7 +32,7 @@ export const getFetchById = async (key: string, id: string | number) => {
     const response = await fetch(`${DOMAIN}/api/${key}/${id}`, {
         credentials: "include",
         headers: {
-            Cookie: `jwt=${token}`
+            Cookie: `${JWT_COOKIE_NAME}=${token}`
         }
     })
     return response

@@ -3,6 +3,7 @@ import { JWTPaylod } from "./Types";
 import { NextRequest } from 'next/server';
 import prisma from "@/utils/db";
 import { serializePrisma } from './serialize';
+import { JWT_COOKIE_NAME } from './consant';
 
 // Types for router compatibility
 interface NextApiRequestLike {
@@ -16,10 +17,10 @@ export function varfiyToken(req: NextRequest | NextApiRequestLike): JWTPaylod | 
         if ('cookies' in req) {
             if (typeof req.cookies.get === 'function') {
                 // NextRequest (App Router)
-                jwtToken = (req as NextRequest).cookies.get("jwt")?.value;
+                jwtToken = (req as NextRequest).cookies.get(JWT_COOKIE_NAME)?.value;
             } else {
                 // NextApiRequest (Pages Router) or Express
-                jwtToken = (req as NextApiRequestLike).cookies['jwt'];
+                jwtToken = (req as NextApiRequestLike).cookies[JWT_COOKIE_NAME];
             }
         }
 
@@ -40,7 +41,7 @@ export async function varfiyTokenForPage() {
         try {
             const { cookies } = await import("next/headers");
             const cookieStore = await cookies();
-            token = cookieStore.get("jwt")?.value || "";
+            token = cookieStore.get(JWT_COOKIE_NAME)?.value || "";
         } catch {
             console.warn("varfiyTokenForPage called outside App Router context");
             return null;
@@ -68,7 +69,7 @@ export async function varfiyMyAccount(includeRelations: boolean = false) {
         try {
             const { cookies } = await import("next/headers");
             const cookieStore = await cookies();
-            token = cookieStore.get("jwt")?.value || "";
+            token = cookieStore.get(JWT_COOKIE_NAME)?.value || "";
         } catch {
             console.warn("varfiyMyAccount called outside App Router context");
             return null;
